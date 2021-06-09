@@ -12,7 +12,7 @@ use solana_program_test::ProgramTest;
 use solana_program_test::*;
 
 use hapi_core_solana::{
-  instruction::{add_reporter, create_network},
+  instruction::{add_reporter, create_network, update_reporter},
   processor::process,
   state::enums::{HapiAccountType, ReporterType},
   state::network::{get_network_address, Network},
@@ -140,14 +140,16 @@ impl HapiProgramTest {
 
     let account = Reporter {
       account_type: HapiAccountType::Reporter,
-      reporter_key: reporter_keypair.pubkey(),
-      name,
-      reporter_type,
+      name: name.clone(),
+      reporter_type: reporter_type.clone(),
     };
 
     ReporterCookie {
       address: reporter_address,
+      reporter_key: reporter_keypair.pubkey(),
+      reporter_type,
       account,
+      name,
     }
   }
 
@@ -187,5 +189,25 @@ impl HapiProgramTest {
       .get_account(*address)
       .await
       .unwrap()
+  }
+
+  #[allow(dead_code)]
+  pub async fn update_reporter(
+    &mut self,
+    reporter_cookie: &ReporterCookie,
+    new_reporter_cookie: &ReporterCookie,
+  ) -> Result<(), ProgramError> {
+    let update_reporter_instruction = update_reporter(
+      &self.context.payer.pubkey(),
+      &reporter_cookie.reporter_key,
+      new_reporter_cookie.name.clone(),
+      new_reporter_cookie.reporter_type.clone(),
+    );
+
+    self
+      .process_transaction(&[update_reporter_instruction], None)
+      .await?;
+
+    Ok(())
   }
 }

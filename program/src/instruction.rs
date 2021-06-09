@@ -23,6 +23,7 @@ pub enum HapiInstruction {
   /// 1. `[writable]` Network account. PDA seeds: ['network', name]
   /// 2. `[]` System
   /// 3. `[]` Sysvar Rent
+  /// 
   CreateNetwork {
     #[allow(dead_code)]
     /// UTF-8 encoded HAPI Network name
@@ -32,14 +33,12 @@ pub enum HapiInstruction {
   /// Add reporter credentials
   ///
   /// 0. `[signer]` Authority account
-  /// 1. `[writable]` Reporter account. PDA seeds: [`reporter`, pubkey]
+  /// 1. `[]` Reporter account (will be used as signer in address and incident reports)
+  /// 1. `[writable]` Reporter info account. PDA seeds: [`reporter`, pubkey]
   /// 2. `[]` System
   /// 3. `[]` Sysvar Rent
+  /// 
   AddReporter {
-    #[allow(dead_code)]
-    /// Reporter public key
-    reporter_key: Pubkey,
-
     #[allow(dead_code)]
     /// UTF-8 encoded Reporter name
     name: String,
@@ -48,6 +47,21 @@ pub enum HapiInstruction {
     /// Reporter type
     reporter_type: ReporterType,
   },
+
+  /// Update reporter name and type
+  /// 
+  /// 0. `[signer]` Authority account
+  /// 1. `[writable` Reporter account. PDA seeds: ['reporter', pubkey]
+  /// 
+  UpdateReporter {
+    #[allow(dead_code)]
+    /// UTF-8 encoded Reporter name
+    name: String,
+
+    #[allow(dead_code)]
+    /// Reporter type
+    reporter_type: ReporterType,
+  }
 }
 
 /// Creates CreateNetwork instruction
@@ -79,6 +93,37 @@ pub fn create_network(
 pub fn add_reporter(
   // Accounts
   payer: &Pubkey,
+  reporter_account: &Pubkey,
+  // Args
+  name: String,
+  reporter_type: ReporterType,
+) -> Instruction {
+  let reporter_info = get_reporter_address(reporter_account);
+
+  let accounts = vec![
+    AccountMeta::new_readonly(*payer, true),
+    AccountMeta::new_readonly(*reporter_account, false),
+    AccountMeta::new(reporter_info, false),
+    AccountMeta::new_readonly(system_program::id(), false),
+    AccountMeta::new_readonly(sysvar::rent::id(), false),
+  ];
+
+  let instruction = HapiInstruction::AddReporter {
+    name,
+    reporter_type,
+  };
+
+  Instruction {
+    program_id: id(),
+    accounts,
+    data: instruction.try_to_vec().unwrap(),
+  }
+}
+
+/// Creates UpdateReporter instruction
+pub fn update_reporter(
+  // Accounts
+  payer: &Pubkey,
   reporter_key: &Pubkey,
   // Args
   name: String,
@@ -89,12 +134,9 @@ pub fn add_reporter(
   let accounts = vec![
     AccountMeta::new_readonly(*payer, true),
     AccountMeta::new(reporter_address, false),
-    AccountMeta::new_readonly(system_program::id(), false),
-    AccountMeta::new_readonly(sysvar::rent::id(), false),
   ];
 
-  let instruction = HapiInstruction::AddReporter {
-    reporter_key: *reporter_key,
+  let instruction = HapiInstruction::UpdateReporter {
     name,
     reporter_type,
   };

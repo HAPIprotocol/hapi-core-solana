@@ -20,9 +20,6 @@ pub struct Reporter {
   /// HAPI account type
   pub account_type: HapiAccountType,
 
-  /// Reporter public key
-  pub reporter_key: Pubkey,
-
   /// Reporter type
   pub reporter_type: ReporterType,
 

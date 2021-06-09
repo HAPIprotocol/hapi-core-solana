@@ -15,15 +15,15 @@ use crate::{
 pub fn process_add_reporter(
   program_id: &Pubkey,
   accounts: &[AccountInfo],
-  reporter_key: &Pubkey,
   name: String,
   reporter_type: ReporterType,
 ) -> ProgramResult {
   let account_info_iter = &mut accounts.iter();
   let payer_info = next_account_info(account_info_iter)?; // 0
-  let reporter_info = next_account_info(account_info_iter)?; // 1
-  let system_info = next_account_info(account_info_iter)?; // 2
-  let rent_sysvar_info = next_account_info(account_info_iter)?; // 3
+  let reporter_key = next_account_info(account_info_iter)?; // 1
+  let reporter_info = next_account_info(account_info_iter)?; // 2
+  let system_info = next_account_info(account_info_iter)?; // 3
+  let rent_sysvar_info = next_account_info(account_info_iter)?; // 4
   let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
   if !payer_info.is_signer {
@@ -33,7 +33,6 @@ pub fn process_add_reporter(
 
   let reporter_data = Reporter {
     account_type: HapiAccountType::Reporter,
-    reporter_key: *reporter_key,
     name: name.clone(),
     reporter_type,
   };
@@ -42,7 +41,7 @@ pub fn process_add_reporter(
     payer_info,
     &reporter_info,
     &reporter_data,
-    &get_reporter_address_seeds(reporter_key),
+    &get_reporter_address_seeds(reporter_key.key),
     program_id,
     system_info,
     rent,
