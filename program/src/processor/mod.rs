@@ -23,8 +23,8 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
   match instruction {
     HapiInstruction::CreateNetwork { name } => process_create_network(program_id, accounts, name),
 
-    HapiInstruction::AddReporter { name, reporter_key } => {
-      process_add_reporter(program_id, accounts, &reporter_key, name)
+    HapiInstruction::AddReporter { name, reporter_key, reporter_type } => {
+      process_add_reporter(program_id, accounts, &reporter_key, name, reporter_type)
     }
 
     _ => todo!("Instruction not implemented yet"),

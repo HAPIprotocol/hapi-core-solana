@@ -2,7 +2,7 @@
 
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
 
-/// Defines all Governance accounts types
+/// Defines all HAPI accounts types
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, BorshDeserialize, BorshSerialize, BorshSchema)]
 pub enum HapiAccountType {
@@ -19,5 +19,25 @@ pub enum HapiAccountType {
 impl Default for HapiAccountType {
   fn default() -> Self {
     HapiAccountType::Uninitialized
+  }
+}
+
+/// Reporter type
+#[repr(C)]
+#[derive(Clone, Debug, PartialEq, BorshDeserialize, BorshSerialize, BorshSchema)]
+pub enum ReporterType {
+  /// Inactive reporter
+  Inactive,
+
+  /// Tracer - can report addresses
+  Tracer,
+
+  /// Full - can report incidents and addresses
+  Full,
+}
+
+impl Default for ReporterType {
+  fn default() -> Self {
+    ReporterType::Inactive
   }
 }

@@ -8,7 +8,7 @@ use solana_program::{
 };
 
 use crate::{
-  error::HapiError, state::enums::HapiAccountType, state::reporter::get_reporter_address_seeds,
+  error::HapiError, state::enums::{HapiAccountType, ReporterType}, state::reporter::get_reporter_address_seeds,
   state::reporter::Reporter, tools::account::create_and_serialize_account_signed,
 };
 
@@ -17,6 +17,7 @@ pub fn process_add_reporter(
   accounts: &[AccountInfo],
   reporter_key: &Pubkey,
   name: String,
+  reporter_type: ReporterType,
 ) -> ProgramResult {
   let account_info_iter = &mut accounts.iter();
   let payer_info = next_account_info(account_info_iter)?; // 0
@@ -34,6 +35,7 @@ pub fn process_add_reporter(
     account_type: HapiAccountType::Reporter,
     reporter_key: *reporter_key,
     name: name.clone(),
+    reporter_type,
   };
 
   create_and_serialize_account_signed::<Reporter>(

@@ -12,9 +12,9 @@ use solana_program_test::ProgramTest;
 use solana_program_test::*;
 
 use hapi_core_solana::{
-  instruction::{create_network, add_reporter},
+  instruction::{add_reporter, create_network},
   processor::process,
-  state::enums::HapiAccountType,
+  state::enums::{HapiAccountType, ReporterType},
   state::network::{get_network_address, Network},
   state::reporter::{get_reporter_address, Reporter},
 };
@@ -119,14 +119,19 @@ impl HapiProgramTest {
   #[allow(dead_code)]
   pub async fn with_reporter(&mut self) -> ReporterCookie {
     let reporter_keypair = Keypair::new();
+    let reporter_type = ReporterType::Tracer;
 
     let name = format!("Reporter #{}", self.next_reporter_id).to_string();
     self.next_reporter_id = self.next_reporter_id + 1;
 
     let reporter_address = get_reporter_address(&reporter_keypair.pubkey());
 
-    let add_reporter_instruction =
-      add_reporter(&self.context.payer.pubkey(), &reporter_keypair.pubkey(), name.clone());
+    let add_reporter_instruction = add_reporter(
+      &self.context.payer.pubkey(),
+      &reporter_keypair.pubkey(),
+      name.clone(),
+      reporter_type.clone(),
+    );
 
     self
       .process_transaction(&[add_reporter_instruction], None)
@@ -137,6 +142,7 @@ impl HapiProgramTest {
       account_type: HapiAccountType::Reporter,
       reporter_key: reporter_keypair.pubkey(),
       name,
+      reporter_type,
     };
 
     ReporterCookie {
@@ -147,16 +153,12 @@ impl HapiProgramTest {
 
   #[allow(dead_code)]
   pub async fn get_network_account(&mut self, address: &Pubkey) -> Network {
-    self
-      .get_borsh_account::<Network>(address)
-      .await
+    self.get_borsh_account::<Network>(address).await
   }
 
   #[allow(dead_code)]
   pub async fn get_reporter_account(&mut self, address: &Pubkey) -> Reporter {
-    self
-      .get_borsh_account::<Reporter>(address)
-      .await
+    self.get_borsh_account::<Reporter>(address).await
   }
 
   #[allow(dead_code)]

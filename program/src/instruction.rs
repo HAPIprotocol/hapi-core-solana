@@ -8,7 +8,10 @@ use solana_program::{
   system_program, sysvar,
 };
 
-use crate::{id, state::network::get_network_address, state::reporter::get_reporter_address};
+use crate::{
+  id, state::enums::ReporterType, state::network::get_network_address,
+  state::reporter::get_reporter_address,
+};
 
 /// Instructions supported by the HAPI program
 #[repr(C)]
@@ -40,6 +43,10 @@ pub enum HapiInstruction {
     #[allow(dead_code)]
     /// UTF-8 encoded Reporter name
     name: String,
+
+    #[allow(dead_code)]
+    /// Reporter type
+    reporter_type: ReporterType,
   },
 }
 
@@ -75,6 +82,7 @@ pub fn add_reporter(
   reporter_key: &Pubkey,
   // Args
   name: String,
+  reporter_type: ReporterType,
 ) -> Instruction {
   let reporter_address = get_reporter_address(reporter_key);
 
@@ -88,6 +96,7 @@ pub fn add_reporter(
   let instruction = HapiInstruction::AddReporter {
     reporter_key: *reporter_key,
     name,
+    reporter_type,
   };
 
   Instruction {

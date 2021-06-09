@@ -8,7 +8,7 @@ use solana_program::{
 
 use crate::{
   id,
-  state::enums::HapiAccountType,
+  state::enums::{HapiAccountType, ReporterType},
   tools::account::{assert_is_valid_account, get_account_data, AccountMaxSize},
 };
 
@@ -22,6 +22,9 @@ pub struct Reporter {
 
   /// Reporter public key
   pub reporter_key: Pubkey,
+
+  /// Reporter type
+  pub reporter_type: ReporterType,
 
   /// Reporter name
   pub name: String,
