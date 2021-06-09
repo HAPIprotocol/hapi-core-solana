@@ -1,0 +1,28 @@
+[package]
+name = "hapi-core-solana"
+version = "0.1.0"
+authors = ["Andrei Arsenin <andrei.arsenin@hapi.one>"]
+edition = "2018"
+description = "Solana Program Library Memo"
+license = "BSL-1.1"
+
+[features]
+no-entrypoint = []
+test-bpf = []
+
+[dependencies]
+solana-program = "1.7"
+thiserror = "1.0"
+borsh = "0.8"
+num-derive = "0.3"
+num-traits = "0.2"
+
+[dev-dependencies]
+solana-program-test = "1.6.7"
+solana-sdk = "1.6.7"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]
