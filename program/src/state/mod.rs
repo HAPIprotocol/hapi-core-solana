@@ -2,3 +2,4 @@
 
 pub mod enums;
 pub mod network;
+pub mod reporter;

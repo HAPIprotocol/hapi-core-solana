@@ -11,6 +11,9 @@ pub enum HapiAccountType {
 
   /// HAPI network account
   Network,
+
+  /// Reporter account
+  Reporter,
 }
 
 impl Default for HapiAccountType {

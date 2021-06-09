@@ -8,18 +8,19 @@ use solana_program::{
 };
 
 use crate::{
-  error::HapiError, state::enums::HapiAccountType, state::network::get_network_address_seeds,
-  state::network::Network, tools::account::create_and_serialize_account_signed,
+  error::HapiError, state::enums::HapiAccountType, state::reporter::get_reporter_address_seeds,
+  state::reporter::Reporter, tools::account::create_and_serialize_account_signed,
 };
 
-pub fn process_create_network(
+pub fn process_add_reporter(
   program_id: &Pubkey,
   accounts: &[AccountInfo],
+  reporter_key: &Pubkey,
   name: String,
 ) -> ProgramResult {
   let account_info_iter = &mut accounts.iter();
   let payer_info = next_account_info(account_info_iter)?; // 0
-  let network_info = next_account_info(account_info_iter)?; // 1
+  let reporter_info = next_account_info(account_info_iter)?; // 1
   let system_info = next_account_info(account_info_iter)?; // 2
   let rent_sysvar_info = next_account_info(account_info_iter)?; // 3
   let rent = &Rent::from_account_info(rent_sysvar_info)?;
@@ -29,17 +30,17 @@ pub fn process_create_network(
     return Err(HapiError::SignatureMissing.into());
   }
 
-  let network_data = Network {
-    account_type: HapiAccountType::Network,
-    authority: *payer_info.key,
+  let reporter_data = Reporter {
+    account_type: HapiAccountType::Reporter,
+    reporter_key: *reporter_key,
     name: name.clone(),
   };
 
-  create_and_serialize_account_signed::<Network>(
+  create_and_serialize_account_signed::<Reporter>(
     payer_info,
-    &network_info,
-    &network_data,
-    &get_network_address_seeds(&name),
+    &reporter_info,
+    &reporter_data,
+    &get_reporter_address_seeds(reporter_key),
     program_id,
     system_info,
     rent,
