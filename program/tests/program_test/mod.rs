@@ -6,15 +6,17 @@ use solana_program::{
   program_pack::{IsInitialized, Pack},
   pubkey::Pubkey,
   rent::Rent,
+  system_instruction,
 };
 
 use solana_program_test::ProgramTest;
 use solana_program_test::*;
 
 use hapi_core_solana::{
-  instruction::{add_reporter, create_network, update_reporter},
+  instruction::{add_reporter, create_network, report_event, update_reporter},
   processor::process,
   state::enums::{HapiAccountType, ReporterType},
+  state::event::{get_event_address, Event},
   state::network::{get_network_address, Network},
   state::reporter::{get_reporter_address, Reporter},
 };
@@ -26,7 +28,7 @@ use solana_sdk::{
 
 pub mod cookies;
 
-use self::cookies::{NetworkCookie, ReporterCookie};
+use self::cookies::{EventCookie, NetworkCookie, ReporterCookie};
 
 pub mod tools;
 use self::tools::map_transaction_error;
@@ -36,6 +38,7 @@ pub struct HapiProgramTest {
   pub rent: Rent,
   pub next_network_id: u8,
   pub next_reporter_id: u8,
+  pub next_event_id: u8,
 }
 
 impl HapiProgramTest {
@@ -54,6 +57,7 @@ impl HapiProgramTest {
       rent,
       next_network_id: 0,
       next_reporter_id: 0,
+      next_event_id: 0,
     }
   }
 
@@ -97,28 +101,29 @@ impl HapiProgramTest {
 
     let network_address = get_network_address(&name);
 
-    let create_network_instruction = create_network(&self.context.payer.pubkey(), name.clone());
+    let create_network_ix = create_network(&self.context.payer.pubkey(), name.clone());
 
     self
-      .process_transaction(&[create_network_instruction], None)
+      .process_transaction(&[create_network_ix], None)
       .await
       .unwrap();
 
     let account = Network {
       account_type: HapiAccountType::Network,
       authority: self.context.payer.pubkey(),
-      name,
+      name: name.clone(),
+      next_event_id: 0,
     };
 
     NetworkCookie {
       address: network_address,
+      name,
       account,
     }
   }
 
   #[allow(dead_code)]
-  pub async fn with_reporter(&mut self) -> ReporterCookie {
-    let reporter_keypair = Keypair::new();
+  pub async fn with_reporter(&mut self, reporter_keypair: Keypair) -> ReporterCookie {
     let reporter_type = ReporterType::Tracer;
 
     let name = format!("Reporter #{}", self.next_reporter_id).to_string();
@@ -126,7 +131,13 @@ impl HapiProgramTest {
 
     let reporter_address = get_reporter_address(&reporter_keypair.pubkey());
 
-    let add_reporter_instruction = add_reporter(
+    let fund_reporter_ix = system_instruction::transfer(
+      &self.context.payer.pubkey(),
+      &reporter_keypair.pubkey(),
+      1000000000,
+    );
+
+    let add_reporter_ix = add_reporter(
       &self.context.payer.pubkey(),
       &reporter_keypair.pubkey(),
       name.clone(),
@@ -134,7 +145,7 @@ impl HapiProgramTest {
     );
 
     self
-      .process_transaction(&[add_reporter_instruction], None)
+      .process_transaction(&[fund_reporter_ix, add_reporter_ix], None)
       .await
       .unwrap();
 
@@ -146,9 +157,48 @@ impl HapiProgramTest {
 
     ReporterCookie {
       address: reporter_address,
-      reporter_key: reporter_keypair.pubkey(),
+      reporter_keypair,
       reporter_type,
       account,
+      name,
+    }
+  }
+
+  #[allow(dead_code)]
+  pub async fn with_event(
+    &mut self,
+    reporter: &ReporterCookie,
+    network: &NetworkCookie,
+  ) -> EventCookie {
+    let name = format!("Event #{}", self.next_event_id).to_string();
+    self.next_event_id = self.next_event_id + 1;
+
+    let event_id = network.account.next_event_id;
+
+    let event_address = get_event_address(&network.address, &event_id.to_le_bytes());
+
+    let report_event_ix = report_event(
+      &reporter.reporter_keypair.pubkey(),
+      network.name.clone(),
+      event_id,
+      name.clone(),
+    );
+
+    self
+      .process_transaction(&[report_event_ix], Some(&[&reporter.reporter_keypair]))
+      .await
+      .unwrap();
+
+    let event = Event {
+      account_type: HapiAccountType::Event,
+      name: name.clone(),
+      reporter_key: reporter.reporter_keypair.pubkey(),
+    };
+
+    EventCookie {
+      address: event_address,
+      account: event,
+      network_account: network.address,
       name,
     }
   }
@@ -161,6 +211,11 @@ impl HapiProgramTest {
   #[allow(dead_code)]
   pub async fn get_reporter_account(&mut self, address: &Pubkey) -> Reporter {
     self.get_borsh_account::<Reporter>(address).await
+  }
+
+  #[allow(dead_code)]
+  pub async fn get_event_account(&mut self, address: &Pubkey) -> Event {
+    self.get_borsh_account::<Event>(address).await
   }
 
   #[allow(dead_code)]
@@ -195,17 +250,17 @@ impl HapiProgramTest {
   pub async fn update_reporter(
     &mut self,
     reporter_cookie: &ReporterCookie,
-    new_reporter_cookie: &ReporterCookie,
+    updated_reporter: &Reporter,
   ) -> Result<(), ProgramError> {
-    let update_reporter_instruction = update_reporter(
+    let update_reporter_ix = update_reporter(
       &self.context.payer.pubkey(),
-      &reporter_cookie.reporter_key,
-      new_reporter_cookie.name.clone(),
-      new_reporter_cookie.reporter_type.clone(),
+      &reporter_cookie.reporter_keypair.pubkey(),
+      updated_reporter.name.clone(),
+      updated_reporter.reporter_type.clone(),
     );
 
     self
-      .process_transaction(&[update_reporter_instruction], None)
+      .process_transaction(&[update_reporter_ix], None)
       .await?;
 
     Ok(())

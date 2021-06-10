@@ -29,10 +29,13 @@ pub fn process_create_network(
     return Err(HapiError::SignatureMissing.into());
   }
 
+  // TODO: check that payer is authority
+
   let network_data = Network {
     account_type: HapiAccountType::Network,
     authority: *payer_info.key,
     name: name.clone(),
+    next_event_id: 0,
   };
 
   create_and_serialize_account_signed::<Network>(

@@ -1,4 +1,4 @@
-//! HAPI Config Account
+//! HAPI Reporter Account
 
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
 use solana_program::{

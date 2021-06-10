@@ -31,6 +31,8 @@ pub fn process_add_reporter(
     return Err(HapiError::SignatureMissing.into());
   }
 
+  // TODO: check that payer is authority
+
   let reporter_data = Reporter {
     account_type: HapiAccountType::Reporter,
     name: name.clone(),

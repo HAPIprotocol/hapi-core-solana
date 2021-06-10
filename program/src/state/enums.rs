@@ -14,6 +14,9 @@ pub enum HapiAccountType {
 
   /// Reporter account
   Reporter,
+
+  /// Event account
+  Event,
 }
 
 impl Default for HapiAccountType {
@@ -32,7 +35,7 @@ pub enum ReporterType {
   /// Tracer - can report addresses
   Tracer,
 
-  /// Full - can report incidents and addresses
+  /// Full - can report events and addresses
   Full,
 }
 

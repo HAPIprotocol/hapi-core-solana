@@ -23,6 +23,8 @@ pub fn process_update_reporter(
     return Err(HapiError::SignatureMissing.into());
   }
 
+  // TODO: check that payer is authority
+
   let mut reporter_data = get_reporter_data(reporter_info)?;
 
   reporter_data.name = name;

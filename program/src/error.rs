@@ -31,6 +31,10 @@ pub enum HapiError {
   #[error("SignatureMissing")]
   SignatureMissing,
 
+  /// Invalid event ID for a network.
+  #[error("EventIDMismatch")]
+  EventIDMismatch,
+
   /// ---- Account Tools Errors ----
 
   /// Invalid account owner
