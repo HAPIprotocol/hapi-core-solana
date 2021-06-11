@@ -1,9 +1,9 @@
 #![cfg(feature = "test-bpf")]
 
+use hapi_core_solana::error::HapiError;
 use solana_program_test::*;
-use solana_sdk::signature::Keypair;
 
-mod program_test;
+pub mod program_test;
 
 use program_test::*;
 
@@ -11,10 +11,14 @@ use program_test::*;
 async fn test_reporter_added() {
   // Arrange
   let mut hapi_test = HapiProgramTest::start_new().await;
-  let reporter_keypair = Keypair::new();
+  let authority_keypair = hapi_test.create_funded_keypair().await;
+  let network_cookie = hapi_test.with_network(&authority_keypair).await;
 
   // Act
-  let reporter_cookie = hapi_test.with_reporter(reporter_keypair).await;
+  let reporter_cookie = hapi_test
+    .with_reporter(&network_cookie, &authority_keypair)
+    .await
+    .unwrap();
 
   // Assert
   let reporter_account = hapi_test
@@ -26,5 +30,19 @@ async fn test_reporter_added() {
 
 #[tokio::test]
 async fn test_reporter_not_added_invalid_authority() {
-  // TODO: make sure that reporter can only be added by authority
+  // Arrange
+  let mut hapi_test = HapiProgramTest::start_new().await;
+  let real_authority = hapi_test.create_funded_keypair().await;
+  let rando_authority = hapi_test.create_funded_keypair().await;
+  let network_cookie = hapi_test.with_network(&real_authority).await;
+
+  // Act
+  let err = hapi_test
+    .with_reporter(&network_cookie, &rando_authority)
+    .await
+    .err()
+    .unwrap();
+
+  // Assert
+  assert_eq!(err, HapiError::InvalidNetworkAuthority.into());
 }

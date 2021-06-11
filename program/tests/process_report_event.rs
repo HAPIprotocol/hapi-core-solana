@@ -1,7 +1,6 @@
 #![cfg(feature = "test-bpf")]
 
 use solana_program_test::*;
-use solana_sdk::signature::Keypair;
 
 mod program_test;
 
@@ -11,9 +10,9 @@ use program_test::*;
 async fn test_event_reported() {
   // Arrange
   let mut hapi_test = HapiProgramTest::start_new().await;
-  let reporter_keypair = Keypair::new();
-  let reporter_cookie = hapi_test.with_reporter(reporter_keypair).await;
-  let network_cookie = hapi_test.with_network().await;
+  let authority_keypair = hapi_test.create_funded_keypair().await;
+  let network_cookie = hapi_test.with_network(&authority_keypair).await;
+  let reporter_cookie = hapi_test.with_reporter(&network_cookie, &authority_keypair).await.unwrap();
 
   // Act
   let event_cookie = hapi_test

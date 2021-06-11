@@ -27,7 +27,6 @@ use solana_sdk::{
 };
 
 pub mod cookies;
-
 use self::cookies::{EventCookie, NetworkCookie, ReporterCookie};
 
 pub mod tools;
@@ -95,25 +94,39 @@ impl HapiProgramTest {
   }
 
   #[allow(dead_code)]
-  pub async fn with_network(&mut self) -> NetworkCookie {
+  pub async fn create_funded_keypair(&mut self) -> Keypair {
+    let keypair = Keypair::new();
+
+    let fund_keypair_ix =
+      system_instruction::transfer(&self.context.payer.pubkey(), &keypair.pubkey(), 1000000000);
+
+    self
+      .process_transaction(&[fund_keypair_ix], None)
+      .await
+      .unwrap();
+
+    keypair
+  }
+
+  pub async fn with_network(&mut self, authority: &Keypair) -> NetworkCookie {
     let name = format!("Network #{}", self.next_network_id).to_string();
     self.next_network_id = self.next_network_id + 1;
 
-    let network_address = get_network_address(&name);
-
-    let create_network_ix = create_network(&self.context.payer.pubkey(), name.clone());
+    let create_network_ix = create_network(&authority.pubkey(), name.clone());
 
     self
-      .process_transaction(&[create_network_ix], None)
+      .process_transaction(&[create_network_ix], Some(&[&authority]))
       .await
       .unwrap();
 
     let account = Network {
       account_type: HapiAccountType::Network,
-      authority: self.context.payer.pubkey(),
+      authority: authority.pubkey(),
       name: name.clone(),
       next_event_id: 0,
     };
+
+    let network_address = get_network_address(&name);
 
     NetworkCookie {
       address: network_address,
@@ -123,13 +136,16 @@ impl HapiProgramTest {
   }
 
   #[allow(dead_code)]
-  pub async fn with_reporter(&mut self, reporter_keypair: Keypair) -> ReporterCookie {
+  pub async fn with_reporter(
+    &mut self,
+    network_cookie: &NetworkCookie,
+    authority: &Keypair,
+  ) -> Result<ReporterCookie, ProgramError> {
     let reporter_type = ReporterType::Tracer;
+    let reporter_keypair = Keypair::new();
 
     let name = format!("Reporter #{}", self.next_reporter_id).to_string();
     self.next_reporter_id = self.next_reporter_id + 1;
-
-    let reporter_address = get_reporter_address(&reporter_keypair.pubkey());
 
     let fund_reporter_ix = system_instruction::transfer(
       &self.context.payer.pubkey(),
@@ -138,16 +154,16 @@ impl HapiProgramTest {
     );
 
     let add_reporter_ix = add_reporter(
-      &self.context.payer.pubkey(),
+      &authority.pubkey(),
+      &network_cookie.address,
       &reporter_keypair.pubkey(),
       name.clone(),
       reporter_type.clone(),
     );
 
     self
-      .process_transaction(&[fund_reporter_ix, add_reporter_ix], None)
-      .await
-      .unwrap();
+      .process_transaction(&[fund_reporter_ix, add_reporter_ix], Some(&[&authority]))
+      .await?;
 
     let account = Reporter {
       account_type: HapiAccountType::Reporter,
@@ -155,13 +171,16 @@ impl HapiProgramTest {
       reporter_type: reporter_type.clone(),
     };
 
-    ReporterCookie {
+    let reporter_address = get_reporter_address(&reporter_keypair.pubkey());
+
+    Ok(ReporterCookie {
       address: reporter_address,
+      network_address: network_cookie.address,
       reporter_keypair,
       reporter_type,
       account,
       name,
-    }
+    })
   }
 
   #[allow(dead_code)]

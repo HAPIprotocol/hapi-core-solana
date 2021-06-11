@@ -37,6 +37,9 @@ pub enum ReporterType {
 
   /// Full - can report events and addresses
   Full,
+
+  /// Authority - can modify events and addresses
+  Authority,
 }
 
 impl Default for ReporterType {

@@ -35,6 +35,10 @@ pub enum HapiError {
   #[error("EventIDMismatch")]
   EventIDMismatch,
 
+  /// Invalid network authority
+  #[error("InvalidNetworkAuthority")]
+  InvalidNetworkAuthority,
+
   /// ---- Account Tools Errors ----
 
   /// Invalid account owner

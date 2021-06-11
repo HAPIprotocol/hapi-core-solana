@@ -1,7 +1,6 @@
 //! Instruction types
 
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
-
 use solana_program::{
   instruction::{AccountMeta, Instruction},
   pubkey::Pubkey,
@@ -30,13 +29,14 @@ pub enum HapiInstruction {
     name: String,
   },
 
-  /// Add reporter credentials
+  /// Add reporter to network
   ///
   /// 0. `[signer]` Authority account
-  /// 1. `[]` Reporter account (will be used as signer in address and event reports)
-  /// 1. `[writable]` Reporter info account. PDA seeds: [`reporter`, pubkey]
-  /// 2. `[]` System
-  /// 3. `[]` Sysvar Rent
+  /// 1. `[writable]` Network account
+  /// 2. `[]` Reporter account (will be used as signer in address and event reports)
+  /// 3. `[writable]` Reporter info account. PDA seeds: [`reporter`, network_account, reporter_pubkey]
+  /// 4. `[]` System
+  /// 5. `[]` Sysvar Rent
   ///
   AddReporter {
     #[allow(dead_code)]
@@ -98,14 +98,14 @@ pub enum HapiInstruction {
 /// Creates CreateNetwork instruction
 pub fn create_network(
   // Accounts
-  payer: &Pubkey,
+  authority: &Pubkey,
   // Args
   name: String,
 ) -> Instruction {
   let network_address = get_network_address(&name);
 
   let accounts = vec![
-    AccountMeta::new_readonly(*payer, true),
+    AccountMeta::new(*authority, true),
     AccountMeta::new(network_address, false),
     AccountMeta::new_readonly(system_program::id(), false),
     AccountMeta::new_readonly(sysvar::rent::id(), false),
@@ -124,6 +124,7 @@ pub fn create_network(
 pub fn add_reporter(
   // Accounts
   payer: &Pubkey,
+  network_account: &Pubkey,
   reporter_account: &Pubkey,
   // Args
   name: String,
@@ -132,7 +133,8 @@ pub fn add_reporter(
   let reporter_info = get_reporter_address(reporter_account);
 
   let accounts = vec![
-    AccountMeta::new_readonly(*payer, true),
+    AccountMeta::new(*payer, true),
+    AccountMeta::new_readonly(*network_account, false),
     AccountMeta::new_readonly(*reporter_account, false),
     AccountMeta::new(reporter_info, false),
     AccountMeta::new_readonly(system_program::id(), false),
@@ -154,16 +156,16 @@ pub fn add_reporter(
 /// Creates UpdateReporter instruction
 pub fn update_reporter(
   // Accounts
-  payer: &Pubkey,
-  reporter_key: &Pubkey,
+  authority: &Pubkey,
+  reporter_account: &Pubkey,
   // Args
   name: String,
   reporter_type: ReporterType,
 ) -> Instruction {
-  let reporter_address = get_reporter_address(reporter_key);
+  let reporter_address = get_reporter_address(reporter_account);
 
   let accounts = vec![
-    AccountMeta::new_readonly(*payer, true),
+    AccountMeta::new_readonly(*authority, true),
     AccountMeta::new(reporter_address, false),
   ];
 

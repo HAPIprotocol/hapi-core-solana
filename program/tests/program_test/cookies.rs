@@ -1,7 +1,9 @@
 use solana_program::pubkey::Pubkey;
 use solana_sdk::signature::Keypair;
 
-use hapi_core_solana::state::{enums::ReporterType, network::Network, reporter::Reporter, event::Event};
+use hapi_core_solana::state::{
+  enums::ReporterType, event::Event, network::Network, reporter::Reporter,
+};
 
 #[derive(Debug)]
 pub struct NetworkCookie {
@@ -14,6 +16,7 @@ pub struct NetworkCookie {
 pub struct ReporterCookie {
   pub address: Pubkey,
   pub account: Reporter,
+  pub network_address: Pubkey,
   pub reporter_keypair: Keypair,
   pub reporter_type: ReporterType,
   pub name: String,
