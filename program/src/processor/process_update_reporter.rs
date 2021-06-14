@@ -33,7 +33,6 @@ pub fn process_update_reporter(
 
   // Authority must match network
   let network_data = get_network_data(network_info)?;
-  msg!("check {:?} vs {:?}", authority_info, network_data);
   if *authority_info.key != network_data.authority {
     msg!("Signer does not match network authority");
     return Err(HapiError::InvalidNetworkAuthority.into());

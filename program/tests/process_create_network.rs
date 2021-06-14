@@ -1,4 +1,4 @@
-#![cfg(feature = "test-bpf")]
+//#![cfg(feature = "test-bpf")]
 
 use solana_program_test::*;
 

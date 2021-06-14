@@ -1,4 +1,4 @@
-#![cfg(feature = "test-bpf")]
+//#![cfg(feature = "test-bpf")]
 
 use hapi_core_solana::error::HapiError;
 use solana_program_test::*;
