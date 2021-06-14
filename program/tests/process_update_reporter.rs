@@ -30,7 +30,7 @@ async fn test_reporter_updated() {
 
   // Act
   hapi_test
-    .update_reporter(&network_cookie, &reporter_cookie, &reporter)
+    .update_reporter(&authority_keypair, &network_cookie, &reporter_cookie, &reporter)
     .await
     .unwrap();
 

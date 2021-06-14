@@ -31,6 +31,7 @@ pub fn process_report_event(
   let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
   let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
+  // Reporter must sign
   if !reporter_info.is_signer {
     msg!("Reporter did not sign ReportEvent");
     return Err(HapiError::SignatureMissing.into());
@@ -43,6 +44,7 @@ pub fn process_report_event(
     return Err(HapiError::InvalidNetworkReporter.into());
   }
 
+  // Obtain next event ID and increment it in Network account
   let mut network_data = get_network_data(network_info)?;
   let event_id = network_data.next_event_id;
   network_data.next_event_id += 1;

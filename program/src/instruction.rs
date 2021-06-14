@@ -53,7 +53,9 @@ pub enum HapiInstruction {
   /// Update reporter name and type
   ///
   /// 0. `[signer]` Authority account
-  /// 1. `[writable]` NetworkReporter account. PDA seeds: ['reporter', pubkey]
+  /// 1. `[]` Network account
+  /// 2. `[writable]` NetworkReporter account. PDA seeds: [`reporter`, network_account, reporter_pubkey]
+  /// 3. `[]` Reporter account
   ///
   UpdateReporter {
     #[allow(dead_code)]
@@ -170,7 +172,9 @@ pub fn update_reporter(
 
   let accounts = vec![
     AccountMeta::new_readonly(*authority, true),
+    AccountMeta::new_readonly(*network_account, false),
     AccountMeta::new(network_reporter_address, false),
+    AccountMeta::new_readonly(*reporter_account, false),
   ];
 
   let instruction = HapiInstruction::UpdateReporter {

@@ -171,7 +171,8 @@ impl HapiProgramTest {
       reporter_type: reporter_type.clone(),
     };
 
-    let reporter_address = get_reporter_address(&network_cookie.address, &reporter_keypair.pubkey());
+    let reporter_address =
+      get_reporter_address(&network_cookie.address, &reporter_keypair.pubkey());
 
     Ok(NetworkReporterCookie {
       address: reporter_address,
@@ -268,12 +269,13 @@ impl HapiProgramTest {
   #[allow(dead_code)]
   pub async fn update_reporter(
     &mut self,
+    authority: &Keypair,
     network_cookie: &NetworkCookie,
     reporter_cookie: &NetworkReporterCookie,
     updated_reporter: &NetworkReporter,
   ) -> Result<(), ProgramError> {
     let update_reporter_ix = update_reporter(
-      &self.context.payer.pubkey(),
+      &authority.pubkey(),
       &network_cookie.address,
       &reporter_cookie.reporter_keypair.pubkey(),
       updated_reporter.name.clone(),
@@ -281,7 +283,7 @@ impl HapiProgramTest {
     );
 
     self
-      .process_transaction(&[update_reporter_ix], None)
+      .process_transaction(&[update_reporter_ix], Some(&[&authority]))
       .await?;
 
     Ok(())

@@ -6,7 +6,12 @@ use solana_program::{
   pubkey::Pubkey,
 };
 
-use crate::{error::HapiError, state::enums::ReporterType, state::reporter::get_reporter_data};
+use crate::{
+  error::HapiError,
+  state::enums::ReporterType,
+  state::network::get_network_data,
+  state::reporter::{get_reporter_address, get_reporter_data},
+};
 
 pub fn process_update_reporter(
   _program_id: &Pubkey,
@@ -15,22 +20,37 @@ pub fn process_update_reporter(
   reporter_type: ReporterType,
 ) -> ProgramResult {
   let account_info_iter = &mut accounts.iter();
-  let payer_info = next_account_info(account_info_iter)?; // 0
-  let reporter_info = next_account_info(account_info_iter)?; // 1
+  let authority_info = next_account_info(account_info_iter)?; // 0
+  let network_info = next_account_info(account_info_iter)?; // 1
+  let network_reporter_info = next_account_info(account_info_iter)?; // 2
+  let reporter_info = next_account_info(account_info_iter)?; // 3
 
-  if !payer_info.is_signer {
+  // Authority must sign
+  if !authority_info.is_signer {
     msg!("Authority did not sign initialization");
     return Err(HapiError::SignatureMissing.into());
   }
 
-  // TODO: check that payer is authority
+  // Authority must match network
+  let network_data = get_network_data(network_info)?;
+  msg!("check {:?} vs {:?}", authority_info, network_data);
+  if *authority_info.key != network_data.authority {
+    msg!("Signer does not match network authority");
+    return Err(HapiError::InvalidNetworkAuthority.into());
+  }
 
-  let mut reporter_data = get_reporter_data(reporter_info)?;
+  // Make sure that this is in fact a correct reporter
+  let reporter_address = get_reporter_address(network_info.key, reporter_info.key);
+  if *network_reporter_info.key != reporter_address {
+    msg!("Reporter doesn't match NetworkReporter account");
+    return Err(HapiError::InvalidNetworkReporter.into());
+  }
 
+  // Update reporter data
+  let mut reporter_data = get_reporter_data(network_reporter_info)?;
   reporter_data.name = name;
   reporter_data.reporter_type = reporter_type;
-
-  reporter_data.serialize(&mut *reporter_info.data.borrow_mut())?;
+  reporter_data.serialize(&mut *network_reporter_info.data.borrow_mut())?;
 
   Ok(())
 }

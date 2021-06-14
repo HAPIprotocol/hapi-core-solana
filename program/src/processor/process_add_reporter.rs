@@ -23,7 +23,7 @@ pub fn process_add_reporter(
   reporter_type: ReporterType,
 ) -> ProgramResult {
   let account_info_iter = &mut accounts.iter();
-  let payer_info = next_account_info(account_info_iter)?; // 0
+  let authority_info = next_account_info(account_info_iter)?; // 0
   let network_info = next_account_info(account_info_iter)?; // 1
   let reporter_info = next_account_info(account_info_iter)?; // 2
   let network_reporter_info = next_account_info(account_info_iter)?; // 3
@@ -31,13 +31,15 @@ pub fn process_add_reporter(
   let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
   let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
-  if !payer_info.is_signer {
+  // Authority must sign
+  if !authority_info.is_signer {
     msg!("Payer did not sign");
     return Err(HapiError::SignatureMissing.into());
   }
 
+  // Authority must match network record
   let network_data = get_network_data(network_info)?;
-  if network_data.authority != *payer_info.key {
+  if network_data.authority != *authority_info.key {
     msg!("Payer is not authority of the network");
     return Err(HapiError::InvalidNetworkAuthority.into());
   }
@@ -49,7 +51,7 @@ pub fn process_add_reporter(
   };
 
   create_and_serialize_account_signed::<NetworkReporter>(
-    payer_info,
+    authority_info,
     &network_reporter_info,
     &network_reporter_data,
     &get_reporter_address_seeds(network_info.key, reporter_info.key),
