@@ -13,6 +13,7 @@ use crate::{
   state::enums::HapiAccountType,
   state::event::{get_event_address_seeds, Event},
   state::network::get_network_data,
+  state::reporter::get_reporter_address,
   tools::account::create_and_serialize_account_signed,
 };
 
@@ -24,9 +25,10 @@ pub fn process_report_event(
   let account_info_iter = &mut accounts.iter();
   let reporter_info = next_account_info(account_info_iter)?; // 0
   let network_info = next_account_info(account_info_iter)?; // 1
-  let event_info = next_account_info(account_info_iter)?; // 2
-  let system_info = next_account_info(account_info_iter)?; // 3
-  let rent_sysvar_info = next_account_info(account_info_iter)?; // 4
+  let network_reporter_info = next_account_info(account_info_iter)?; // 2
+  let event_info = next_account_info(account_info_iter)?; // 3
+  let system_info = next_account_info(account_info_iter)?; // 4
+  let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
   let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
   if !reporter_info.is_signer {
@@ -34,7 +36,12 @@ pub fn process_report_event(
     return Err(HapiError::SignatureMissing.into());
   }
 
-  // TODO: check if reporter is registered and can report events
+  // Make sure that reporter's public key matches NetworkReporter account
+  let network_reporter_address = get_reporter_address(&network_info.key, &reporter_info.key);
+  if network_reporter_address != *network_reporter_info.key {
+    msg!("Reporter doesn't match NetworkReporter account");
+    return Err(HapiError::InvalidNetworkReporter.into());
+  }
 
   let mut network_data = get_network_data(network_info)?;
   let event_id = network_data.next_event_id;

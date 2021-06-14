@@ -12,8 +12,8 @@ pub enum HapiAccountType {
   /// HAPI network account
   Network,
 
-  /// Reporter account
-  Reporter,
+  /// Network reporter account
+  NetworkReporter,
 
   /// Event account
   Event,

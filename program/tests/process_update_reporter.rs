@@ -8,7 +8,7 @@ use program_test::*;
 
 use hapi_core_solana::state::{
   enums::{HapiAccountType, ReporterType},
-  reporter::Reporter,
+  reporter::NetworkReporter,
 };
 
 #[tokio::test]
@@ -22,15 +22,15 @@ async fn test_reporter_updated() {
     .await
     .unwrap();
 
-  let reporter = Reporter {
-    account_type: HapiAccountType::Reporter,
+  let reporter = NetworkReporter {
+    account_type: HapiAccountType::NetworkReporter,
     reporter_type: ReporterType::Inactive,
     name: "Updated".to_string(),
   };
 
   // Act
   hapi_test
-    .update_reporter(&reporter_cookie, &reporter)
+    .update_reporter(&network_cookie, &reporter_cookie, &reporter)
     .await
     .unwrap();
 

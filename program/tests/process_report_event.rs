@@ -12,11 +12,14 @@ async fn test_event_reported() {
   let mut hapi_test = HapiProgramTest::start_new().await;
   let authority_keypair = hapi_test.create_funded_keypair().await;
   let network_cookie = hapi_test.with_network(&authority_keypair).await;
-  let reporter_cookie = hapi_test.with_reporter(&network_cookie, &authority_keypair).await.unwrap();
+  let reporter_cookie = hapi_test
+    .with_reporter(&network_cookie, &authority_keypair)
+    .await
+    .unwrap();
 
   // Act
   let event_cookie = hapi_test
-    .with_event(&reporter_cookie, &network_cookie)
+    .with_event(&network_cookie, &reporter_cookie)
     .await;
 
   // Assert

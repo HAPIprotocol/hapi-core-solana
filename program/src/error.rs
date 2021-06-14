@@ -39,6 +39,10 @@ pub enum HapiError {
   #[error("InvalidNetworkAuthority")]
   InvalidNetworkAuthority,
 
+  /// Invalid network reporter
+  #[error("InvalidNetworkReporter")]
+  InvalidNetworkReporter,
+
   /// ---- Account Tools Errors ----
 
   /// Invalid account owner
