@@ -20,6 +20,7 @@ num-traits = "0.2"
 [dev-dependencies]
 solana-program-test = "1.7"
 solana-sdk = "1.7"
+tokio-test = "0.4.2"
 
 [lib]
 crate-type = ["cdylib", "lib"]

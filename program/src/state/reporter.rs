@@ -4,10 +4,12 @@ use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
 use solana_program::{
   account_info::AccountInfo, program_error::ProgramError, program_pack::IsInitialized,
   pubkey::Pubkey,
+  msg,
 };
 
 use crate::{
   id,
+  error::HapiError,
   state::enums::{HapiAccountType, ReporterType},
   tools::account::{assert_is_valid_account, get_account_data, AccountMaxSize},
 };
@@ -38,6 +40,34 @@ impl IsInitialized for NetworkReporter {
 /// Checks whether reporter account exists, is initialized and owned by HAPI program
 pub fn assert_is_valid_reporter(reporter_info: &AccountInfo) -> Result<(), ProgramError> {
   assert_is_valid_account(reporter_info, HapiAccountType::NetworkReporter, &id())
+}
+
+/// Checks network reporter against network and pubkey
+pub fn assert_reporter_belongs_to_network(
+  network_reporter_info: &AccountInfo,
+  network_info: &AccountInfo,
+  reporter_pubkey: &Pubkey,
+) -> Result<(), ProgramError> {
+  assert_is_valid_reporter(network_reporter_info)?;
+
+  let network_reporter_address = get_reporter_address(&network_info.key, &reporter_pubkey);
+  if network_reporter_address != *network_reporter_info.key {
+    msg!("Reporter doesn't match NetworkReporter account");
+    return Err(HapiError::InvalidNetworkReporter.into());
+  }
+
+  Ok(())
+}
+
+/// Checks reporter's ability to report an address
+pub fn assert_reporter_can_report_address(network_reporter_info: &AccountInfo) -> Result<(), ProgramError> {
+  let network_reporter_data = get_reporter_data(&network_reporter_info)?;
+  if network_reporter_data.reporter_type == ReporterType::Inactive {
+    msg!("Reporter doesn't have a permission to report an address in this network");
+    return Err(HapiError::ReportingNotPermitted.into());
+  }
+
+  Ok(())
 }
 
 /// Deserializes account and checks owner program

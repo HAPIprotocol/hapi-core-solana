@@ -13,8 +13,9 @@ use solana_program_test::ProgramTest;
 use solana_program_test::*;
 
 use hapi_core_solana::{
-  instruction::{add_reporter, create_network, report_event, update_reporter},
+  instruction::{add_reporter, create_network, report_address, report_event, update_reporter},
   processor::process,
+  state::address::{get_address_address, Address},
   state::enums::{HapiAccountType, ReporterType},
   state::event::{get_event_address, Event},
   state::network::{get_network_address, Network},
@@ -27,7 +28,7 @@ use solana_sdk::{
 };
 
 pub mod cookies;
-use self::cookies::{EventCookie, NetworkCookie, NetworkReporterCookie};
+use self::cookies::{AddressCookie, EventCookie, NetworkCookie, NetworkReporterCookie};
 
 pub mod tools;
 use self::tools::map_transaction_error;
@@ -220,6 +221,46 @@ impl HapiProgramTest {
       account: event,
       network_account: network.address,
       name,
+      id: event_id,
+    }
+  }
+
+  #[allow(dead_code)]
+  pub async fn with_address(
+    &mut self,
+    network: &NetworkCookie,
+    reporter: &NetworkReporterCookie,
+    event: &EventCookie,
+    risk: u8,
+  ) -> AddressCookie {
+    let value = Pubkey::new_unique();
+
+    let address_address = get_address_address(&network.address, &value);
+
+    let report_address_ix = report_address(
+      &reporter.reporter_keypair.pubkey(),
+      network.name.clone(),
+      event.id,
+      &value,
+      risk,
+    );
+
+    self
+      .process_transaction(&[report_address_ix], Some(&[&reporter.reporter_keypair]))
+      .await
+      .unwrap();
+
+    let address = Address {
+      account_type: HapiAccountType::Address,
+      risk,
+      event_id: event.id,
+      reporter_key: reporter.reporter_keypair.pubkey(),
+    };
+
+    AddressCookie {
+      address: address_address,
+      account: address,
+      value,
     }
   }
 
@@ -236,6 +277,11 @@ impl HapiProgramTest {
   #[allow(dead_code)]
   pub async fn get_event_account(&mut self, address: &Pubkey) -> Event {
     self.get_borsh_account::<Event>(address).await
+  }
+
+  #[allow(dead_code)]
+  pub async fn get_address_account(&mut self, address: &Pubkey) -> Address {
+    self.get_borsh_account::<Address>(address).await
   }
 
   #[allow(dead_code)]

@@ -9,7 +9,8 @@ pub use reporter::*;
 
 // TODO: describe actors (Authority and Reporter) and their respective program accounts
 
-use  borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
+use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
+use solana_program::pubkey::Pubkey;
 
 use crate::state::enums::ReporterType;
 
@@ -79,10 +80,25 @@ pub enum HapiInstruction {
   ///
   /// 0. `[signer]` Reporter account
   /// 1. `[]` Network account
-  /// 2. `[writable]` Address account. PDA seeds: ['address', network_account, address]
-  /// 3. `[]` Incident account
+  /// 2. `[]` NetworkReporter account
+  /// 3. `[]` Event account. PDA seeds: ['event', network_account, event_id]
+  /// 4. `[writable]` Address account. PDA seeds: ['address', network_account, address]
+  /// 5. `[]` System
+  /// 6. `[]` Sysvar Rent
   ///
   ReportAddress {
+    /// Address value
+    address: Pubkey,
+
+    /// Address risk score: 0 is safe, 10 is maximum risk
+    risk: u8,
+
+    /// Event ID
+    event_id: u64,
+  },
+
+  /// Update an existing address
+  UpdateAddress {
     /// Address risk score: 0 is safe, 10 is maximum risk
     risk: u8,
 

@@ -17,6 +17,9 @@ pub enum HapiAccountType {
 
   /// Event account
   Event,
+
+  /// Address account
+  Address,
 }
 
 impl Default for HapiAccountType {
