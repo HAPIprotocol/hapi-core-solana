@@ -31,9 +31,9 @@ pub enum HapiError {
   #[error("SignatureMissing")]
   SignatureMissing,
 
-  /// Invalid event ID for a network
-  #[error("EventIDMismatch")]
-  EventIDMismatch,
+  /// Invalid case ID for a network
+  #[error("CaseIDMismatch")]
+  CaseIDMismatch,
 
   /// Invalid network authority
   #[error("InvalidNetworkAuthority")]

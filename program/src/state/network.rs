@@ -26,8 +26,8 @@ pub struct Network {
   /// HAPI network name
   pub name: String,
 
-  /// ID for the next reported event
-  pub next_event_id: u64,
+  /// ID for the next reported case
+  pub next_case_id: u64,
 }
 
 impl AccountMaxSize for Network {}

@@ -13,11 +13,11 @@ use solana_program_test::ProgramTest;
 use solana_program_test::*;
 
 use hapi_core_solana::{
-  instruction::{add_reporter, create_network, report_address, report_event, update_reporter},
+  instruction::{add_reporter, create_network, report_address, report_case, update_reporter},
   processor::process,
   state::address::{get_address_address, Address},
   state::enums::{HapiAccountType, ReporterType},
-  state::event::{get_event_address, Event},
+  state::case::{get_case_address, Case},
   state::network::{get_network_address, Network},
   state::reporter::{get_reporter_address, NetworkReporter},
 };
@@ -28,7 +28,7 @@ use solana_sdk::{
 };
 
 pub mod cookies;
-use self::cookies::{AddressCookie, EventCookie, NetworkCookie, NetworkReporterCookie};
+use self::cookies::{AddressCookie, CaseCookie, NetworkCookie, NetworkReporterCookie};
 
 pub mod tools;
 use self::tools::map_transaction_error;
@@ -38,7 +38,7 @@ pub struct HapiProgramTest {
   pub rent: Rent,
   pub next_network_id: u8,
   pub next_reporter_id: u8,
-  pub next_event_id: u8,
+  pub next_case_id: u8,
 }
 
 impl HapiProgramTest {
@@ -57,7 +57,7 @@ impl HapiProgramTest {
       rent,
       next_network_id: 0,
       next_reporter_id: 0,
-      next_event_id: 0,
+      next_case_id: 0,
     }
   }
 
@@ -124,7 +124,7 @@ impl HapiProgramTest {
       account_type: HapiAccountType::Network,
       authority: authority.pubkey(),
       name: name.clone(),
-      next_event_id: 0,
+      next_case_id: 0,
     };
 
     let network_address = get_network_address(&name);
@@ -186,42 +186,42 @@ impl HapiProgramTest {
   }
 
   #[allow(dead_code)]
-  pub async fn with_event(
+  pub async fn with_case(
     &mut self,
     network: &NetworkCookie,
     reporter: &NetworkReporterCookie,
-  ) -> EventCookie {
-    let name = format!("Event #{}", self.next_event_id).to_string();
-    self.next_event_id = self.next_event_id + 1;
+  ) -> CaseCookie {
+    let name = format!("Case #{}", self.next_case_id).to_string();
+    self.next_case_id = self.next_case_id + 1;
 
-    let event_id = network.account.next_event_id;
+    let case_id = network.account.next_case_id;
 
-    let event_address = get_event_address(&network.address, &event_id.to_le_bytes());
+    let case_address = get_case_address(&network.address, &case_id.to_le_bytes());
 
-    let report_event_ix = report_event(
+    let report_case_ix = report_case(
       &reporter.reporter_keypair.pubkey(),
       network.name.clone(),
-      event_id,
+      case_id,
       name.clone(),
     );
 
     self
-      .process_transaction(&[report_event_ix], Some(&[&reporter.reporter_keypair]))
+      .process_transaction(&[report_case_ix], Some(&[&reporter.reporter_keypair]))
       .await
       .unwrap();
 
-    let event = Event {
-      account_type: HapiAccountType::Event,
+    let case = Case {
+      account_type: HapiAccountType::Case,
       name: name.clone(),
       reporter_key: reporter.reporter_keypair.pubkey(),
     };
 
-    EventCookie {
-      address: event_address,
-      account: event,
+    CaseCookie {
+      address: case_address,
+      account: case,
       network_account: network.address,
       name,
-      id: event_id,
+      id: case_id,
     }
   }
 
@@ -230,7 +230,7 @@ impl HapiProgramTest {
     &mut self,
     network: &NetworkCookie,
     reporter: &NetworkReporterCookie,
-    event: &EventCookie,
+    case: &CaseCookie,
     risk: u8,
   ) -> AddressCookie {
     let value = Pubkey::new_unique();
@@ -240,7 +240,7 @@ impl HapiProgramTest {
     let report_address_ix = report_address(
       &reporter.reporter_keypair.pubkey(),
       network.name.clone(),
-      event.id,
+      case.id,
       &value,
       risk,
     );
@@ -253,7 +253,7 @@ impl HapiProgramTest {
     let address = Address {
       account_type: HapiAccountType::Address,
       risk,
-      event_id: event.id,
+      case_id: case.id,
       reporter_key: reporter.reporter_keypair.pubkey(),
     };
 
@@ -275,8 +275,8 @@ impl HapiProgramTest {
   }
 
   #[allow(dead_code)]
-  pub async fn get_event_account(&mut self, address: &Pubkey) -> Event {
-    self.get_borsh_account::<Event>(address).await
+  pub async fn get_case_account(&mut self, address: &Pubkey) -> Case {
+    self.get_borsh_account::<Case>(address).await
   }
 
   #[allow(dead_code)]

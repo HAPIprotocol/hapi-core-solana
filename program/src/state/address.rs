@@ -23,8 +23,8 @@ pub struct Address {
   /// Risk score
   pub risk: u8,
 
-  /// Event ID
-  pub event_id: u64,
+  /// Case ID
+  pub case_id: u64,
 
   /// Address reporter key
   pub reporter_key: Pubkey,

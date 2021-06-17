@@ -7,7 +7,7 @@ mod program_test;
 use program_test::*;
 
 #[tokio::test]
-async fn test_event_reported() {
+async fn test_case_reported() {
   // Arrange
   let mut hapi_test = HapiProgramTest::start_new().await;
   let authority_keypair = hapi_test.create_funded_keypair().await;
@@ -18,13 +18,13 @@ async fn test_event_reported() {
     .unwrap();
 
   // Act
-  let event_cookie = hapi_test
-    .with_event(&network_cookie, &reporter_cookie)
+  let case_cookie = hapi_test
+    .with_case(&network_cookie, &reporter_cookie)
     .await;
 
   // Assert
-  let event_account = hapi_test.get_event_account(&event_cookie.address).await;
-  assert_eq!(event_cookie.account, event_account);
+  let case_account = hapi_test.get_case_account(&case_cookie.address).await;
+  assert_eq!(case_cookie.account, case_account);
   let network_account = hapi_test.get_network_account(&network_cookie.address).await;
-  assert_eq!(network_account.next_event_id, 1); // event id incremented
+  assert_eq!(network_account.next_case_id, 1); // case id incremented
 }

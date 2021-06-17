@@ -34,7 +34,7 @@ pub fn process_create_network(
     account_type: HapiAccountType::Network,
     authority: *authority_info.key,
     name: name.clone(),
-    next_event_id: 0,
+    next_case_id: 0,
   };
 
   create_and_serialize_account_signed::<Network>(

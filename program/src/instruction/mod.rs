@@ -34,7 +34,7 @@ pub enum HapiInstruction {
   ///
   /// 0. `[signer]` Authority account
   /// 1. `[writable]` Network account
-  /// 2. `[]` Reporter account (will be used as signer in address and event reports)
+  /// 2. `[]` Reporter account (will be used as signer in address and case reports)
   /// 3. `[writable]` NetworkReporter account. PDA seeds: [`reporter`, network_account, reporter_pubkey]
   /// 4. `[]` System
   /// 5. `[]` Sysvar Rent
@@ -62,26 +62,26 @@ pub enum HapiInstruction {
     reporter_type: ReporterType,
   },
 
-  /// Report a new event
+  /// Report a new case
   ///
   /// 0. `[signer]` Reporter account
   /// 1. `[writable]` Network account
   /// 2. `[]` NetworkReporter account
-  /// 3. `[writable]` Event account. PDA seeds: ['event', network_account, event_id]
+  /// 3. `[writable]` Case account. PDA seeds: ['case', network_account, case_id]
   /// 4. `[]` System
   /// 5. `[]` Sysvar Rent
   ///
-  ReportEvent {
-    /// UTF-8 encoded event name
+  ReportCase {
+    /// UTF-8 encoded case name
     name: String,
   },
 
-  /// Report an address for an existing event
+  /// Report an address for an existing case
   ///
   /// 0. `[signer]` Reporter account
   /// 1. `[]` Network account
   /// 2. `[]` NetworkReporter account
-  /// 3. `[]` Event account. PDA seeds: ['event', network_account, event_id]
+  /// 3. `[]` Case account. PDA seeds: ['case', network_account, case_id]
   /// 4. `[writable]` Address account. PDA seeds: ['address', network_account, address]
   /// 5. `[]` System
   /// 6. `[]` Sysvar Rent
@@ -93,8 +93,8 @@ pub enum HapiInstruction {
     /// Address risk score: 0 is safe, 10 is maximum risk
     risk: u8,
 
-    /// Event ID
-    event_id: u64,
+    /// Case ID
+    case_id: u64,
   },
 
   /// Update an existing address
@@ -102,7 +102,7 @@ pub enum HapiInstruction {
     /// Address risk score: 0 is safe, 10 is maximum risk
     risk: u8,
 
-    /// Event ID
-    event_id: u64,
+    /// Case ID
+    case_id: u64,
   },
 }

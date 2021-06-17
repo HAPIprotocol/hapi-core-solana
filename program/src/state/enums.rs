@@ -15,8 +15,8 @@ pub enum HapiAccountType {
   /// Network reporter account
   NetworkReporter,
 
-  /// Event account
-  Event,
+  /// Case account
+  Case,
 
   /// Address account
   Address,
@@ -38,10 +38,10 @@ pub enum ReporterType {
   /// Tracer - can report addresses
   Tracer,
 
-  /// Full - can report events and addresses
+  /// Full - can report cases and addresses
   Full,
 
-  /// Authority - can modify events and addresses
+  /// Authority - can modify cases and addresses
   Authority,
 }
 

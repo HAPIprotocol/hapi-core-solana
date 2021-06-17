@@ -2,7 +2,7 @@ use solana_program::pubkey::Pubkey;
 use solana_sdk::signature::Keypair;
 
 use hapi_core_solana::state::{
-  address::Address, enums::ReporterType, event::Event, network::Network, reporter::NetworkReporter,
+  address::Address, enums::ReporterType, case::Case, network::Network, reporter::NetworkReporter,
 };
 
 #[derive(Debug)]
@@ -23,9 +23,9 @@ pub struct NetworkReporterCookie {
 }
 
 #[derive(Debug)]
-pub struct EventCookie {
+pub struct CaseCookie {
   pub address: Pubkey,
-  pub account: Event,
+  pub account: Case,
   pub network_account: Pubkey,
   pub name: String,
   pub id: u64,
