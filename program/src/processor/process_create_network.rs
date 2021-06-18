@@ -8,8 +8,11 @@ use solana_program::{
 };
 
 use crate::{
-  error::HapiError, state::enums::HapiAccountType, state::network::get_network_address_seeds,
-  state::network::Network, tools::account::create_and_serialize_account_signed,
+  error::HapiError,
+  state::enums::HapiAccountType,
+  state::network::get_network_address_seeds,
+  state::network::Network,
+  tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
 pub fn process_create_network(
@@ -29,6 +32,8 @@ pub fn process_create_network(
     msg!("Authority did not sign initialization");
     return Err(HapiError::SignatureMissing.into());
   }
+
+  assert_is_empty_account(network_info)?;
 
   let network_data = Network {
     account_type: HapiAccountType::Network,

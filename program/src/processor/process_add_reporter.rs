@@ -10,10 +10,10 @@ use solana_program::{
 use crate::{
   error::HapiError,
   state::enums::{HapiAccountType, ReporterType},
-  state::network::get_network_data,
+  state::network::{assert_is_valid_network, get_network_data},
   state::reporter::get_reporter_address_seeds,
   state::reporter::NetworkReporter,
-  tools::account::create_and_serialize_account_signed,
+  tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
 pub fn process_add_reporter(
@@ -38,11 +38,14 @@ pub fn process_add_reporter(
   }
 
   // Authority must match network record
+  assert_is_valid_network(network_info)?;
   let network_data = get_network_data(network_info)?;
   if network_data.authority != *authority_info.key {
     msg!("Payer is not authority of the network");
     return Err(HapiError::InvalidNetworkAuthority.into());
   }
+
+  assert_is_empty_account(network_reporter_info)?;
 
   let network_reporter_data = NetworkReporter {
     account_type: HapiAccountType::NetworkReporter,

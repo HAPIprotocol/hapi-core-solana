@@ -10,10 +10,10 @@ use solana_program::{
 use crate::{
   error::HapiError,
   state::address::{get_address_address_seeds, Address},
-  state::enums::{HapiAccountType, Category},
   state::case::{assert_is_valid_case, get_case_address},
+  state::enums::{Category, HapiAccountType},
   state::reporter::{assert_reporter_belongs_to_network, assert_reporter_can_report_address},
-  tools::account::create_and_serialize_account_signed,
+  tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
 pub fn process_report_address(
@@ -50,7 +50,7 @@ pub fn process_report_address(
     return Err(HapiError::CaseIDMismatch.into());
   }
 
-  // TODO: error if address already exists
+  assert_is_empty_account(address_info)?;
 
   let address_data = Address {
     account_type: HapiAccountType::Address,

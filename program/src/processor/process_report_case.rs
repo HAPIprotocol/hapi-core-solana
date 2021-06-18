@@ -14,7 +14,7 @@ use crate::{
   state::enums::{Category, HapiAccountType},
   state::network::get_network_data,
   state::reporter::get_reporter_address,
-  tools::account::create_and_serialize_account_signed,
+  tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
 pub fn process_report_case(
@@ -50,6 +50,8 @@ pub fn process_report_case(
   let case_id = network_data.next_case_id;
   network_data.next_case_id += 1;
   network_data.serialize(&mut *network_info.data.borrow_mut())?;
+
+  assert_is_empty_account(case_info)?;
 
   let case_data = Case {
     account_type: HapiAccountType::Case,

@@ -126,6 +126,15 @@ pub fn assert_is_valid_account<T: BorshDeserialize + PartialEq>(
     Ok(())
 }
 
+/// Asserts the given account is empty
+pub fn assert_is_empty_account(account_info: &AccountInfo) -> Result<(), ProgramError> {
+    if !account_info.data_is_empty() {
+        return Err(ProgramError::AccountAlreadyInitialized);
+    }
+
+    Ok(())
+}
+
 /// Disposes account by transferring its lamports to the beneficiary account and zeros its data
 // After transaction completes the runtime would remove the account with no lamports
 pub fn dispose_account(account_info: &AccountInfo, beneficiary_info: &AccountInfo) {

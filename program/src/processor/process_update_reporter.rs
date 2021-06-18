@@ -9,8 +9,8 @@ use solana_program::{
 use crate::{
   error::HapiError,
   state::enums::ReporterType,
-  state::network::get_network_data,
-  state::reporter::{get_reporter_address, get_reporter_data},
+  state::network::{assert_is_valid_network, get_network_data},
+  state::reporter::{assert_is_valid_reporter, get_reporter_address, get_reporter_data},
 };
 
 pub fn process_update_reporter(
@@ -32,6 +32,7 @@ pub fn process_update_reporter(
   }
 
   // Authority must match network
+  assert_is_valid_network(network_info)?;
   let network_data = get_network_data(network_info)?;
   if *authority_info.key != network_data.authority {
     msg!("Signer does not match network authority");
@@ -39,6 +40,7 @@ pub fn process_update_reporter(
   }
 
   // Make sure that this is in fact a correct reporter
+  assert_is_valid_reporter(network_reporter_info)?;
   let reporter_address = get_reporter_address(network_info.key, reporter_info.key);
   if *network_reporter_info.key != reporter_address {
     msg!("Reporter doesn't match NetworkReporter account");
