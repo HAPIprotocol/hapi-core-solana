@@ -39,7 +39,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
       reporter_type,
     } => process_update_reporter(program_id, accounts, name, reporter_type),
 
-    HapiInstruction::ReportCase { name } => process_report_case(program_id, accounts, name),
+    HapiInstruction::ReportCase { name, categories } => process_report_case(program_id, accounts, name, &categories),
 
     HapiInstruction::ReportAddress {
       address,

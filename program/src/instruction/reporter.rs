@@ -89,6 +89,7 @@ pub fn report_case(
   network_name: String,
   case_id: u64,
   case_name: String,
+  categories: Vec<Category>,
 ) -> Instruction {
   let network_address = get_network_address(&network_name);
   let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
@@ -103,7 +104,10 @@ pub fn report_case(
     AccountMeta::new_readonly(sysvar::rent::id(), false),
   ];
 
-  let instruction = HapiInstruction::ReportCase { name: case_name };
+  let instruction = HapiInstruction::ReportCase {
+    name: case_name,
+    categories,
+  };
 
   Instruction {
     program_id: id(),

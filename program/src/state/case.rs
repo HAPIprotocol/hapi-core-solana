@@ -8,7 +8,7 @@ use solana_program::{
 
 use crate::{
   id,
-  state::enums::HapiAccountType,
+  state::enums::{HapiAccountType, Category},
   tools::account::{assert_is_valid_account, get_account_data, AccountMaxSize},
 };
 
@@ -25,6 +25,9 @@ pub struct Case {
 
   /// Case reporter key
   pub reporter_key: Pubkey,
+
+  /// Categories
+  pub categories: Vec<Category>,
 }
 
 impl AccountMaxSize for Case {}

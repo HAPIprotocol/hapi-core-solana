@@ -74,6 +74,9 @@ pub enum HapiInstruction {
   ReportCase {
     /// UTF-8 encoded case name
     name: String,
+
+    /// Categories
+    categories: Vec<Category>,
   },
 
   /// Report an address for an existing case

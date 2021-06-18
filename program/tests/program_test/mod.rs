@@ -198,11 +198,14 @@ impl HapiProgramTest {
 
     let case_address = get_case_address(&network.address, &case_id.to_le_bytes());
 
+    let categories = vec![Category::Safe];
+
     let report_case_ix = report_case(
       &reporter.reporter_keypair.pubkey(),
       network.name.clone(),
       case_id,
       name.clone(),
+      categories.clone(),
     );
 
     self
@@ -214,6 +217,7 @@ impl HapiProgramTest {
       account_type: HapiAccountType::Case,
       name: name.clone(),
       reporter_key: reporter.reporter_keypair.pubkey(),
+      categories,
     };
 
     CaseCookie {
