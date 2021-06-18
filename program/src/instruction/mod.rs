@@ -12,7 +12,7 @@ pub use reporter::*;
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
 use solana_program::pubkey::Pubkey;
 
-use crate::state::enums::ReporterType;
+use crate::state::enums::{ReporterType, Category};
 
 /// Instructions supported by the HAPI program
 #[repr(C)]
@@ -95,6 +95,9 @@ pub enum HapiInstruction {
 
     /// Case ID
     case_id: u64,
+
+    /// Category
+    category: Category,
   },
 
   /// Update an existing address

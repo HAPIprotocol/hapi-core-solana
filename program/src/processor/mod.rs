@@ -45,7 +45,8 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
       address,
       risk,
       case_id,
-    } => process_report_address(program_id, accounts, &address, case_id, risk),
+      category,
+    } => process_report_address(program_id, accounts, &address, case_id, risk, category),
 
     _ => todo!("Instruction not implemented yet"),
   }

@@ -10,7 +10,7 @@ use solana_program::{
 use crate::{
   error::HapiError,
   state::address::{get_address_address_seeds, Address},
-  state::enums::HapiAccountType,
+  state::enums::{HapiAccountType, Category},
   state::case::{assert_is_valid_case, get_case_address},
   state::reporter::{assert_reporter_belongs_to_network, assert_reporter_can_report_address},
   tools::account::create_and_serialize_account_signed,
@@ -22,6 +22,7 @@ pub fn process_report_address(
   value: &Pubkey,
   case_id: u64,
   risk: u8,
+  category: Category,
 ) -> ProgramResult {
   let account_info_iter = &mut accounts.iter();
   let reporter_info = next_account_info(account_info_iter)?; // 0
@@ -55,6 +56,7 @@ pub fn process_report_address(
     account_type: HapiAccountType::Address,
     risk,
     case_id,
+    category,
     reporter_key: *reporter_info.key,
   };
 

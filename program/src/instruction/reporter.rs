@@ -8,8 +8,12 @@ use solana_program::{
 };
 
 use crate::{
-  id, instruction::HapiInstruction, state::address::get_address_address,
-  state::enums::ReporterType, state::case::get_case_address, state::network::get_network_address,
+  id,
+  instruction::HapiInstruction,
+  state::address::get_address_address,
+  state::case::get_case_address,
+  state::enums::{Category, ReporterType},
+  state::network::get_network_address,
   state::reporter::get_reporter_address,
 };
 
@@ -117,6 +121,7 @@ pub fn report_address(
   case_id: u64,
   address: &Pubkey,
   risk: u8,
+  category: Category,
 ) -> Instruction {
   let network_address = get_network_address(&network_name);
   let address_address = get_address_address(&network_address, address);
@@ -133,7 +138,12 @@ pub fn report_address(
     AccountMeta::new_readonly(sysvar::rent::id(), false),
   ];
 
-  let instruction = HapiInstruction::ReportAddress { address: *address, risk, case_id };
+  let instruction = HapiInstruction::ReportAddress {
+    address: *address,
+    risk,
+    case_id,
+    category,
+  };
 
   Instruction {
     program_id: id(),

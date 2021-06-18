@@ -16,8 +16,8 @@ use hapi_core_solana::{
   instruction::{add_reporter, create_network, report_address, report_case, update_reporter},
   processor::process,
   state::address::{get_address_address, Address},
-  state::enums::{HapiAccountType, ReporterType},
   state::case::{get_case_address, Case},
+  state::enums::{Category, HapiAccountType, ReporterType},
   state::network::{get_network_address, Network},
   state::reporter::{get_reporter_address, NetworkReporter},
 };
@@ -234,6 +234,7 @@ impl HapiProgramTest {
     risk: u8,
   ) -> AddressCookie {
     let value = Pubkey::new_unique();
+    let category = Category::WalletService;
 
     let address_address = get_address_address(&network.address, &value);
 
@@ -243,6 +244,7 @@ impl HapiProgramTest {
       case.id,
       &value,
       risk,
+      category.clone(),
     );
 
     self
@@ -255,6 +257,7 @@ impl HapiProgramTest {
       risk,
       case_id: case.id,
       reporter_key: reporter.reporter_keypair.pubkey(),
+      category,
     };
 
     AddressCookie {

@@ -16,12 +16,12 @@ async fn test_address_reported() {
     .with_reporter(&network_cookie, &authority_keypair)
     .await
     .unwrap();
-  let case_cookie = hapi_test
-    .with_case(&network_cookie, &reporter_cookie)
-    .await;
+  let case_cookie = hapi_test.with_case(&network_cookie, &reporter_cookie).await;
 
   // Act
-  let address_cookie = hapi_test.with_address(&network_cookie, &reporter_cookie, &case_cookie, 5).await;
+  let address_cookie = hapi_test
+    .with_address(&network_cookie, &reporter_cookie, &case_cookie, 5)
+    .await;
 
   // Assert
   let address_account = hapi_test.get_address_account(&address_cookie.address).await;

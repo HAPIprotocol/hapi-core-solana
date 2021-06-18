@@ -8,7 +8,7 @@ use solana_program::{
 
 use crate::{
   id,
-  state::enums::HapiAccountType,
+  state::enums::{Category, HapiAccountType},
   tools::account::{assert_is_valid_account, get_account_data, AccountMaxSize},
 };
 
@@ -28,6 +28,9 @@ pub struct Address {
 
   /// Address reporter key
   pub reporter_key: Pubkey,
+
+  /// Category
+  pub category: Category,
 }
 
 impl AccountMaxSize for Address {}
@@ -49,18 +52,11 @@ pub fn get_address_data(address_info: &AccountInfo) -> Result<Address, ProgramEr
 }
 
 /// Returns Address PDA seeds
-pub fn get_address_address_seeds<'a>(
-  network: &'a Pubkey,
-  address: &'a Pubkey,
-) -> [&'a [u8]; 3] {
+pub fn get_address_address_seeds<'a>(network: &'a Pubkey, address: &'a Pubkey) -> [&'a [u8]; 3] {
   [b"address", &network.as_ref(), &address.as_ref()]
 }
 
 /// Returns Address PDA address
 pub fn get_address_address<'a>(network: &'a Pubkey, address: &'a Pubkey) -> Pubkey {
-  Pubkey::find_program_address(
-    &get_address_address_seeds(&network, &address),
-    &id(),
-  )
-  .0
+  Pubkey::find_program_address(&get_address_address_seeds(&network, &address), &id()).0
 }
