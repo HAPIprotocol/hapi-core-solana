@@ -198,11 +198,7 @@ impl HapiProgramTest {
 
         let case_id = network.account.next_case_id;
 
-        println!("Tokk1");
-
         let case_address = get_case_address(&network.address, &case_id.to_le_bytes());
-
-        println!("Tokk2");
 
         let category_set: BTreeSet<Category> = vec![Category::Safe].into_iter().collect();
 
@@ -214,13 +210,9 @@ impl HapiProgramTest {
             category_set.clone(),
         );
 
-        println!("Tokk3");
-
         self.process_transaction(&[report_case_ix], Some(&[&reporter.reporter_keypair]))
             .await
             .unwrap();
-
-        println!("Tokk4");
 
         let mut category_map = Category::new_map();
         for category in category_set.into_iter() {
