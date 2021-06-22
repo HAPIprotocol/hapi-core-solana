@@ -4,24 +4,21 @@ use solana_program::{
     entrypoint::ProgramResult,
     msg,
     pubkey::Pubkey,
-    rent::Rent,
-    sysvar::Sysvar,
 };
 use std::collections::BTreeSet;
 
 use crate::{
     error::HapiError,
-    state::case::{get_case_address_seeds, Case},
-    state::enums::{Category, HapiAccountType},
-    state::network::get_network_data,
-    state::reporter::get_reporter_address,
-    tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
+    state::case::{assert_is_valid_case, get_case_data},
+    state::enums::Category,
+    state::reporter::{
+        assert_is_valid_reporter, assert_reporter_can_update_case, get_reporter_address,
+    },
 };
 
-pub fn process_report_case(
-    program_id: &Pubkey,
+pub fn process_update_case(
+    _program_id: &Pubkey,
     accounts: &[AccountInfo],
-    name: String,
     category_set: &BTreeSet<Category>,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
@@ -29,9 +26,6 @@ pub fn process_report_case(
     let network_info = next_account_info(account_info_iter)?; // 1
     let network_reporter_info = next_account_info(account_info_iter)?; // 2
     let case_info = next_account_info(account_info_iter)?; // 3
-    let system_info = next_account_info(account_info_iter)?; // 4
-    let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
-    let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
     // Reporter must sign
     if !reporter_info.is_signer {
@@ -46,13 +40,18 @@ pub fn process_report_case(
         return Err(HapiError::InvalidNetworkReporter.into());
     }
 
-    // Obtain next case ID and increment it in Network account
-    let mut network_data = get_network_data(network_info)?;
-    let case_id = network_data.next_case_id;
-    network_data.next_case_id += 1;
-    network_data.serialize(&mut *network_info.data.borrow_mut())?;
+    assert_is_valid_reporter(network_reporter_info)?;
 
-    assert_is_empty_account(case_info)?;
+    let mut case_data = get_case_data(&case_info)?;
+    // let reporter_data = get_reporter_data(&network_reporter_info)?;
+
+    assert_reporter_can_update_case(
+        &reporter_info,
+        &network_reporter_info,
+        &case_data.reporter_key,
+    )?;
+
+    assert_is_valid_case(case_info)?;
 
     // Convert category set to category map with blank data
     let mut category_map = Category::new_map();
@@ -60,22 +59,9 @@ pub fn process_report_case(
         category_map.insert(*category, true);
     }
 
-    let case_data = Case {
-        account_type: HapiAccountType::Case,
-        name: name.clone(),
-        reporter_key: *reporter_info.key,
-        categories: category_map,
-    };
+    case_data.categories = category_map;
 
-    create_and_serialize_account_signed::<Case>(
-        reporter_info,
-        &case_info,
-        &case_data,
-        &get_case_address_seeds(&network_info.key, &case_id.to_le_bytes()),
-        program_id,
-        system_info,
-        rent,
-    )?;
+    case_data.serialize(&mut *case_info.data.borrow_mut())?;
 
     Ok(())
 }

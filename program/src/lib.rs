@@ -2,10 +2,10 @@
 
 //! HAPI core smart contract for the Solana blockchain
 
+pub mod entrypoint;
 pub mod error;
 pub mod instruction;
 pub mod processor;
-pub mod entrypoint;
 pub mod state;
 pub mod tools;
 

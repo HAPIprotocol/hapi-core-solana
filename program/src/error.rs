@@ -2,76 +2,80 @@
 
 use num_derive::FromPrimitive;
 use solana_program::{
-  decode_error::DecodeError,
-  msg,
-  program_error::{PrintProgramError, ProgramError},
+    decode_error::DecodeError,
+    msg,
+    program_error::{PrintProgramError, ProgramError},
 };
 use thiserror::Error;
 
 /// Errors that may be returned by the HAPI program
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
 pub enum HapiError {
-  /// Lamport balance below rent-exempt threshold
-  #[error("Lamport balance below rent-exempt threshold")]
-  NotRentExempt,
+    /// Lamport balance below rent-exempt threshold
+    #[error("Lamport balance below rent-exempt threshold")]
+    NotRentExempt,
 
-  /// Insufficient funds for the operation requested
-  #[error("Insufficient funds")]
-  InsufficientFunds,
+    /// Insufficient funds for the operation requested
+    #[error("Insufficient funds")]
+    InsufficientFunds,
 
-  /// Invalid instruction
-  #[error("Invalid instruction")]
-  InvalidInstruction,
+    /// Invalid instruction
+    #[error("Invalid instruction")]
+    InvalidInstruction,
 
-  /// The account cannot be initialized because it is already being used
-  #[error("Already in use")]
-  AlreadyInUse,
+    /// The account cannot be initialized because it is already being used
+    #[error("Already in use")]
+    AlreadyInUse,
 
-  /// Required signature is missing
-  #[error("SignatureMissing")]
-  SignatureMissing,
+    /// Required signature is missing
+    #[error("SignatureMissing")]
+    SignatureMissing,
 
-  /// Invalid case ID for a network
-  #[error("CaseIDMismatch")]
-  CaseIDMismatch,
+    /// Invalid case ID for a network
+    #[error("CaseIDMismatch")]
+    CaseIDMismatch,
 
-  /// Invalid network authority
-  #[error("InvalidNetworkAuthority")]
-  InvalidNetworkAuthority,
+    /// Invalid network authority
+    #[error("InvalidNetworkAuthority")]
+    InvalidNetworkAuthority,
 
-  /// Invalid network reporter
-  #[error("InvalidNetworkReporter")]
-  InvalidNetworkReporter,
+    /// Invalid network reporter
+    #[error("InvalidNetworkReporter")]
+    InvalidNetworkReporter,
 
-  /// This reporter has no permission to report
-  #[error("ReportingNotPermitted")]
-  ReportingNotPermitted,
+    /// This reporter has no permission to report
+    #[error("ReportingNotPermitted")]
+    ReportingNotPermitted,
 
-  /// ---- Account Tools Errors ----
+    /// This reporter has no permissions to operate this way
+    #[error("InvalidReporterPermissions")]
+    InvalidReporterPermissions,
 
-  /// Invalid account owner
-  #[error("Invalid account owner")]
-  InvalidAccountOwner,
+    /// ---- Account Tools Errors ----
 
-  /// Invalid Account type
-  #[error("Invalid Account type")]
-  InvalidAccountType,
+    /// Invalid account owner
+    #[error("Invalid account owner")]
+    InvalidAccountOwner,
+
+    /// Invalid Account type
+    #[error("Invalid Account type")]
+    InvalidAccountType,
 }
 
 impl From<HapiError> for ProgramError {
-  fn from(e: HapiError) -> Self {
-    ProgramError::Custom(e as u32)
-  }
+    fn from(e: HapiError) -> Self {
+        ProgramError::Custom(e as u32)
+    }
 }
 
 impl<T> DecodeError<T> for HapiError {
-  fn type_of() -> &'static str {
-    "HapiError"
-  }
+    fn type_of() -> &'static str {
+        "HapiError"
+    }
 }
 
 impl PrintProgramError for HapiError {
-  fn print<E>(&self) {
-    msg!("HAPI-ERROR: {}", &self.to_string());
-  }
+    fn print<E>(&self) {
+        msg!("HAPI-ERROR: {}", &self.to_string());
+    }
 }
