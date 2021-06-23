@@ -56,7 +56,7 @@ pub fn process_report_case(
 
     // Convert category set to category map with blank data
     let mut category_map = Category::new_map();
-    for category in category_set.into_iter() {
+    for category in category_set.iter() {
         category_map.insert(*category, true);
     }
 

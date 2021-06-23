@@ -115,7 +115,7 @@ impl HapiProgramTest {
 
     pub async fn with_network(&mut self, authority: &Keypair) -> NetworkCookie {
         let name = format!("Network #{}", self.next_network_id).to_string();
-        self.next_network_id = self.next_network_id + 1;
+        self.next_network_id += 1;
 
         let create_network_ix = create_network(&authority.pubkey(), name.clone());
 
@@ -149,7 +149,7 @@ impl HapiProgramTest {
         let reporter_keypair = Keypair::new();
 
         let name = format!("NetworkReporter #{}", self.next_reporter_id).to_string();
-        self.next_reporter_id = self.next_reporter_id + 1;
+        self.next_reporter_id += 1;
 
         let fund_reporter_ix = system_instruction::transfer(
             &self.context.payer.pubkey(),
@@ -194,7 +194,7 @@ impl HapiProgramTest {
         reporter: &NetworkReporterCookie,
     ) -> CaseCookie {
         let name = format!("Case #{}", self.next_case_id).to_string();
-        self.next_case_id = self.next_case_id + 1;
+        self.next_case_id += 1;
 
         let case_id = network.account.next_case_id;
 
@@ -254,7 +254,7 @@ impl HapiProgramTest {
             case.id,
             &value,
             risk,
-            category.clone(),
+            category,
         );
 
         self.process_transaction(&[report_address_ix], Some(&[&reporter.reporter_keypair]))
@@ -309,7 +309,7 @@ impl HapiProgramTest {
         self.get_account(address)
             .await
             .map(|a| try_from_slice_unchecked(&a.data).unwrap())
-            .expect(format!("GET-TEST-ACCOUNT-ERROR: Account {} not found", address).as_str())
+            .unwrap_or_else(|| panic!("GET-TEST-ACCOUNT-ERROR: Account {} not found", address))
     }
 
     #[allow(dead_code)]

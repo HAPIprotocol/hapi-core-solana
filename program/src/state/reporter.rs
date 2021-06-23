@@ -90,7 +90,7 @@ pub fn assert_reporter_can_update_case(
         }
         _ => {
             msg!("Reporter doesn't have a permission to update this case");
-            return Err(HapiError::InvalidReporterPermissions.into());
+            Err(HapiError::InvalidReporterPermissions.into())
         }
     }
 }
