@@ -265,7 +265,6 @@ impl HapiProgramTest {
             account_type: HapiAccountType::Address,
             risk,
             case_id: case.id,
-            reporter_key: reporter.reporter_keypair.pubkey(),
             category,
         };
 

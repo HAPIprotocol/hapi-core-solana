@@ -26,4 +26,6 @@ async fn test_address_reported() {
     // Assert
     let address_account = hapi_test.get_address_account(&address_cookie.address).await;
     assert_eq!(address_cookie.account, address_account);
+
+    assert_eq!(24, std::mem::size_of_val(&address_account));
 }

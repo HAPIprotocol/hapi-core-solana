@@ -43,7 +43,6 @@ pub fn process_update_case(
     assert_is_valid_reporter(network_reporter_info)?;
 
     let mut case_data = get_case_data(&case_info)?;
-    // let reporter_data = get_reporter_data(&network_reporter_info)?;
 
     assert_reporter_can_update_case(
         &reporter_info,

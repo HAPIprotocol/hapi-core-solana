@@ -57,7 +57,6 @@ pub fn process_report_address(
         risk,
         case_id,
         category,
-        reporter_key: *reporter_info.key,
     };
 
     create_and_serialize_account_signed::<Address>(

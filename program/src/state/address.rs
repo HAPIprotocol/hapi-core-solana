@@ -26,9 +26,6 @@ pub struct Address {
     /// Case ID
     pub case_id: u64,
 
-    /// Address reporter key
-    pub reporter_key: Pubkey,
-
     /// Category
     pub category: Category,
 }
