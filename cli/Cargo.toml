@@ -1,0 +1,26 @@
+[package]
+name = "hapi-core-solana-cli"
+version = "0.1.0"
+authors = ["Andrei Arsenin <andrei.arsenin@hapi.one>"]
+edition = "2018"
+description = "HAPI Core Program Client"
+license = "BSL-1.1"
+
+[dependencies]
+chrono = "0.4.19"
+clap = "2.33.3"
+colored = "2"
+solana-program = "1.7"
+solana-clap-utils = "1.7"
+solana-cli-config = "1.7"
+solana-client = "1.7"
+solana-logger = "1.7"
+solana-sdk = "1.7"
+hapi-core-solana = { version = "^0.1", path = "../program", features = ["no-entrypoint"] }
+
+[[bin]]
+name = "hapi-core-solana-cli"
+path = "src/main.rs"
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]

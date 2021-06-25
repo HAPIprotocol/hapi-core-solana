@@ -65,7 +65,5 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
             case_id,
             category,
         } => process_update_address(program_id, accounts, case_id, risk, category),
-
-        _ => todo!("Instruction not implemented yet"),
     }
 }
