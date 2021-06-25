@@ -62,7 +62,7 @@ pub fn process_report_case(
 
     let case_data = Case {
         account_type: HapiAccountType::Case,
-        name: name.clone(),
+        name,
         reporter_key: *reporter_info.key,
         categories: category_map,
     };

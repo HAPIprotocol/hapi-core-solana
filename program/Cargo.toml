@@ -3,7 +3,7 @@ name = "hapi-core-solana"
 version = "0.1.0"
 authors = ["Andrei Arsenin <andrei.arsenin@hapi.one>"]
 edition = "2018"
-description = "Solana Program Library Memo"
+description = "HAPI Core program"
 license = "BSL-1.1"
 
 [features]

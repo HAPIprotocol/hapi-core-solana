@@ -49,7 +49,7 @@ pub fn process_add_reporter(
 
     let network_reporter_data = NetworkReporter {
         account_type: HapiAccountType::NetworkReporter,
-        name: name.clone(),
+        name,
         reporter_type,
     };
 
