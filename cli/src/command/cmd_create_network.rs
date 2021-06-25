@@ -16,7 +16,7 @@ pub fn cmd_create_network(
   network_authority: &Pubkey,
 ) -> Result<(), Box<dyn std::error::Error>> {
   if config.verbose {
-    println!("{} {}", "Network:".bright_black(), network_name.bold());
+    println!("{}: {}", "Network".bright_black(), network_name.bold());
     println!(
       "{} {}",
       "Network authority pubkey:".bright_black(),
@@ -33,7 +33,7 @@ pub fn cmd_create_network(
   let mut transaction = Transaction::new_with_payer(
     &[instruction::create_network(
       network_authority,
-      network_name.clone(),
+      network_name,
     )],
     Some(&config.keypair.pubkey()),
   );
@@ -41,7 +41,7 @@ pub fn cmd_create_network(
   transaction.try_sign(&[&config.keypair], blockhash)?;
   rpc_client.send_and_confirm_transaction_with_spinner(&transaction)?;
 
-  println!("{} {}", "Network created:".green(), network_address);
+  println!("{}: {}", "Network created".green(), network_address);
 
   Ok(())
 }

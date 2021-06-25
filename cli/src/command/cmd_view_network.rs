@@ -12,13 +12,13 @@ pub fn cmd_view_network(
   network_name: String,
 ) -> Result<(), Box<dyn std::error::Error>> {
   if config.verbose {
-    println!("{} {}", "Network:".bright_black(), network_name);
+    println!("{}: {}", "Network".bright_black(), network_name);
   }
 
   let address = get_network_address(&network_name);
 
   if config.verbose {
-    println!("{} {}", "Network address:".bright_black(), address);
+    println!("{}: {}", "Network address".bright_black(), address);
   }
 
   let data = rpc_client.get_account_data(&address)?;

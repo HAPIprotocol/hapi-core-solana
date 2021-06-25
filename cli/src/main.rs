@@ -2,7 +2,10 @@ mod command;
 mod tools;
 
 use {
-    crate::command::{cmd_add_reporter, cmd_create_network, cmd_view_network, cmd_view_reporter},
+    crate::command::{
+        cmd_add_reporter, cmd_create_network, cmd_update_reporter, cmd_view_network,
+        cmd_view_reporter,
+    },
     clap::{
         crate_description, crate_name, crate_version, value_t_or_exit, App, AppSettings, Arg,
         SubCommand,
@@ -27,6 +30,35 @@ pub struct Config {
 }
 
 fn run() -> Result<(), Box<dyn std::error::Error>> {
+    let arg_network_name = Arg::with_name("network_name")
+        .long("network-name")
+        .value_name("NETWORK_NAME")
+        .validator(is_url_or_moniker)
+        .help("The name of the new network");
+
+    let arg_network_authority = Arg::with_name("network_authority")
+        .long("network-authority")
+        .value_name("NETWORK_AUTHORITY")
+        .validator(is_valid_pubkey)
+        .help("Authority public key (default: signer public key)");
+
+    let arg_reporter_pubkey = Arg::with_name("reporter_pubkey")
+        .long("reporter-pubkey")
+        .value_name("REPORTER_PUBKEY")
+        .validator(is_valid_pubkey)
+        .help("The public key of the reporter");
+
+    let arg_reporter_name = Arg::with_name("reporter_name")
+        .long("reporter-name")
+        .value_name("REPORTER_NAME")
+        .help("The name of the new reporter");
+
+    let arg_reporter_type = Arg::with_name("reporter_type")
+        .long("reporter-type")
+        .value_name("REPORTER_TYPE")
+        .possible_values(&["Inactive", "Tracer", "Full", "Authority"])
+        .help("The type of the new reporter");
+
     let app_matches = App::new(crate_name!())
         .about(crate_description!())
         .version(crate_version!())
@@ -74,97 +106,35 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         .subcommand(
             SubCommand::with_name("create_network")
                 .about("Create a new HAPI network")
-                .arg(
-                    Arg::with_name("network_name")
-                        .long("network-name")
-                        .value_name("NETWORK_NAME")
-                        .validator(is_url_or_moniker)
-                        .index(1)
-                        .required(true)
-                        .help("The name of the new network"),
-                )
-                .arg(
-                    Arg::with_name("network_authority")
-                        .long("network-authority")
-                        .value_name("NETWORK_AUTHORITY")
-                        .validator(is_valid_pubkey)
-                        .index(2)
-                        .required(false)
-                        .help("Authority public key (default: signer public key)"),
-                ),
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_network_authority.clone().index(2).required(false)),
         )
         .subcommand(
             SubCommand::with_name("network")
                 .about("View network data")
-                .arg(
-                    Arg::with_name("network_name")
-                        .long("network-name")
-                        .value_name("NETWORK_NAME")
-                        .validator(is_url_or_moniker)
-                        .index(1)
-                        .required(true)
-                        .help("The name of the new network"),
-                ),
+                .arg(arg_network_name.clone().index(1).required(true)),
         )
         .subcommand(
             SubCommand::with_name("add_reporter")
                 .about("Add a new reporter public key to network")
-                .arg(
-                    Arg::with_name("network_name")
-                        .long("network-name")
-                        .value_name("NETWORK_NAME")
-                        .index(1)
-                        .required(true)
-                        .help("The name of the network"),
-                )
-                .arg(
-                    Arg::with_name("reporter_pubkey")
-                        .long("reporter-pubkey")
-                        .value_name("REPORTER_PUBKEY")
-                        .validator(is_valid_pubkey)
-                        .index(2)
-                        .required(true)
-                        .help("The public key of the reporter"),
-                )
-                .arg(
-                    Arg::with_name("reporter_name")
-                        .long("reporter-name")
-                        .value_name("REPORTER_NAME")
-                        .index(3)
-                        .required(true)
-                        .help("The name of the new reporter"),
-                )
-                .arg(
-                    Arg::with_name("reporter_type")
-                        .long("reporter-type")
-                        .value_name("REPORTER_TYPE")
-                        .possible_values(&["Inactive", "Tracer", "Full", "Authority"])
-                        .index(4)
-                        .required(true)
-                        .help("The type of the new reporter"),
-                ),
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_reporter_pubkey.clone().index(2).required(true))
+                .arg(arg_reporter_name.clone().index(3).required(true))
+                .arg(arg_reporter_type.clone().index(4).required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("update_reporter")
+                .about("Update an existing reporter")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_reporter_pubkey.clone().index(2).required(true))
+                .arg(arg_reporter_name.clone().index(3).required(true))
+                .arg(arg_reporter_type.clone().index(4).required(true)),
         )
         .subcommand(
             SubCommand::with_name("reporter")
                 .about("View reporter data")
-                .arg(
-                    Arg::with_name("network_name")
-                        .long("network-name")
-                        .value_name("NETWORK_NAME")
-                        .validator(is_url_or_moniker)
-                        .index(1)
-                        .required(true)
-                        .help("The name of the new network"),
-                )
-                .arg(
-                    Arg::with_name("reporter_pubkey")
-                        .long("reporter-pubkey")
-                        .value_name("REPORTER_PUBKEY")
-                        .validator(is_valid_pubkey)
-                        .index(2)
-                        .required(true)
-                        .help("The public key of the reporter"),
-                ),
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_reporter_pubkey.clone().index(2).required(true)),
         )
         .get_matches();
 
@@ -197,7 +167,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         RpcClient::new_with_commitment(config.json_rpc_url.clone(), CommitmentConfig::confirmed());
 
     if config.verbose {
-        println!("{} {}", "JSON RPC URL:".bright_black(), config.json_rpc_url);
+        println!("{}: {}", "JSON RPC URL".bright_black(), config.json_rpc_url);
     }
 
     match (sub_command, sub_matches) {
@@ -222,6 +192,21 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             let reporter_type = value_t_or_exit!(arg_matches, "reporter_type", ReporterType);
 
             cmd_add_reporter(
+                &rpc_client,
+                &config,
+                network_name,
+                &reporter_pubkey,
+                reporter_name,
+                reporter_type,
+            )
+        }
+        ("update_reporter", Some(arg_matches)) => {
+            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+            let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+            let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
+            let reporter_type = value_t_or_exit!(arg_matches, "reporter_type", ReporterType);
+
+            cmd_update_reporter(
                 &rpc_client,
                 &config,
                 network_name,

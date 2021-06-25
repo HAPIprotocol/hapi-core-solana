@@ -17,21 +17,21 @@ pub fn cmd_view_reporter(
   reporter_pubkey: &Pubkey,
 ) -> Result<(), Box<dyn std::error::Error>> {
   if config.verbose {
-    println!("{} {}", "Network:".bright_black(), network_name);
+    println!("{}: {}", "Network".bright_black(), network_name);
   }
 
   let network_address = get_network_address(&network_name);
 
   if config.verbose {
-    println!("{} {}", "Network address:".bright_black(), network_address);
+    println!("{}: {}", "Network address".bright_black(), network_address);
   }
 
   let reporter_address = get_reporter_address(&network_address, &reporter_pubkey);
 
   if config.verbose {
     println!(
-      "{} {}",
-      "Reporter address:".bright_black(),
+      "{}: {}",
+      "Reporter address".bright_black(),
       reporter_address
     );
   }
