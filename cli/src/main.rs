@@ -1,12 +1,13 @@
 mod command;
 
 use {
-    crate::command::{cmd_create_network, cmd_view_network},
+    crate::command::{cmd_add_reporter, cmd_create_network, cmd_view_network},
     clap::{
         crate_description, crate_name, crate_version, value_t_or_exit, App, AppSettings, Arg,
         SubCommand,
     },
     colored::*,
+    hapi_core_solana::state::enums::ReporterType,
     solana_clap_utils::{
         input_parsers::pubkey_of,
         input_validators::{is_keypair, is_url, is_url_or_moniker, is_valid_pubkey},
@@ -104,6 +105,44 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         .help("The name of the new network"),
                 ),
         )
+        .subcommand(
+            SubCommand::with_name("add_reporter")
+                .about("Add a new reporter public key to network")
+                .arg(
+                    Arg::with_name("network_name")
+                        .long("network-name")
+                        .value_name("NETWORK_NAME")
+                        .index(1)
+                        .required(true)
+                        .help("The name of the network"),
+                )
+                .arg(
+                    Arg::with_name("reporter_pubkey")
+                        .long("reporter-pubkey")
+                        .value_name("REPORTER_PUBKEY")
+                        .validator(is_valid_pubkey)
+                        .index(2)
+                        .required(true)
+                        .help("The public key of the reporter"),
+                )
+                .arg(
+                    Arg::with_name("reporter_name")
+                        .long("reporter-name")
+                        .value_name("REPORTER_NAME")
+                        .index(3)
+                        .required(true)
+                        .help("The name of the new reporter"),
+                )
+                .arg(
+                    Arg::with_name("reporter_type")
+                        .long("reporter-type")
+                        .value_name("REPORTER_TYPE")
+                        .possible_values(&["Inactive", "Tracer", "Full", "Authority"])
+                        .index(4)
+                        .required(true)
+                        .help("The type of the new reporter"),
+                ),
+        )
         .get_matches();
 
     let (sub_command, sub_matches) = app_matches.subcommand();
@@ -152,6 +191,21 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             let network_name = value_t_or_exit!(arg_matches, "network_name", String);
 
             cmd_view_network(&rpc_client, &config, network_name)
+        }
+        ("add_reporter", Some(arg_matches)) => {
+            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+            let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+            let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
+            let reporter_type = value_t_or_exit!(arg_matches, "reporter_type", ReporterType);
+
+            cmd_add_reporter(
+                &rpc_client,
+                &config,
+                network_name,
+                &reporter_pubkey,
+                reporter_name,
+                reporter_type,
+            )
         }
         _ => unreachable!(),
     }
