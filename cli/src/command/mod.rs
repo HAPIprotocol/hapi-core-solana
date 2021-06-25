@@ -1,5 +1,5 @@
-mod process_create_network;
-mod process_view_network;
+mod cmd_create_network;
+mod cmd_view_network;
 
-pub use process_create_network::*;
-pub use process_view_network::*;
+pub use cmd_create_network::*;
+pub use cmd_view_network::*;

@@ -1,7 +1,7 @@
 mod command;
 
 use {
-    crate::command::{process_create_network, process_view_network},
+    crate::command::{cmd_create_network, cmd_view_network},
     clap::{
         crate_description, crate_name, crate_version, value_t_or_exit, App, AppSettings, Arg,
         SubCommand,
@@ -146,12 +146,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 None => config.keypair.pubkey(),
             };
 
-            process_create_network(&rpc_client, &config, network_name, &network_authority)
+            cmd_create_network(&rpc_client, &config, network_name, &network_authority)
         }
         ("network", Some(arg_matches)) => {
             let network_name = value_t_or_exit!(arg_matches, "network_name", String);
 
-            process_view_network(&rpc_client, &config, network_name)
+            cmd_view_network(&rpc_client, &config, network_name)
         }
         _ => unreachable!(),
     }

@@ -5,7 +5,7 @@ use {
   solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction},
 };
 
-pub fn process_create_network(
+pub fn cmd_create_network(
   rpc_client: &RpcClient,
   config: &Config,
   network_name: String,

@@ -6,7 +6,7 @@ use {
   solana_program::borsh::try_from_slice_unchecked,
 };
 
-pub fn process_view_network(
+pub fn cmd_view_network(
   rpc_client: &RpcClient,
   config: &Config,
   network_name: String,
