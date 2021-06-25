@@ -10,6 +10,7 @@ mod process_add_reporter;
 mod process_create_network;
 mod process_report_address;
 mod process_report_case;
+mod process_update_address;
 mod process_update_case;
 mod process_update_reporter;
 
@@ -18,6 +19,7 @@ use process_add_reporter::*;
 use process_create_network::*;
 use process_report_address::*;
 use process_report_case::*;
+use process_update_address::*;
 use process_update_case::*;
 use process_update_reporter::*;
 
@@ -57,6 +59,12 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
             case_id,
             category,
         } => process_report_address(program_id, accounts, &address, case_id, risk, category),
+
+        HapiInstruction::UpdateAddress {
+            risk,
+            case_id,
+            category,
+        } => process_update_address(program_id, accounts, case_id, risk, category),
 
         _ => todo!("Instruction not implemented yet"),
     }

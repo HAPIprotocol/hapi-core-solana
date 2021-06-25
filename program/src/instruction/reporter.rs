@@ -187,3 +187,41 @@ pub fn report_address(
         data: instruction.try_to_vec().unwrap(),
     }
 }
+
+/// Creates ReportAddress instruction
+pub fn update_address(
+    // Accounts
+    reporter: &Pubkey,
+    // Args
+    network_name: String,
+    case_id: u64,
+    address: &Pubkey,
+    risk: u8,
+    category: Category,
+) -> Instruction {
+    let network_address = get_network_address(&network_name);
+    let address_address = get_address_address(&network_address, address);
+    let reporter_address = get_reporter_address(&network_address, &reporter);
+    let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
+
+    let accounts = vec![
+        AccountMeta::new(*reporter, true),
+        AccountMeta::new(network_address, false),
+        AccountMeta::new(reporter_address, false),
+        AccountMeta::new(case_address, false),
+        AccountMeta::new(address_address, false),
+    ];
+
+    let instruction = HapiInstruction::UpdateAddress {
+        risk,
+        case_id,
+        category,
+    };
+
+    Instruction {
+        program_id: id(),
+        accounts,
+        data: instruction.try_to_vec().unwrap(),
+    }
+}
+

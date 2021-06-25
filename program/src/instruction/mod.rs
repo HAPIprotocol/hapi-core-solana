@@ -123,5 +123,8 @@ pub enum HapiInstruction {
 
         /// Case ID
         case_id: u64,
+
+        /// Category
+        category: Category,
     },
 }
