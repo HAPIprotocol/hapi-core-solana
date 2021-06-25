@@ -1,5 +1,8 @@
 use {
-  crate::Config,
+  crate::{
+    tools::{assert_is_empty_account, assert_is_existing_account},
+    Config,
+  },
   colored::*,
   hapi_core_solana::{
     instruction,
@@ -30,8 +33,11 @@ pub fn cmd_add_reporter(
     println!("{}: {}", "Network".bright_black(), network.name.bold());
   }
 
-  // Verify that reporter is an existing account
-  rpc_client.get_account(reporter_pubkey)?;
+  assert_is_existing_account(rpc_client, &reporter_pubkey)?;
+
+  let reporter_address = get_reporter_address(network_account, reporter_pubkey);
+
+  assert_is_empty_account(rpc_client, &reporter_address)?;
 
   let mut transaction = Transaction::new_with_payer(
     &[instruction::add_reporter(
@@ -47,11 +53,7 @@ pub fn cmd_add_reporter(
   transaction.try_sign(&[&config.keypair], blockhash)?;
   rpc_client.send_and_confirm_transaction_with_spinner(&transaction)?;
 
-  println!(
-    "{} {}",
-    "Reporter added:".green(),
-    get_reporter_address(network_account, reporter_pubkey)
-  );
+  println!("{} {}", "Reporter added:".green(), reporter_address);
 
   Ok(())
 }

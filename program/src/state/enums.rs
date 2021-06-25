@@ -104,6 +104,7 @@ pub enum Category {
     // Tier 2 - Medium risk
     /// Exchange (Medium Risk)
     MediumRiskExchange,
+
     /// DeFi application
     DeFi,
 

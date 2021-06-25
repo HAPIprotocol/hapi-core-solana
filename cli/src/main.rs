@@ -1,7 +1,8 @@
 mod command;
+mod tools;
 
 use {
-    crate::command::{cmd_add_reporter, cmd_create_network, cmd_view_network},
+    crate::command::{cmd_add_reporter, cmd_create_network, cmd_view_network, cmd_view_reporter},
     clap::{
         crate_description, crate_name, crate_version, value_t_or_exit, App, AppSettings, Arg,
         SubCommand,
@@ -143,6 +144,28 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         .help("The type of the new reporter"),
                 ),
         )
+        .subcommand(
+            SubCommand::with_name("reporter")
+                .about("View reporter data")
+                .arg(
+                    Arg::with_name("network_name")
+                        .long("network-name")
+                        .value_name("NETWORK_NAME")
+                        .validator(is_url_or_moniker)
+                        .index(1)
+                        .required(true)
+                        .help("The name of the new network"),
+                )
+                .arg(
+                    Arg::with_name("reporter_pubkey")
+                        .long("reporter-pubkey")
+                        .value_name("REPORTER_PUBKEY")
+                        .validator(is_valid_pubkey)
+                        .index(2)
+                        .required(true)
+                        .help("The public key of the reporter"),
+                ),
+        )
         .get_matches();
 
     let (sub_command, sub_matches) = app_matches.subcommand();
@@ -206,6 +229,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 reporter_name,
                 reporter_type,
             )
+        }
+        ("reporter", Some(arg_matches)) => {
+            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+            let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+
+            cmd_view_reporter(&rpc_client, &config, network_name, &reporter_pubkey)
         }
         _ => unreachable!(),
     }
