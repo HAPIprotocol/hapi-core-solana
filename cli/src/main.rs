@@ -3,8 +3,8 @@ mod tools;
 
 use {
     crate::command::{
-        cmd_add_reporter, cmd_create_network, cmd_update_reporter, cmd_view_network,
-        cmd_view_reporter,
+        cmd_add_reporter, cmd_create_network, cmd_list_accounts, cmd_update_reporter,
+        cmd_view_network, cmd_view_reporter,
     },
     clap::{
         crate_description, crate_name, crate_version, value_t_or_exit, App, AppSettings, Arg,
@@ -103,6 +103,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .validator(is_url)
                 .help("JSON RPC URL for the cluster [default: value from configuration file]"),
         )
+        .subcommand(SubCommand::with_name("accounts"))
         .subcommand(
             SubCommand::with_name("create_network")
                 .about("Create a new HAPI network")
@@ -171,6 +172,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     match (sub_command, sub_matches) {
+        ("accounts", Some(_)) => cmd_list_accounts(&rpc_client, &config),
         ("create_network", Some(arg_matches)) => {
             let network_name = value_t_or_exit!(arg_matches, "network_name", String);
             let network_authority = match pubkey_of(arg_matches, "network_authority") {
