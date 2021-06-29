@@ -2,16 +2,12 @@ mod command;
 mod tools;
 
 use {
-    crate::command::{
-        cmd_add_reporter, cmd_create_network, cmd_list_accounts, cmd_update_reporter,
-        cmd_view_network, cmd_view_reporter,
-    },
+    crate::{command::*, tools::*},
     clap::{
         crate_description, crate_name, crate_version, value_t_or_exit, App, AppSettings, Arg,
         SubCommand,
     },
     colored::*,
-    hapi_core_solana::state::enums::ReporterType,
     solana_clap_utils::{
         input_parsers::pubkey_of,
         input_validators::{is_keypair, is_url, is_url_or_moniker, is_valid_pubkey},
@@ -21,6 +17,7 @@ use {
         commitment_config::CommitmentConfig,
         signature::{read_keypair_file, Keypair, Signer},
     },
+    std::collections::BTreeSet,
 };
 
 pub struct Config {
@@ -56,8 +53,86 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arg_reporter_type = Arg::with_name("reporter_type")
         .long("reporter-type")
         .value_name("REPORTER_TYPE")
-        .possible_values(&["Inactive", "Tracer", "Full", "Authority"])
+        .possible_values(REPORTER_TYPE_VALUES)
         .help("The type of the new reporter");
+
+    let arg_case_name = Arg::with_name("case_name")
+        .long("case-name")
+        .value_name("CASE_NAME")
+        .help("Short memo about case");
+
+    let arg_case_categories = Arg::with_name("category")
+        .multiple(true)
+        .long("category")
+        .value_name("CATEGORY")
+        .takes_value(true)
+        .possible_values(CATEGORY_VALUES);
+
+    let arg_case_id = Arg::with_name("case_id")
+        .long("case-id")
+        .value_name("CASE_ID")
+        .help("Case ID number");
+
+    let subcommand_network = SubCommand::with_name("network")
+        .about("Manage networks")
+        .subcommand(
+            SubCommand::with_name("create")
+                .about("Create a new HAPI network")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_network_authority.clone().index(2).required(false)),
+        )
+        .subcommand(
+            SubCommand::with_name("view")
+                .about("View network data")
+                .arg(arg_network_name.clone().index(1).required(true)),
+        );
+
+    let subcommand_reporter = SubCommand::with_name("reporter")
+        .about("Manage reporters")
+        .subcommand(
+            SubCommand::with_name("add")
+                .about("Add a new reporter public key to a network")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_reporter_pubkey.clone().index(2).required(true))
+                .arg(arg_reporter_name.clone().index(3).required(true))
+                .arg(arg_reporter_type.clone().index(4).required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("update")
+                .about("Update an existing reporter")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_reporter_pubkey.clone().index(2).required(true))
+                .arg(arg_reporter_name.clone().index(3).required(true))
+                .arg(arg_reporter_type.clone().index(4).required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("view")
+                .about("View reporter data")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_reporter_pubkey.clone().index(2).required(true)),
+        );
+
+    let subcommand_case = SubCommand::with_name("case")
+        .about("Manage cases")
+        .subcommand(
+            SubCommand::with_name("report")
+                .about("Report a new case")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_case_name.clone().index(2).required(true))
+                .arg(arg_case_categories),
+        )
+        .subcommand(SubCommand::with_name("update").about("Update an existing case"))
+        .subcommand(
+            SubCommand::with_name("view")
+                .about("View case data")
+                .arg(arg_network_name.clone().index(1).required(true))
+                .arg(arg_case_id.clone().index(2).required(true)),
+        );
+
+    let subcommand_address = SubCommand::with_name("address")
+        .about("Manage addresses")
+        .subcommand(SubCommand::with_name("report").about("Report a new address"))
+        .subcommand(SubCommand::with_name("update").about("Update an existing address"));
 
     let app_matches = App::new(crate_name!())
         .about(crate_description!())
@@ -103,40 +178,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .validator(is_url)
                 .help("JSON RPC URL for the cluster [default: value from configuration file]"),
         )
-        .subcommand(SubCommand::with_name("accounts"))
-        .subcommand(
-            SubCommand::with_name("create_network")
-                .about("Create a new HAPI network")
-                .arg(arg_network_name.clone().index(1).required(true))
-                .arg(arg_network_authority.clone().index(2).required(false)),
-        )
-        .subcommand(
-            SubCommand::with_name("network")
-                .about("View network data")
-                .arg(arg_network_name.clone().index(1).required(true)),
-        )
-        .subcommand(
-            SubCommand::with_name("add_reporter")
-                .about("Add a new reporter public key to network")
-                .arg(arg_network_name.clone().index(1).required(true))
-                .arg(arg_reporter_pubkey.clone().index(2).required(true))
-                .arg(arg_reporter_name.clone().index(3).required(true))
-                .arg(arg_reporter_type.clone().index(4).required(true)),
-        )
-        .subcommand(
-            SubCommand::with_name("update_reporter")
-                .about("Update an existing reporter")
-                .arg(arg_network_name.clone().index(1).required(true))
-                .arg(arg_reporter_pubkey.clone().index(2).required(true))
-                .arg(arg_reporter_name.clone().index(3).required(true))
-                .arg(arg_reporter_type.clone().index(4).required(true)),
-        )
-        .subcommand(
-            SubCommand::with_name("reporter")
-                .about("View reporter data")
-                .arg(arg_network_name.clone().index(1).required(true))
-                .arg(arg_reporter_pubkey.clone().index(2).required(true)),
-        )
+        .subcommand(SubCommand::with_name("list_accounts").about("List all program accounts"))
+        .subcommand(subcommand_network.clone())
+        .subcommand(subcommand_reporter.clone())
+        .subcommand(subcommand_case.clone())
+        .subcommand(subcommand_address.clone())
         .get_matches();
 
     let (sub_command, sub_matches) = app_matches.subcommand();
@@ -172,57 +218,127 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     match (sub_command, sub_matches) {
-        ("accounts", Some(_)) => cmd_list_accounts(&rpc_client, &config),
-        ("create_network", Some(arg_matches)) => {
-            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-            let network_authority = match pubkey_of(arg_matches, "network_authority") {
-                Some(pubkey) => pubkey,
-                None => config.keypair.pubkey(),
-            };
+        ("list_accounts", Some(_)) => cmd_list_accounts(&rpc_client, &config),
 
-            cmd_create_network(&rpc_client, &config, network_name, &network_authority)
+        ("address", Some(arg_matches)) => {
+            let (sub_command, sub_matches) = arg_matches.subcommand();
+            match (sub_command, sub_matches) {
+                ("report", Some(_arg_matches)) => cmd_report_address(&rpc_client, &config),
+                ("update", Some(_arg_matches)) => cmd_update_address(&rpc_client, &config),
+                _ => subcommand_address
+                    .clone()
+                    .print_long_help()
+                    .map(|_| println!())
+                    .map_err(|e| e.into()),
+            }
         }
+
+        ("case", Some(arg_matches)) => {
+            let (sub_command, sub_matches) = arg_matches.subcommand();
+            match (sub_command, sub_matches) {
+                ("report", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let case_name = value_t_or_exit!(arg_matches, "case_name", String);
+
+                    let mut categories = BTreeSet::new();
+                    if let Some(arg_categories) = &arg_matches.values_of("category") {
+                        for category in arg_categories.clone() {
+                            categories.insert(category_from_string(category)?);
+                        }
+                    };
+
+                    cmd_report_case(&rpc_client, &config, network_name, case_name, categories)
+                }
+                ("update", Some(_arg_matches)) => cmd_update_case(&rpc_client, &config),
+                ("view", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
+
+                    cmd_view_case(&rpc_client, &config, network_name, case_id)
+                }
+                _ => subcommand_case
+                    .clone()
+                    .print_long_help()
+                    .map(|_| println!())
+                    .map_err(|e| e.into()),
+            }
+        }
+
         ("network", Some(arg_matches)) => {
-            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-
-            cmd_view_network(&rpc_client, &config, network_name)
+            let (sub_command, sub_matches) = arg_matches.subcommand();
+            match (sub_command, sub_matches) {
+                ("create", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let network_authority = match pubkey_of(arg_matches, "network_authority") {
+                        Some(pubkey) => pubkey,
+                        None => config.keypair.pubkey(),
+                    };
+                    cmd_create_network(&rpc_client, &config, network_name, &network_authority)
+                }
+                ("view", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    cmd_view_network(&rpc_client, &config, network_name)
+                }
+                _ => subcommand_network
+                    .clone()
+                    .print_long_help()
+                    .map(|_| println!())
+                    .map_err(|e| e.into()),
+            }
         }
-        ("add_reporter", Some(arg_matches)) => {
-            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-            let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
-            let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
-            let reporter_type = value_t_or_exit!(arg_matches, "reporter_type", ReporterType);
 
-            cmd_add_reporter(
-                &rpc_client,
-                &config,
-                network_name,
-                &reporter_pubkey,
-                reporter_name,
-                reporter_type,
-            )
-        }
-        ("update_reporter", Some(arg_matches)) => {
-            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-            let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
-            let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
-            let reporter_type = value_t_or_exit!(arg_matches, "reporter_type", ReporterType);
-
-            cmd_update_reporter(
-                &rpc_client,
-                &config,
-                network_name,
-                &reporter_pubkey,
-                reporter_name,
-                reporter_type,
-            )
-        }
         ("reporter", Some(arg_matches)) => {
-            let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-            let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+            let (sub_command, sub_matches) = arg_matches.subcommand();
+            match (sub_command, sub_matches) {
+                ("add", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+                    let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
+                    let reporter_type =
+                        reporter_type_from_string(arg_matches.value_of("reporter_type").unwrap())?;
 
-            cmd_view_reporter(&rpc_client, &config, network_name, &reporter_pubkey)
+                    cmd_add_reporter(
+                        &rpc_client,
+                        &config,
+                        network_name,
+                        &reporter_pubkey,
+                        reporter_name,
+                        reporter_type,
+                    )
+                }
+
+                ("update", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+                    let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
+                    let reporter_type =
+                        reporter_type_from_string(arg_matches.value_of("reporter_type").unwrap())?;
+
+                    cmd_update_reporter(
+                        &rpc_client,
+                        &config,
+                        network_name,
+                        &reporter_pubkey,
+                        reporter_name,
+                        reporter_type,
+                    )
+                }
+
+                ("view", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
+
+                    cmd_view_reporter(&rpc_client, &config, network_name, &reporter_pubkey)
+                }
+
+                _ => subcommand_reporter
+                    .clone()
+                    .print_long_help()
+                    .map(|_| println!())
+                    .map_err(|e| e.into()),
+            }
         }
+
         _ => unreachable!(),
     }
 }

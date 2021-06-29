@@ -1,7 +1,7 @@
 //! State enumerations
 
 use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
-use std::{collections::BTreeMap, str::FromStr};
+use std::{collections::BTreeMap};
 
 /// Defines all HAPI accounts types
 #[repr(C)]
@@ -51,20 +51,6 @@ pub enum ReporterType {
 impl Default for ReporterType {
     fn default() -> Self {
         ReporterType::Inactive
-    }
-}
-
-impl FromStr for ReporterType {
-    type Err = ();
-
-    fn from_str(input: &str) -> Result<ReporterType, Self::Err> {
-        match input {
-            "Inactive" => Ok(ReporterType::Inactive),
-            "Tracer" => Ok(ReporterType::Tracer),
-            "Full" => Ok(ReporterType::Full),
-            "Authority" => Ok(ReporterType::Authority),
-            _ => Err(()),
-        }
     }
 }
 

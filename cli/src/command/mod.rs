@@ -1,13 +1,23 @@
 mod cmd_add_reporter;
 mod cmd_create_network;
-mod cmd_update_reporter;
-mod cmd_view_network;
-mod cmd_view_reporer;
 mod cmd_list_accounts;
+mod cmd_report_address;
+mod cmd_report_case;
+mod cmd_update_address;
+mod cmd_update_case;
+mod cmd_update_reporter;
+mod cmd_view_case;
+mod cmd_view_network;
+mod cmd_view_reporter;
 
 pub use cmd_add_reporter::*;
 pub use cmd_create_network::*;
 pub use cmd_list_accounts::*;
+pub use cmd_report_address::*;
+pub use cmd_report_case::*;
+pub use cmd_update_address::*;
+pub use cmd_update_case::*;
 pub use cmd_update_reporter::*;
+pub use cmd_view_case::*;
 pub use cmd_view_network::*;
-pub use cmd_view_reporer::*;
+pub use cmd_view_reporter::*;
