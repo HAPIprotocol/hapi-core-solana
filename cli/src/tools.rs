@@ -94,3 +94,7 @@ pub fn parse_arg_categories(matches: &clap::ArgMatches) -> Result<BTreeSet<Categ
   }
   Ok(tree)
 }
+
+pub fn parse_arg_reporter_type(matches: &clap::ArgMatches)-> Result<ReporterType, Box<dyn std::error::Error>> {
+  reporter_type_from_string(matches.value_of("reporter_type").unwrap())
+}

@@ -1,6 +1,5 @@
 mod command;
 mod tools;
-
 use {
     crate::{command::*, tools::*},
     clap::{
@@ -300,8 +299,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
                     let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
-                    let reporter_type =
-                        reporter_type_from_string(arg_matches.value_of("reporter_type").unwrap())?;
+                    let reporter_type = parse_arg_reporter_type(&arg_matches)?;
 
                     cmd_add_reporter(
                         &rpc_client,
@@ -317,8 +315,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
                     let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
-                    let reporter_type =
-                        reporter_type_from_string(arg_matches.value_of("reporter_type").unwrap())?;
+                    let reporter_type = parse_arg_reporter_type(&arg_matches)?;
 
                     cmd_update_reporter(
                         &rpc_client,
