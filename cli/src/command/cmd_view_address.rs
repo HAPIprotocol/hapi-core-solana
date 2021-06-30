@@ -23,12 +23,13 @@ pub fn cmd_view_address(
     println!("{}: {}", "Network account".bright_black(), network_account);
   }
 
-  let address_address = get_address_address(&network_account, address);
+  let address_account = get_address_address(&network_account, address);
   if config.verbose {
-    println!("{}: {}", "Address account".bright_black(), address_address);
+    println!("{}: {}", "Address account".bright_black(), address_account);
   }
-  let address_data = rpc_client.get_account_data(&address_address)?;
+  let address_data = rpc_client.get_account_data(&address_account)?;
   let address: Address = try_from_slice_unchecked(&address_data)?;
   println!("{:#?}", address);
+
   Ok(())
 }

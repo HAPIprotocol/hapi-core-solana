@@ -9,7 +9,7 @@ use {
     colored::*,
     solana_clap_utils::{
         input_parsers::pubkey_of,
-        input_validators::{is_keypair, is_url, is_url_or_moniker, is_valid_pubkey},
+        input_validators::{is_keypair, is_url, is_valid_pubkey},
     },
     solana_client::rpc_client::RpcClient,
     solana_sdk::{
@@ -28,7 +28,6 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let arg_network_name = Arg::with_name("network_name")
         .long("network-name")
         .value_name("NETWORK_NAME")
-        .validator(is_url_or_moniker)
         .help("The name of the new network");
 
     let arg_network_authority = Arg::with_name("network_authority")
@@ -240,7 +239,23 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     )
                 }
 
-                ("update", Some(_arg_matches)) => cmd_update_address(&rpc_client, &config),
+                ("update", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
+                    let address = pubkey_of(arg_matches, "address").unwrap();
+                    let risk = value_t_or_exit!(arg_matches, "risk", u8);
+                    let category = parse_arg_category(arg_matches)?;
+
+                    cmd_update_address(
+                        &rpc_client,
+                        &config,
+                        network_name,
+                        case_id,
+                        &address,
+                        risk,
+                        category,
+                    )
+                }
 
                 ("view", Some(arg_matches)) => {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
