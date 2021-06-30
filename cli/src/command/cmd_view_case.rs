@@ -2,8 +2,8 @@ use {
     crate::Config,
     colored::*,
     hapi_core_solana::state::{
-        network::get_network_address,
         case::{get_case_address, Case},
+        network::get_network_address,
     },
     solana_client::rpc_client::RpcClient,
     solana_program::borsh::try_from_slice_unchecked,

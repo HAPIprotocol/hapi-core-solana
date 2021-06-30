@@ -1,4 +1,4 @@
-use { crate::Config, solana_client::rpc_client::RpcClient};
+use {crate::Config, solana_client::rpc_client::RpcClient};
 
 pub fn cmd_report_address(
     _rpc_client: &RpcClient,
