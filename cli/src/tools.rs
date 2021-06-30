@@ -97,6 +97,12 @@ pub fn parse_arg_categories(
     Ok(tree)
 }
 
+pub fn parse_arg_category(
+    matches: &clap::ArgMatches,
+) -> Result<Category, Box<dyn std::error::Error>> {
+    category_from_string(matches.value_of("category").unwrap())
+}
+
 pub fn parse_arg_reporter_type(
     matches: &clap::ArgMatches,
 ) -> Result<ReporterType, Box<dyn std::error::Error>> {

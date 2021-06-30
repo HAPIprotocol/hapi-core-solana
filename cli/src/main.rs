@@ -221,7 +221,23 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         ("address", Some(arg_matches)) => {
             let (sub_command, sub_matches) = arg_matches.subcommand();
             match (sub_command, sub_matches) {
-                ("report", Some(_arg_matches)) => cmd_report_address(&rpc_client, &config),
+                ("report", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
+                    let address = pubkey_of(arg_matches, "address").unwrap();
+                    let risk = value_t_or_exit!(arg_matches, "risk", u8);
+                    let category = parse_arg_category(arg_matches)?;
+
+                    cmd_report_address(
+                        &rpc_client,
+                        &config,
+                        network_name,
+                        case_id,
+                        &address,
+                        risk,
+                        category,
+                    )
+                }
                 ("update", Some(_arg_matches)) => cmd_update_address(&rpc_client, &config),
                 _ => subcommand_address
                     .clone()
