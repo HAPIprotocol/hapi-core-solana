@@ -14,7 +14,7 @@ use crate::{
     state::case::{get_case_address_seeds, Case},
     state::enums::{Category, HapiAccountType},
     state::network::get_network_data,
-    state::reporter::get_reporter_address,
+    state::reporter::{assert_reporter_can_report_case, get_reporter_address},
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
@@ -45,6 +45,8 @@ pub fn process_report_case(
         msg!("Reporter doesn't match NetworkReporter account");
         return Err(HapiError::InvalidNetworkReporter.into());
     }
+
+    assert_reporter_can_report_case(network_reporter_info)?;
 
     // Obtain next case ID and increment it in Network account
     let mut network_data = get_network_data(network_info)?;

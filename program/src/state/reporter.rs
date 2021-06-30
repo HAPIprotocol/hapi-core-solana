@@ -71,7 +71,7 @@ pub fn assert_reporter_can_report_address(
     Ok(())
 }
 
-/// Checks reporter's ability to update case
+/// Checks reporter's ability to update the case
 pub fn assert_reporter_can_update_case(
     reporter_info: &AccountInfo,
     network_reporter_info: &AccountInfo,
@@ -90,6 +90,19 @@ pub fn assert_reporter_can_update_case(
         }
         _ => {
             msg!("Reporter doesn't have a permission to update this case");
+            Err(HapiError::InvalidReporterPermissions.into())
+        }
+    }
+}
+
+/// Checks reporter's ability to report cases
+pub fn assert_reporter_can_report_case(network_reporter_info: &AccountInfo) -> Result<(), ProgramError> {
+    let reporter_data = get_reporter_data(&network_reporter_info)?;
+
+    match reporter_data.reporter_type {
+        ReporterType::Authority | ReporterType::Full => Ok(()),
+        _ => {
+            msg!("Reporter doesn't have a permission to report a case");
             Err(HapiError::InvalidReporterPermissions.into())
         }
     }
