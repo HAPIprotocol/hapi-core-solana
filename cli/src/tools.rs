@@ -3,6 +3,7 @@ use {
   solana_client::rpc_client::RpcClient,
   solana_program::program_error::ProgramError,
   solana_sdk::pubkey::Pubkey,
+  std::collections::BTreeSet,
 };
 
 pub fn assert_is_empty_account(
@@ -82,4 +83,14 @@ pub fn category_from_string(input: &str) -> Result<Category, Box<dyn std::error:
     "ChildAbuse" => Ok(Category::ChildAbuse),
     _ => Err("Unknown category".into()),
   }
+}
+
+pub fn parse_arg_categories(matches: &clap::ArgMatches) -> Result<BTreeSet<Category>, Box<dyn std::error::Error>> {
+  let mut tree = BTreeSet::new();
+  if let Some(arg_categories) = matches.values_of("category") {
+      for category in arg_categories.clone() {
+          tree.insert(category_from_string(category)?);
+      }
+  }
+  Ok(tree)
 }

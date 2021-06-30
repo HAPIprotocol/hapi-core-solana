@@ -17,7 +17,6 @@ use {
         commitment_config::CommitmentConfig,
         signature::{read_keypair_file, Keypair, Signer},
     },
-    std::collections::BTreeSet,
 };
 
 pub struct Config {
@@ -239,16 +238,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 ("report", Some(arg_matches)) => {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_name = value_t_or_exit!(arg_matches, "case_name", String);
-
-                    let categories = { 
-                        let mut tree = BTreeSet::new();
-                        if let Some(arg_categories) = &arg_matches.values_of("category") {
-                            for category in arg_categories.clone() {
-                                tree.insert(category_from_string(category)?);
-                            }
-                        }
-                        tree
-                    };
+                    let categories = parse_arg_categories(&arg_matches)?;
 
                     cmd_report_case(&rpc_client, &config, network_name, case_name, categories)
                 }
@@ -256,16 +246,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 ("update", Some(arg_matches)) => {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
-
-                    let categories = { 
-                        let mut tree = BTreeSet::new();
-                        if let Some(arg_categories) = &arg_matches.values_of("category") {
-                            for category in arg_categories.clone() {
-                                tree.insert(category_from_string(category)?);
-                            }
-                        }
-                        tree
-                    };
+                    let categories = parse_arg_categories(&arg_matches)?;
 
                     cmd_update_case(&rpc_client, &config, network_name, case_id, categories)
                 }
