@@ -10,8 +10,7 @@ use {
         },
     },
     solana_client::rpc_client::RpcClient,
-    solana_program::borsh::try_from_slice_unchecked,
-    solana_sdk::{signature::Signer, transaction::Transaction},
+    solana_sdk::{borsh::try_from_slice_unchecked, signature::Signer, transaction::Transaction},
     std::collections::BTreeSet,
 };
 

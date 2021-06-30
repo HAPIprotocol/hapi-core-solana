@@ -130,7 +130,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let subcommand_address = SubCommand::with_name("address")
         .about("Manage addresses")
         .subcommand(SubCommand::with_name("report").about("Report a new address"))
-        .subcommand(SubCommand::with_name("update").about("Update an existing address"));
+        .subcommand(SubCommand::with_name("update").about("Update an existing address"))
+        .subcommand(SubCommand::with_name("address").about("View address data"));
 
     let app_matches = App::new(crate_name!())
         .about(crate_description!())
@@ -238,7 +239,16 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         category,
                     )
                 }
+
                 ("update", Some(_arg_matches)) => cmd_update_address(&rpc_client, &config),
+
+                ("view", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let address = pubkey_of(arg_matches, "address").unwrap();
+
+                    cmd_view_address(&rpc_client, &config, network_name, &address)
+                }
+
                 _ => subcommand_address
                     .clone()
                     .print_long_help()

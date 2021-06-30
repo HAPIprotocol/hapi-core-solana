@@ -16,7 +16,6 @@ solana-clap-utils = "1.7"
 solana-cli-config = "1.7"
 solana-client = "1.7"
 solana-logger = "1.7"
-solana-program = "1.7"
 solana-sdk = "1.7"
 
 [[bin]]

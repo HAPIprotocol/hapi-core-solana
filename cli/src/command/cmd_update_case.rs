@@ -20,16 +20,16 @@ pub fn cmd_update_case(
     if config.verbose {
         println!("{}: {}", "Network".bright_black(), network_name);
     }
-    let network_address = get_network_address(&network_name);
+    let network_account = get_network_address(&network_name);
     if config.verbose {
-        println!("{}: {}", "Network address".bright_black(), network_address);
+        println!("{}: {}", "Network account".bright_black(), network_account);
     }
-    let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
+    let case_account = get_case_address(&network_account, &case_id.to_le_bytes());
 
-    assert_is_existing_account(rpc_client, &case_address)?;
+    assert_is_existing_account(rpc_client, &case_account)?;
 
     if config.verbose {
-        println!("{}: {}", "Case address".bright_black(), case_address);
+        println!("{}: {}", "Case account".bright_black(), case_account);
     }
 
     let mut transaction = Transaction::new_with_payer(
@@ -45,7 +45,7 @@ pub fn cmd_update_case(
     transaction.try_sign(&[&config.keypair], blockhash)?;
     rpc_client.send_and_confirm_transaction_with_spinner(&transaction)?;
 
-    println!("{}: {}", "Case updated".green(), case_address);
+    println!("{}: {}", "Case updated".green(), case_account);
 
     Ok(())
 }

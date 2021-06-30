@@ -1,8 +1,7 @@
 use {
     hapi_core_solana::state::enums::{Category, ReporterType},
     solana_client::rpc_client::RpcClient,
-    solana_program::program_error::ProgramError,
-    solana_sdk::pubkey::Pubkey,
+    solana_sdk::{program_error::ProgramError, pubkey::Pubkey},
     std::collections::BTreeSet,
 };
 

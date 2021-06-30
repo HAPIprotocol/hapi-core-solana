@@ -10,8 +10,10 @@ use {
         },
     },
     solana_client::rpc_client::RpcClient,
-    solana_program::borsh::try_from_slice_unchecked,
-    solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction},
+    solana_sdk::{
+        borsh::try_from_slice_unchecked, pubkey::Pubkey, signature::Signer,
+        transaction::Transaction,
+    },
 };
 
 pub fn cmd_update_reporter(
@@ -32,23 +34,23 @@ pub fn cmd_update_reporter(
 
     assert_is_existing_account(rpc_client, &reporter_pubkey)?;
 
-    let reporter_address = get_reporter_address(network_account, reporter_pubkey);
+    let reporter_account = get_reporter_address(network_account, reporter_pubkey);
 
     if config.verbose {
         println!(
             "{}: {}",
-            "Reporter address".bright_black(),
-            reporter_address
+            "Reporter account".bright_black(),
+            reporter_account
         );
     }
 
-    assert_is_existing_account(rpc_client, &reporter_address)?;
+    assert_is_existing_account(rpc_client, &reporter_account)?;
 
     let mut transaction = Transaction::new_with_payer(
         &[instruction::update_reporter(
             &config.keypair.pubkey(),
             network_account,
-            &reporter_address,
+            &reporter_account,
             name,
             reporter_type,
         )],
@@ -58,7 +60,7 @@ pub fn cmd_update_reporter(
     transaction.try_sign(&[&config.keypair], blockhash)?;
     rpc_client.send_and_confirm_transaction_with_spinner(&transaction)?;
 
-    println!("{} {}", "Reporter updated:".green(), reporter_address);
+    println!("{} {}", "Reporter updated:".green(), reporter_account);
 
     Ok(())
 }

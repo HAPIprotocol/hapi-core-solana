@@ -13,8 +13,10 @@ use {
         },
     },
     solana_client::rpc_client::RpcClient,
-    solana_program::borsh::try_from_slice_unchecked,
-    solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction},
+    solana_sdk::{
+        borsh::try_from_slice_unchecked, pubkey::Pubkey, signature::Signer,
+        transaction::Transaction,
+    },
 };
 
 pub fn cmd_add_reporter(

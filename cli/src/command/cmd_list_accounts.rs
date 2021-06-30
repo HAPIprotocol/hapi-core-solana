@@ -9,7 +9,7 @@ use {
         },
     },
     solana_client::rpc_client::RpcClient,
-    solana_program::borsh::try_from_slice_unchecked,
+    solana_sdk::borsh::try_from_slice_unchecked,
 };
 pub fn cmd_list_accounts(
     rpc_client: &RpcClient,

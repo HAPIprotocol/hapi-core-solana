@@ -26,9 +26,9 @@ pub fn cmd_create_network(
 
     assert_is_existing_account(rpc_client, &network_authority)?;
 
-    let network_address = get_network_address(&network_name);
+    let network_account = get_network_address(&network_name);
 
-    assert_is_empty_account(rpc_client, &network_address)?;
+    assert_is_empty_account(rpc_client, &network_account)?;
 
     let mut transaction = Transaction::new_with_payer(
         &[instruction::create_network(network_authority, network_name)],
@@ -38,7 +38,7 @@ pub fn cmd_create_network(
     transaction.try_sign(&[&config.keypair], blockhash)?;
     rpc_client.send_and_confirm_transaction_with_spinner(&transaction)?;
 
-    println!("{}: {}", "Network created".green(), network_address);
+    println!("{}: {}", "Network created".green(), network_account);
 
     Ok(())
 }

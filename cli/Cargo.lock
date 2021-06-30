@@ -1118,7 +1118,6 @@ dependencies = [
  "solana-cli-config",
  "solana-client",
  "solana-logger",
- "solana-program",
  "solana-sdk",
 ]
 
