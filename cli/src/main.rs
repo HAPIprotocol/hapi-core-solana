@@ -240,22 +240,43 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_name = value_t_or_exit!(arg_matches, "case_name", String);
 
-                    let mut categories = BTreeSet::new();
-                    if let Some(arg_categories) = &arg_matches.values_of("category") {
-                        for category in arg_categories.clone() {
-                            categories.insert(category_from_string(category)?);
+                    let categories = { 
+                        let mut tree = BTreeSet::new();
+                        if let Some(arg_categories) = &arg_matches.values_of("category") {
+                            for category in arg_categories.clone() {
+                                tree.insert(category_from_string(category)?);
+                            }
                         }
+                        tree
                     };
 
                     cmd_report_case(&rpc_client, &config, network_name, case_name, categories)
                 }
-                ("update", Some(_arg_matches)) => cmd_update_case(&rpc_client, &config),
+
+                ("update", Some(arg_matches)) => {
+                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
+
+                    let categories = { 
+                        let mut tree = BTreeSet::new();
+                        if let Some(arg_categories) = &arg_matches.values_of("category") {
+                            for category in arg_categories.clone() {
+                                tree.insert(category_from_string(category)?);
+                            }
+                        }
+                        tree
+                    };
+
+                    cmd_update_case(&rpc_client, &config, network_name, case_id, categories)
+                }
+
                 ("view", Some(arg_matches)) => {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
 
                     cmd_view_case(&rpc_client, &config, network_name, case_id)
                 }
+
                 _ => subcommand_case
                     .clone()
                     .print_long_help()
@@ -273,12 +294,16 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         Some(pubkey) => pubkey,
                         None => config.keypair.pubkey(),
                     };
+
                     cmd_create_network(&rpc_client, &config, network_name, &network_authority)
                 }
+
                 ("view", Some(arg_matches)) => {
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
+
                     cmd_view_network(&rpc_client, &config, network_name)
                 }
+
                 _ => subcommand_network
                     .clone()
                     .print_long_help()
