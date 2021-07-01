@@ -118,7 +118,7 @@ impl HapiProgramTest {
         let name = format!("Network #{}", self.next_network_id).to_string();
         self.next_network_id += 1;
 
-        let create_network_ix = create_network(&authority.pubkey(), name.clone());
+        let create_network_ix = create_network(&authority.pubkey(), &name);
 
         self.process_transaction(&[create_network_ix], Some(&[&authority]))
             .await
@@ -162,7 +162,7 @@ impl HapiProgramTest {
             &authority.pubkey(),
             &network_cookie.address,
             &reporter_keypair.pubkey(),
-            name.clone(),
+            &name,
             reporter_type.clone(),
         );
 
@@ -205,10 +205,10 @@ impl HapiProgramTest {
 
         let report_case_ix = report_case(
             &reporter.reporter_keypair.pubkey(),
-            network.name.clone(),
+            &network.name,
             case_id,
-            name.clone(),
-            category_set.clone(),
+            &name,
+            &category_set,
         );
 
         self.process_transaction(&[report_case_ix], Some(&[&reporter.reporter_keypair]))
@@ -251,7 +251,7 @@ impl HapiProgramTest {
 
         let report_address_ix = report_address(
             &reporter.reporter_keypair.pubkey(),
-            network.name.clone(),
+            &network.name,
             case.id,
             &value,
             risk,
@@ -333,7 +333,7 @@ impl HapiProgramTest {
             &authority.pubkey(),
             &network_cookie.address,
             &reporter_cookie.reporter_keypair.pubkey(),
-            updated_reporter.name.clone(),
+            &updated_reporter.name,
             updated_reporter.reporter_type.clone(),
         );
 
@@ -349,13 +349,13 @@ impl HapiProgramTest {
         reporter: &Keypair,
         network_cookie: &NetworkCookie,
         case_cookie: &CaseCookie,
-        categories: BTreeSet<Category>,
+        categories: &BTreeSet<Category>,
     ) -> Result<(), ProgramError> {
         let update_case_ix = update_case(
             &reporter.pubkey(),
-            network_cookie.name.clone(),
+            &network_cookie.name,
             case_cookie.id,
-            categories.clone(),
+            categories,
         );
 
         self.process_transaction(&[update_case_ix], Some(&[&reporter]))

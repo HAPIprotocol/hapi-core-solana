@@ -27,7 +27,7 @@ pub fn add_reporter(
     network_account: &Pubkey,
     reporter_pubkey: &Pubkey,
     // Args
-    name: String,
+    name: &str,
     reporter_type: ReporterType,
 ) -> Instruction {
     let reporter_account = get_reporter_address(network_account, reporter_pubkey);
@@ -42,7 +42,7 @@ pub fn add_reporter(
     ];
 
     let instruction = HapiInstruction::AddReporter {
-        name,
+        name: name.to_string(),
         reporter_type,
     };
 
@@ -60,7 +60,7 @@ pub fn update_reporter(
     network_account: &Pubkey,
     reporter_account: &Pubkey,
     // Args
-    name: String,
+    name: &str,
     reporter_type: ReporterType,
 ) -> Instruction {
     let network_reporter_address = get_reporter_address(network_account, reporter_account);
@@ -73,7 +73,7 @@ pub fn update_reporter(
     ];
 
     let instruction = HapiInstruction::UpdateReporter {
-        name,
+        name: name.to_string(),
         reporter_type,
     };
 
@@ -89,12 +89,12 @@ pub fn report_case(
     // Accounts
     reporter: &Pubkey,
     // Args
-    network_name: String,
+    network_name: &str,
     case_id: u64,
-    case_name: String,
-    categories: BTreeSet<Category>,
+    case_name: &str,
+    categories: &BTreeSet<Category>,
 ) -> Instruction {
-    let network_address = get_network_address(&network_name);
+    let network_address = get_network_address(network_name);
     let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
     let reporter_address = get_reporter_address(&network_address, &reporter);
 
@@ -108,8 +108,8 @@ pub fn report_case(
     ];
 
     let instruction = HapiInstruction::ReportCase {
-        name: case_name,
-        categories,
+        name: case_name.to_string(),
+        categories: categories.clone(),
     };
 
     Instruction {
@@ -124,11 +124,11 @@ pub fn update_case(
     // Accounts
     reporter: &Pubkey,
     // Args
-    network_name: String,
+    network_name: &str,
     case_id: u64,
-    categories: BTreeSet<Category>,
+    categories: &BTreeSet<Category>,
 ) -> Instruction {
-    let network_address = get_network_address(&network_name);
+    let network_address = get_network_address(network_name);
     let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
     let reporter_address = get_reporter_address(&network_address, &reporter);
 
@@ -141,7 +141,9 @@ pub fn update_case(
         AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
-    let instruction = HapiInstruction::UpdateCase { categories };
+    let instruction = HapiInstruction::UpdateCase {
+        categories: categories.clone(),
+    };
 
     Instruction {
         program_id: id(),
@@ -155,13 +157,13 @@ pub fn report_address(
     // Accounts
     reporter: &Pubkey,
     // Args
-    network_name: String,
+    network_name: &str,
     case_id: u64,
     address: &Pubkey,
     risk: u8,
     category: Category,
 ) -> Instruction {
-    let network_address = get_network_address(&network_name);
+    let network_address = get_network_address(network_name);
     let address_address = get_address_address(&network_address, address);
     let reporter_address = get_reporter_address(&network_address, &reporter);
     let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
@@ -195,13 +197,13 @@ pub fn update_address(
     // Accounts
     reporter: &Pubkey,
     // Args
-    network_name: String,
+    network_name: &str,
     case_id: u64,
     address: &Pubkey,
     risk: u8,
     category: Category,
 ) -> Instruction {
-    let network_address = get_network_address(&network_name);
+    let network_address = get_network_address(network_name);
     let address_address = get_address_address(&network_address, address);
     let reporter_address = get_reporter_address(&network_address, &reporter);
     let case_address = get_case_address(&network_address, &case_id.to_le_bytes());

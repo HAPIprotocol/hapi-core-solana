@@ -19,7 +19,7 @@ use crate::{
 pub fn process_add_reporter(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    name: String,
+    name: &str,
     reporter_type: ReporterType,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
@@ -49,7 +49,7 @@ pub fn process_add_reporter(
 
     let network_reporter_data = NetworkReporter {
         account_type: HapiAccountType::NetworkReporter,
-        name,
+        name: name.to_string(),
         reporter_type,
     };
 

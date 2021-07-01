@@ -18,7 +18,7 @@ use crate::{
 pub fn process_update_reporter(
     _program_id: &Pubkey,
     accounts: &[AccountInfo],
-    name: String,
+    name: &str,
     reporter_type: ReporterType,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
@@ -51,7 +51,7 @@ pub fn process_update_reporter(
 
     // Update reporter data
     let mut reporter_data = get_reporter_data(network_reporter_info)?;
-    reporter_data.name = name;
+    reporter_data.name = name.to_string();
     reporter_data.reporter_type = reporter_type;
     reporter_data.serialize(&mut *network_reporter_info.data.borrow_mut())?;
 

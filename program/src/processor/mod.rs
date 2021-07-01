@@ -34,21 +34,21 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
 
     match instruction {
         HapiInstruction::CreateNetwork { name } => {
-            process_create_network(program_id, accounts, name)
+            process_create_network(program_id, accounts, &name)
         }
 
         HapiInstruction::AddReporter {
             name,
             reporter_type,
-        } => process_add_reporter(program_id, accounts, name, reporter_type),
+        } => process_add_reporter(program_id, accounts, &name, reporter_type),
 
         HapiInstruction::UpdateReporter {
             name,
             reporter_type,
-        } => process_update_reporter(program_id, accounts, name, reporter_type),
+        } => process_update_reporter(program_id, accounts, &name, reporter_type),
 
         HapiInstruction::ReportCase { name, categories } => {
-            process_report_case(program_id, accounts, name, &categories)
+            process_report_case(program_id, accounts, &name, &categories)
         }
 
         HapiInstruction::UpdateCase { categories } => {

@@ -16,7 +16,7 @@ pub fn create_network(
     // Accounts
     authority: &Pubkey,
     // Args
-    name: String,
+    name: &str,
 ) -> Instruction {
     let network_address = get_network_address(&name);
 
@@ -27,7 +27,7 @@ pub fn create_network(
         AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
-    let instruction = HapiInstruction::CreateNetwork { name };
+    let instruction = HapiInstruction::CreateNetwork { name: name.to_string() };
 
     Instruction {
         program_id: id(),

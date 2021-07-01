@@ -31,7 +31,7 @@ async fn test_case_reported() {
             &reporter_cookie.reporter_keypair,
             &network_cookie,
             &case_cookie,
-            category_set.clone(),
+            &category_set,
         )
         .await
         .unwrap();
@@ -93,7 +93,7 @@ async fn test_case_reported_with_all_categories() {
             &reporter_cookie.reporter_keypair,
             &network_cookie,
             &case_cookie,
-            category_set.clone(),
+            &category_set,
         )
         .await
         .unwrap();

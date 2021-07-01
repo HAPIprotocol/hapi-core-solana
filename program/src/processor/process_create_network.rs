@@ -18,7 +18,7 @@ use crate::{
 pub fn process_create_network(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    name: String,
+    name: &str,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
     let authority_info = next_account_info(account_info_iter)?; // 0
@@ -38,7 +38,7 @@ pub fn process_create_network(
     let network_data = Network {
         account_type: HapiAccountType::Network,
         authority: *authority_info.key,
-        name: name.clone(),
+        name: name.to_string(),
         next_case_id: 0,
     };
 

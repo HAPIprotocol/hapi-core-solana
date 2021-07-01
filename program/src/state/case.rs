@@ -41,26 +41,6 @@ impl IsInitialized for Case {
     }
 }
 
-// impl BorshDeserialize for EnumSet<T> {
-//   fn deserialize(buf: &mut &[u8]) -> IoResult<Self> {
-//     let u: u32 = BorshDeserialize::deserialize(buf)?;
-//     match u {
-//       0 => Ok(StakeState::Uninitialized),
-//       1 => {
-//         let meta: Meta = BorshDeserialize::deserialize(buf)?;
-//         Ok(StakeState::Initialized(meta))
-//       }
-//       2 => {
-//         let meta: Meta = BorshDeserialize::deserialize(buf)?;
-//         let stake: Stake = BorshDeserialize::deserialize(buf)?;
-//         Ok(StakeState::Stake(meta, stake))
-//       }
-//       3 => Ok(StakeState::RewardsPool),
-//       _ => Err(IoError::new(IoErrorKind::InvalidData, "Invalid enum value")),
-//     }
-//   }
-// }
-
 /// Checks whether case account exists, is initialized and owned by HAPI program
 pub fn assert_is_valid_case(case_info: &AccountInfo) -> Result<(), ProgramError> {
     assert_is_valid_account(case_info, HapiAccountType::Case, &id())

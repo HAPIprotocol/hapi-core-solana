@@ -23,7 +23,7 @@ use crate::{
 pub fn process_report_case(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
-    name: String,
+    name: &str,
     category_set: &BTreeSet<Category>,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
@@ -66,7 +66,7 @@ pub fn process_report_case(
 
     let case_data = Case {
         account_type: HapiAccountType::Case,
-        name,
+        name: name.to_string(),
         reporter_key: *reporter_info.key,
         categories: category_map,
     };
