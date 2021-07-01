@@ -14,11 +14,14 @@ pub enum HapiAccountType {
     /// Default uninitialized account state
     Uninitialized,
 
+    /// HAPI community account
+    Community,
+
     /// HAPI network account
     Network,
 
-    /// Network reporter account
-    NetworkReporter,
+    /// Reporter account
+    Reporter,
 
     /// Case account
     Case,

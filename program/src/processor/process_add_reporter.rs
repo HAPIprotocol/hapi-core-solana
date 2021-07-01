@@ -9,10 +9,10 @@ use solana_program::{
 
 use crate::{
     error::HapiError,
+    state::community::{assert_is_valid_community, get_community_data},
     state::enums::{HapiAccountType, ReporterType},
-    state::network::{assert_is_valid_network, get_network_data},
     state::reporter::get_reporter_address_seeds,
-    state::reporter::NetworkReporter,
+    state::reporter::Reporter,
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
@@ -24,9 +24,9 @@ pub fn process_add_reporter(
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
     let authority_info = next_account_info(account_info_iter)?; // 0
-    let network_info = next_account_info(account_info_iter)?; // 1
-    let reporter_info = next_account_info(account_info_iter)?; // 2
-    let network_reporter_info = next_account_info(account_info_iter)?; // 3
+    let community_info = next_account_info(account_info_iter)?; // 1
+    let reporter_key_info = next_account_info(account_info_iter)?; // 2
+    let reporter_info = next_account_info(account_info_iter)?; // 3
     let system_info = next_account_info(account_info_iter)?; // 4
     let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
@@ -37,27 +37,27 @@ pub fn process_add_reporter(
         return Err(HapiError::SignatureMissing.into());
     }
 
-    // Authority must match network record
-    assert_is_valid_network(network_info)?;
-    let network_data = get_network_data(network_info)?;
-    if network_data.authority != *authority_info.key {
-        msg!("Payer is not authority of the network");
+    // Authority must match community record
+    assert_is_valid_community(community_info)?;
+    let community_data = get_community_data(community_info)?;
+    if community_data.authority != *authority_info.key {
+        msg!("Payer is not the authority of the community");
         return Err(HapiError::InvalidNetworkAuthority.into());
     }
 
-    assert_is_empty_account(network_reporter_info)?;
+    assert_is_empty_account(reporter_info)?;
 
-    let network_reporter_data = NetworkReporter {
-        account_type: HapiAccountType::NetworkReporter,
+    let reporter_data = Reporter {
+        account_type: HapiAccountType::Reporter,
         name: name.to_string(),
         reporter_type,
     };
 
-    create_and_serialize_account_signed::<NetworkReporter>(
+    create_and_serialize_account_signed::<Reporter>(
         authority_info,
-        &network_reporter_info,
-        &network_reporter_data,
-        &get_reporter_address_seeds(network_info.key, reporter_info.key),
+        &reporter_info,
+        &reporter_data,
+        &get_reporter_address_seeds(community_info.key, reporter_key_info.key),
         program_id,
         system_info,
         rent,

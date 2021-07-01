@@ -1,4 +1,4 @@
-//! HAPI Config Account
+//! HAPI Network Account
 
 use {
     borsh::{BorshDeserialize, BorshSchema, BorshSerialize},
@@ -15,15 +15,12 @@ use crate::{
 };
 
 /// HAPI Network Account
-/// Account PDA seeds: ['network', name]
+/// Account PDA seeds: ['network', community_name, network_name]
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, BorshDeserialize, BorshSerialize, BorshSchema)]
 pub struct Network {
     /// HAPI account type
     pub account_type: HapiAccountType,
-
-    /// HAPI authority account
-    pub authority: Pubkey,
 
     /// HAPI network name
     pub name: String,
@@ -51,11 +48,22 @@ pub fn get_network_data(network_info: &AccountInfo) -> Result<Network, ProgramEr
 }
 
 /// Returns Network PDA seeds
-pub fn get_network_address_seeds(name: &str) -> [&[u8]; 2] {
-    [b"network", &name.as_bytes()]
+pub fn get_network_address_seeds<'a>(
+    community_address: &'a Pubkey,
+    network_name: &'a str,
+) -> [&'a [u8]; 3] {
+    [
+        b"network",
+        &community_address.as_ref(),
+        &network_name.as_bytes(),
+    ]
 }
 
 /// Returns Network PDA address
-pub fn get_network_address(name: &str) -> Pubkey {
-    Pubkey::find_program_address(&get_network_address_seeds(&name), &id()).0
+pub fn get_network_address<'a>(community_address: &'a Pubkey, network_name: &'a str) -> Pubkey {
+    Pubkey::find_program_address(
+        &get_network_address_seeds(community_address, network_name),
+        &id(),
+    )
+    .0
 }

@@ -27,29 +27,30 @@ pub fn process_report_case(
     category_set: &BTreeSet<Category>,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
-    let reporter_info = next_account_info(account_info_iter)?; // 0
-    let network_info = next_account_info(account_info_iter)?; // 1
-    let network_reporter_info = next_account_info(account_info_iter)?; // 2
-    let case_info = next_account_info(account_info_iter)?; // 3
-    let system_info = next_account_info(account_info_iter)?; // 4
-    let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
+    let reporter_key_info = next_account_info(account_info_iter)?; // 0
+    let community_info = next_account_info(account_info_iter)?; // 1
+    let network_info = next_account_info(account_info_iter)?; // 2
+    let reporter_info = next_account_info(account_info_iter)?; // 3
+    let case_info = next_account_info(account_info_iter)?; // 4
+    let system_info = next_account_info(account_info_iter)?; // 5
+    let rent_sysvar_info = next_account_info(account_info_iter)?; // 6
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
     // Reporter must sign
-    if !reporter_info.is_signer {
+    if !reporter_key_info.is_signer {
         msg!("Reporter did not sign ReportCase");
         return Err(HapiError::SignatureMissing.into());
     }
 
-    // Make sure that reporter's public key matches NetworkReporter account
-    let network_reporter_address = get_reporter_address(&network_info.key, &reporter_info.key);
-    if network_reporter_address != *network_reporter_info.key {
-        msg!("Reporter doesn't match NetworkReporter account");
-        return Err(HapiError::InvalidNetworkReporter.into());
+    // Make sure that reporter's public key matches Reporter account
+    let reporter_address = get_reporter_address(&community_info.key, &reporter_key_info.key);
+    if reporter_address != *reporter_info.key {
+        msg!("Reporter doesn't match Reporter account");
+        return Err(HapiError::InvalidReporter.into());
     }
 
     assert_is_empty_account(case_info)?;
-    assert_reporter_can_report_case(network_reporter_info)?;
+    assert_reporter_can_report_case(reporter_info)?;
 
     // Obtain next case ID and increment it in Network account
     let mut network_data = get_network_data(network_info)?;
@@ -66,12 +67,12 @@ pub fn process_report_case(
     let case_data = Case {
         account_type: HapiAccountType::Case,
         name: name.to_string(),
-        reporter_key: *reporter_info.key,
+        reporter_key: *reporter_key_info.key,
         categories: category_map,
     };
 
     create_and_serialize_account_signed::<Case>(
-        reporter_info,
+        reporter_key_info,
         &case_info,
         &case_data,
         &get_case_address_seeds(&network_info.key, &case_id.to_le_bytes()),

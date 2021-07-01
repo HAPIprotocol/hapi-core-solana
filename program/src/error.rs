@@ -10,6 +10,9 @@ use {
     thiserror::Error,
 };
 
+/// Generic error type
+pub type GenericError = Box<dyn std::error::Error>;
+
 /// Errors that may be returned by the HAPI program
 #[derive(Clone, Debug, Eq, Error, FromPrimitive, PartialEq)]
 pub enum HapiError {
@@ -42,8 +45,8 @@ pub enum HapiError {
     InvalidNetworkAuthority,
 
     /// Invalid network reporter
-    #[error("InvalidNetworkReporter")]
-    InvalidNetworkReporter,
+    #[error("InvalidReporter")]
+    InvalidReporter,
 
     /// This reporter has no permission to report
     #[error("ReportingNotPermitted")]

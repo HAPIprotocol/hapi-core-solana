@@ -24,35 +24,34 @@ pub fn process_update_case(
     category_set: &BTreeSet<Category>,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
-    let reporter_info = next_account_info(account_info_iter)?; // 0
-    let network_info = next_account_info(account_info_iter)?; // 1
-    let network_reporter_info = next_account_info(account_info_iter)?; // 2
-    let case_info = next_account_info(account_info_iter)?; // 3
+    let reporter_key_info = next_account_info(account_info_iter)?; // 0
+    let community_info = next_account_info(account_info_iter)?; // 1
+    let reporter_info = next_account_info(account_info_iter)?; // 3
+    let case_info = next_account_info(account_info_iter)?; // 4
 
     // Reporter must sign
-    if !reporter_info.is_signer {
+    if !reporter_key_info.is_signer {
         msg!("Reporter did not sign ReportCase");
         return Err(HapiError::SignatureMissing.into());
     }
 
-    // Make sure that reporter's public key matches NetworkReporter account
-    let network_reporter_address = get_reporter_address(&network_info.key, &reporter_info.key);
-    if network_reporter_address != *network_reporter_info.key {
-        msg!("Reporter doesn't match NetworkReporter account");
-        return Err(HapiError::InvalidNetworkReporter.into());
+    // Make sure that reporter's public key matches Reporter account
+    let reporter_address = get_reporter_address(&community_info.key, &reporter_key_info.key);
+    if reporter_address != *reporter_info.key {
+        msg!("Reporter doesn't match Reporter account");
+        return Err(HapiError::InvalidReporter.into());
     }
 
-    assert_is_valid_reporter(network_reporter_info)?;
+    assert_is_valid_reporter(reporter_info)?;
     assert_is_valid_case(case_info)?;
 
     let mut case_data = get_case_data(&case_info)?;
 
     assert_reporter_can_update_case(
+        &reporter_key_info,
         &reporter_info,
-        &network_reporter_info,
         &case_data.reporter_key,
     )?;
-
 
     // Convert category set to category map with blank data
     let mut category_map = Category::new_map();

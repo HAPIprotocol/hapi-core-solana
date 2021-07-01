@@ -8,7 +8,7 @@ use program_test::*;
 
 use hapi_core_solana::state::{
     enums::{HapiAccountType, ReporterType},
-    reporter::NetworkReporter,
+    reporter::Reporter,
 };
 
 #[tokio::test]
@@ -16,14 +16,14 @@ async fn test_reporter_updated() {
     // Arrange
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
-    let network_cookie = hapi_test.with_network(&authority_keypair).await;
+    let community_cookie = hapi_test.with_community(&authority_keypair).await;
     let reporter_cookie = hapi_test
-        .with_reporter(&network_cookie, &authority_keypair)
+        .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
 
-    let reporter = NetworkReporter {
-        account_type: HapiAccountType::NetworkReporter,
+    let reporter = Reporter {
+        account_type: HapiAccountType::Reporter,
         reporter_type: ReporterType::Inactive,
         name: "Updated".to_string(),
     };
@@ -32,7 +32,7 @@ async fn test_reporter_updated() {
     hapi_test
         .update_reporter(
             &authority_keypair,
-            &network_cookie,
+            &community_cookie,
             &reporter_cookie,
             &reporter,
         )

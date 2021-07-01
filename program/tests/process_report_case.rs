@@ -11,14 +11,19 @@ async fn test_case_reported() {
     // Arrange
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
-    let network_cookie = hapi_test.with_network(&authority_keypair).await;
+    let community_cookie = hapi_test.with_community(&authority_keypair).await;
+    let network_cookie = hapi_test
+        .with_network(&authority_keypair, &community_cookie)
+        .await;
     let reporter_cookie = hapi_test
-        .with_reporter(&network_cookie, &authority_keypair)
+        .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
 
     // Act
-    let case_cookie = hapi_test.with_case(&network_cookie, &reporter_cookie).await;
+    let case_cookie = hapi_test
+        .with_case(&reporter_cookie, &community_cookie, &network_cookie)
+        .await;
 
     // Assert
     let case_account = hapi_test.get_case_account(&case_cookie.address).await;

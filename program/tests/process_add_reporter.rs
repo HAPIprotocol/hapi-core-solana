@@ -10,11 +10,11 @@ async fn test_reporter_added() {
     // Arrange
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
-    let network_cookie = hapi_test.with_network(&authority_keypair).await;
+    let community_cookie = hapi_test.with_community(&authority_keypair).await;
 
     // Act
     let reporter_cookie = hapi_test
-        .with_reporter(&network_cookie, &authority_keypair)
+        .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
 
@@ -32,11 +32,11 @@ async fn test_reporter_not_added_invalid_authority() {
     let mut hapi_test = HapiProgramTest::start_new().await;
     let real_authority = hapi_test.create_funded_keypair().await;
     let rando_authority = hapi_test.create_funded_keypair().await;
-    let network_cookie = hapi_test.with_network(&real_authority).await;
+    let community_cookie = hapi_test.with_community(&real_authority).await;
 
     // Act
     let err = hapi_test
-        .with_reporter(&network_cookie, &rando_authority)
+        .with_reporter(&rando_authority, &community_cookie)
         .await
         .err()
         .unwrap();

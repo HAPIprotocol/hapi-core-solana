@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 //! Instruction types
 
-mod network;
-pub use network::*;
+mod authority;
+pub use authority::*;
 
 mod reporter;
 pub use reporter::*;
@@ -21,12 +21,25 @@ use crate::state::enums::{Category, ReporterType};
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, BorshDeserialize, BorshSerialize)]
 pub enum HapiInstruction {
+    /// Creates a new HAPI Community
+    ///
+    /// 0. `[signer]` Authority account
+    /// 1. `[writable]` Community account. PDA seeds: ['community', name]
+    /// 2. `[]` System
+    /// 3. `[]` Sysvar Rent
+    ///
+    CreateCommunity {
+        /// UTF-8 encoded HAPI Community name
+        name: String,
+    },
+
     /// Creates a new HAPI Network
     ///
     /// 0. `[signer]` Authority account
-    /// 1. `[writable]` Network account. PDA seeds: ['network', name]
-    /// 2. `[]` System
-    /// 3. `[]` Sysvar Rent
+    /// 1. `[]` Community account. PDA seeds: ['community', name]
+    /// 2. `[writable]` Network account. PDA seeds: ['network', community_address, network_name]
+    /// 3. `[]` System
+    /// 4. `[]` Sysvar Rent
     ///
     CreateNetwork {
         /// UTF-8 encoded HAPI Network name
@@ -36,9 +49,9 @@ pub enum HapiInstruction {
     /// Add reporter to network
     ///
     /// 0. `[signer]` Authority account
-    /// 1. `[writable]` Network account
-    /// 2. `[]` Reporter account (will be used as signer in address and case reports)
-    /// 3. `[writable]` NetworkReporter account. PDA seeds: [`reporter`, network_account, reporter_pubkey]
+    /// 1. `[]` Community account. PDA seeds: ['community', name]
+    /// 2. `[]` Reporter key (will be used as signer in address and case reports)
+    /// 3. `[writable]` Reporter account. PDA seeds: [`reporter`, community_address, reporter_pubkey]
     /// 4. `[]` System
     /// 5. `[]` Sysvar Rent
     ///
@@ -53,9 +66,9 @@ pub enum HapiInstruction {
     /// Update reporter name and type
     ///
     /// 0. `[signer]` Authority account
-    /// 1. `[]` Network account
-    /// 2. `[writable]` NetworkReporter account. PDA seeds: [`reporter`, network_account, reporter_pubkey]
-    /// 3. `[]` Reporter account
+    /// 1. `[]` Community account. PDA seeds: ['community', name]
+    /// 2. `[writable]` Reporter account. PDA seeds: [`reporter`, community_address, reporter_pubkey]
+    /// 3. `[]` Reporter key
     ///
     UpdateReporter {
         /// UTF-8 encoded Reporter name
@@ -67,9 +80,9 @@ pub enum HapiInstruction {
 
     /// Report a new case
     ///
-    /// 0. `[signer]` Reporter account
+    /// 0. `[signer]` Reporter key
     /// 1. `[writable]` Network account
-    /// 2. `[]` NetworkReporter account
+    /// 2. `[]` Reporter account
     /// 3. `[writable]` Case account. PDA seeds: ['case', network_account, case_id]
     /// 4. `[]` System
     /// 5. `[]` Sysvar Rent
@@ -84,9 +97,9 @@ pub enum HapiInstruction {
 
     /// Update an existing case
     ///
-    /// 0. `[signer]` Reporter account
+    /// 0. `[signer]` Reporter key
     /// 1. `[]` Network account
-    /// 2. `[]` NetworkReporter account
+    /// 2. `[]` Reporter account
     /// 3. `[writable]` Case account. PDA seeds: ['case', network_account, case_id]
     ///
     UpdateCase {
@@ -96,13 +109,14 @@ pub enum HapiInstruction {
 
     /// Report an address for an existing case
     ///
-    /// 0. `[signer]` Reporter account
-    /// 1. `[]` Network account
-    /// 2. `[]` NetworkReporter account
-    /// 3. `[]` Case account. PDA seeds: ['case', network_account, case_id]
-    /// 4. `[writable]` Address account. PDA seeds: ['address', network_account, address]
-    /// 5. `[]` System
-    /// 6. `[]` Sysvar Rent
+    /// 0. `[signer]` Reporter key
+    /// 1. `[]` Community account
+    /// 2. `[]` Network account
+    /// 3. `[]` Reporter account
+    /// 4. `[]` Case account. PDA seeds: ['case', network_account, case_id]
+    /// 5. `[writable]` Address account. PDA seeds: ['address', network_account, address]
+    /// 6. `[]` System
+    /// 7. `[]` Sysvar Rent
     ///
     ReportAddress {
         /// Address value

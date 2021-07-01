@@ -13,7 +13,7 @@ use crate::{
     state::address::{assert_is_valid_address, get_address_data},
     state::case::{assert_is_valid_case, get_case_address},
     state::enums::Category,
-    state::reporter::{assert_reporter_belongs_to_network, assert_reporter_can_report_address},
+    state::reporter::{assert_reporter_belongs_to_community, assert_reporter_can_report_address},
 };
 
 pub fn process_update_address(
@@ -24,21 +24,22 @@ pub fn process_update_address(
     category: Category,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
-    let reporter_info = next_account_info(account_info_iter)?; // 0
-    let network_info = next_account_info(account_info_iter)?; // 1
-    let network_reporter_info = next_account_info(account_info_iter)?; // 2
-    let case_info = next_account_info(account_info_iter)?; // 3
-    let address_info = next_account_info(account_info_iter)?; // 4
+    let reporter_key_info = next_account_info(account_info_iter)?; // 0
+    let community_info = next_account_info(account_info_iter)?; // 1
+    let network_info = next_account_info(account_info_iter)?; // 2
+    let reporter_info = next_account_info(account_info_iter)?; // 3
+    let case_info = next_account_info(account_info_iter)?; // 4
+    let address_info = next_account_info(account_info_iter)?; // 5
 
     // Reporter must sign
-    if !reporter_info.is_signer {
+    if !reporter_key_info.is_signer {
         msg!("Reporter did not sign ReportCase");
         return Err(HapiError::SignatureMissing.into());
     }
 
     assert_is_valid_address(address_info)?;
-    assert_reporter_belongs_to_network(network_reporter_info, network_info, &reporter_info.key)?;
-    assert_reporter_can_report_address(network_reporter_info)?;
+    assert_reporter_belongs_to_community(reporter_info, community_info, &reporter_key_info.key)?;
+    assert_reporter_can_report_address(reporter_info)?;
 
     // Make sure that case ID and account is fine
     assert_is_valid_case(&case_info)?;
@@ -52,7 +53,7 @@ pub fn process_update_address(
     address_data.case_id = case_id;
     address_data.category = category;
     address_data.risk = risk;
-    address_data.serialize(&mut *network_reporter_info.data.borrow_mut())?;
+    address_data.serialize(&mut *reporter_info.data.borrow_mut())?;
 
     Ok(())
 }

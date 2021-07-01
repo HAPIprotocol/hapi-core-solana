@@ -13,13 +13,18 @@ async fn test_case_reported() {
     // Arrange
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
-    let network_cookie = hapi_test.with_network(&authority_keypair).await;
+    let community_cookie = hapi_test.with_community(&authority_keypair).await;
+    let network_cookie = hapi_test
+        .with_network(&authority_keypair, &community_cookie)
+        .await;
     let reporter_cookie = hapi_test
-        .with_reporter(&network_cookie, &authority_keypair)
+        .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
 
-    let case_cookie = hapi_test.with_case(&network_cookie, &reporter_cookie).await;
+    let case_cookie = hapi_test
+        .with_case(&reporter_cookie, &community_cookie, &network_cookie)
+        .await;
     let category_set: BTreeSet<Category> = vec![Category::MiningPool, Category::Safe]
         .iter()
         .cloned()
@@ -29,6 +34,7 @@ async fn test_case_reported() {
     hapi_test
         .update_case(
             &reporter_cookie.reporter_keypair,
+            &community_cookie,
             &network_cookie,
             &case_cookie,
             &category_set,
@@ -55,13 +61,17 @@ async fn test_case_reported_with_all_categories() {
     // Arrange
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
-    let network_cookie = hapi_test.with_network(&authority_keypair).await;
+    let community_cookie = hapi_test.with_community(&authority_keypair).await;
+    let network_cookie = hapi_test
+        .with_network(&authority_keypair, &community_cookie)
+        .await;
     let reporter_cookie = hapi_test
-        .with_reporter(&network_cookie, &authority_keypair)
+        .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
-
-    let case_cookie = hapi_test.with_case(&network_cookie, &reporter_cookie).await;
+    let case_cookie = hapi_test
+        .with_case(&reporter_cookie, &community_cookie, &network_cookie)
+        .await;
     let category_set: BTreeSet<Category> = vec![
         Category::Safe,
         Category::WalletService,
@@ -91,6 +101,7 @@ async fn test_case_reported_with_all_categories() {
     hapi_test
         .update_case(
             &reporter_cookie.reporter_keypair,
+            &community_cookie,
             &network_cookie,
             &case_cookie,
             &category_set,

@@ -9,6 +9,7 @@ use {
 };
 
 mod process_add_reporter;
+mod process_create_community;
 mod process_create_network;
 mod process_report_address;
 mod process_report_case;
@@ -18,6 +19,7 @@ mod process_update_reporter;
 
 use crate::instruction::HapiInstruction;
 use process_add_reporter::*;
+use process_create_community::*;
 use process_create_network::*;
 use process_report_address::*;
 use process_report_case::*;
@@ -33,6 +35,10 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
     msg!("HAPI-INSTRUCTION: {:?}", instruction);
 
     match instruction {
+        HapiInstruction::CreateCommunity { name } => {
+            process_create_community(program_id, accounts, &name)
+        }
+
         HapiInstruction::CreateNetwork { name } => {
             process_create_network(program_id, accounts, &name)
         }

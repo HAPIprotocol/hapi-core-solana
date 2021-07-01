@@ -12,7 +12,7 @@ use crate::{
     state::address::{get_address_address_seeds, Address},
     state::case::{assert_is_valid_case, get_case_address},
     state::enums::{Category, HapiAccountType},
-    state::reporter::{assert_reporter_belongs_to_network, assert_reporter_can_report_address},
+    state::reporter::{assert_reporter_belongs_to_community, assert_reporter_can_report_address},
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
@@ -25,23 +25,24 @@ pub fn process_report_address(
     category: Category,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
-    let reporter_info = next_account_info(account_info_iter)?; // 0
-    let network_info = next_account_info(account_info_iter)?; // 1
-    let network_reporter_info = next_account_info(account_info_iter)?; // 2
-    let case_info = next_account_info(account_info_iter)?; // 3
-    let address_info = next_account_info(account_info_iter)?; // 4
-    let system_info = next_account_info(account_info_iter)?; // 5
-    let rent_sysvar_info = next_account_info(account_info_iter)?; // 6
+    let reporter_key_info = next_account_info(account_info_iter)?; // 0
+    let community_info = next_account_info(account_info_iter)?; // 1
+    let network_info = next_account_info(account_info_iter)?; // 2
+    let reporter_info = next_account_info(account_info_iter)?; // 3
+    let case_info = next_account_info(account_info_iter)?; // 4
+    let address_info = next_account_info(account_info_iter)?; // 5
+    let system_info = next_account_info(account_info_iter)?; // 6
+    let rent_sysvar_info = next_account_info(account_info_iter)?; // 7
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
     // Reporter must sign
-    if !reporter_info.is_signer {
+    if !reporter_key_info.is_signer {
         msg!("Reporter did not sign ReportCase");
         return Err(HapiError::SignatureMissing.into());
     }
 
-    assert_reporter_belongs_to_network(network_reporter_info, network_info, &reporter_info.key)?;
-    assert_reporter_can_report_address(network_reporter_info)?;
+    assert_reporter_belongs_to_community(reporter_info, community_info, &reporter_key_info.key)?;
+    assert_reporter_can_report_address(reporter_info)?;
     assert_is_empty_account(address_info)?;
 
     // Make sure that case ID and account is fine
@@ -59,7 +60,7 @@ pub fn process_report_address(
     };
 
     create_and_serialize_account_signed::<Address>(
-        reporter_info,
+        reporter_key_info,
         &address_info,
         &address_data,
         &get_address_address_seeds(&network_info.key, value),
