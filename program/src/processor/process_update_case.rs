@@ -43,6 +43,7 @@ pub fn process_update_case(
     }
 
     assert_is_valid_reporter(network_reporter_info)?;
+    assert_is_valid_case(case_info)?;
 
     let mut case_data = get_case_data(&case_info)?;
 
@@ -52,7 +53,6 @@ pub fn process_update_case(
         &case_data.reporter_key,
     )?;
 
-    assert_is_valid_case(case_info)?;
 
     // Convert category set to category map with blank data
     let mut category_map = Category::new_map();
@@ -61,7 +61,6 @@ pub fn process_update_case(
     }
 
     case_data.categories = category_map;
-
     case_data.serialize(&mut *case_info.data.borrow_mut())?;
 
     Ok(())

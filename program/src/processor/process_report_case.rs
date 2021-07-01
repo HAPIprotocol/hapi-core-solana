@@ -48,6 +48,7 @@ pub fn process_report_case(
         return Err(HapiError::InvalidNetworkReporter.into());
     }
 
+    assert_is_empty_account(case_info)?;
     assert_reporter_can_report_case(network_reporter_info)?;
 
     // Obtain next case ID and increment it in Network account
@@ -55,8 +56,6 @@ pub fn process_report_case(
     let case_id = network_data.next_case_id;
     network_data.next_case_id += 1;
     network_data.serialize(&mut *network_info.data.borrow_mut())?;
-
-    assert_is_empty_account(case_info)?;
 
     // Convert category set to category map with blank data
     let mut category_map = Category::new_map();

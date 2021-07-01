@@ -42,6 +42,7 @@ pub fn process_report_address(
 
     assert_reporter_belongs_to_network(network_reporter_info, network_info, &reporter_info.key)?;
     assert_reporter_can_report_address(network_reporter_info)?;
+    assert_is_empty_account(address_info)?;
 
     // Make sure that case ID and account is fine
     assert_is_valid_case(&case_info)?;
@@ -49,8 +50,6 @@ pub fn process_report_address(
         msg!("Invalid case ID");
         return Err(HapiError::CaseIDMismatch.into());
     }
-
-    assert_is_empty_account(address_info)?;
 
     let address_data = Address {
         account_type: HapiAccountType::Address,

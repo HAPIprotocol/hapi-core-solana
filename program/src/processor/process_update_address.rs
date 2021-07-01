@@ -36,10 +36,9 @@ pub fn process_update_address(
         return Err(HapiError::SignatureMissing.into());
     }
 
+    assert_is_valid_address(address_info)?;
     assert_reporter_belongs_to_network(network_reporter_info, network_info, &reporter_info.key)?;
     assert_reporter_can_report_address(network_reporter_info)?;
-
-    // TODO: check if reporter can update this address
 
     // Make sure that case ID and account is fine
     assert_is_valid_case(&case_info)?;
@@ -47,8 +46,6 @@ pub fn process_update_address(
         msg!("Invalid case ID");
         return Err(HapiError::CaseIDMismatch.into());
     }
-
-    assert_is_valid_address(address_info)?;
 
     // Update address data
     let mut address_data = get_address_data(address_info)?;
