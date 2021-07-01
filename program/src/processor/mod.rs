@@ -1,9 +1,11 @@
 //! Program processor
 
-use borsh::BorshDeserialize;
-use solana_program::{
-    account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
-    pubkey::Pubkey,
+use {
+    borsh::BorshDeserialize,
+    solana_program::{
+        account_info::AccountInfo, entrypoint::ProgramResult, msg, program_error::ProgramError,
+        pubkey::Pubkey,
+    },
 };
 
 mod process_add_reporter;

@@ -1,10 +1,12 @@
 //! General purpose account utility functions
 
-use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{
-    account_info::AccountInfo, borsh::try_from_slice_unchecked, msg, program::invoke_signed,
-    program_error::ProgramError, program_pack::IsInitialized, pubkey::Pubkey, rent::Rent,
-    system_instruction::create_account,
+use {
+    borsh::{BorshDeserialize, BorshSerialize},
+    solana_program::{
+        account_info::AccountInfo, borsh::try_from_slice_unchecked, msg, program::invoke_signed,
+        program_error::ProgramError, program_pack::IsInitialized, pubkey::Pubkey, rent::Rent,
+        system_instruction::create_account,
+    },
 };
 
 use crate::error::HapiError;

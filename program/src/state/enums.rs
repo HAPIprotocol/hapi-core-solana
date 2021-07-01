@@ -1,7 +1,9 @@
 //! State enumerations
 
-use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
-use std::{collections::BTreeMap};
+use {
+    borsh::{BorshDeserialize, BorshSchema, BorshSerialize},
+    std::collections::BTreeMap,
+};
 
 /// Defines all HAPI accounts types
 #[repr(C)]

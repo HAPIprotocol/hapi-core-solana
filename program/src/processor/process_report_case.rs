@@ -1,13 +1,15 @@
-use borsh::BorshSerialize;
-use solana_program::{
-    account_info::{next_account_info, AccountInfo},
-    entrypoint::ProgramResult,
-    msg,
-    pubkey::Pubkey,
-    rent::Rent,
-    sysvar::Sysvar,
+use {
+    borsh::BorshSerialize,
+    solana_program::{
+        account_info::{next_account_info, AccountInfo},
+        entrypoint::ProgramResult,
+        msg,
+        pubkey::Pubkey,
+        rent::Rent,
+        sysvar::Sysvar,
+    },
+    std::collections::BTreeSet,
 };
-use std::collections::BTreeSet;
 
 use crate::{
     error::HapiError,

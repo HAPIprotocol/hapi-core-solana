@@ -1,12 +1,14 @@
 //! Reporter operation instructions
 
-use borsh::BorshSerialize;
-use solana_program::{
-    instruction::{AccountMeta, Instruction},
-    pubkey::Pubkey,
-    system_program, sysvar,
+use {
+    borsh::BorshSerialize,
+    solana_program::{
+        instruction::{AccountMeta, Instruction},
+        pubkey::Pubkey,
+        system_program, sysvar,
+    },
+    std::collections::BTreeSet,
 };
-use std::collections::BTreeSet;
 
 use crate::{
     id,
@@ -224,4 +226,3 @@ pub fn update_address(
         data: instruction.try_to_vec().unwrap(),
     }
 }
-

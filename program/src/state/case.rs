@@ -1,11 +1,13 @@
 //! HAPI Case Account
 
-use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::{
-    account_info::AccountInfo, program_error::ProgramError, program_pack::IsInitialized,
-    pubkey::Pubkey,
+use {
+    borsh::{BorshDeserialize, BorshSerialize},
+    solana_program::{
+        account_info::AccountInfo, program_error::ProgramError, program_pack::IsInitialized,
+        pubkey::Pubkey,
+    },
+    std::collections::BTreeMap,
 };
-use std::collections::BTreeMap;
 
 use crate::{
     id,

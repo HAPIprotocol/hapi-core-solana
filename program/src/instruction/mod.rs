@@ -9,9 +9,11 @@ pub use reporter::*;
 
 // TODO: describe actors (Authority and Reporter) and their respective program accounts
 
-use borsh::{BorshDeserialize, BorshSerialize};
-use solana_program::pubkey::Pubkey;
-use std::collections::BTreeSet;
+use {
+    borsh::{BorshDeserialize, BorshSerialize},
+    solana_program::pubkey::Pubkey,
+    std::collections::BTreeSet,
+};
 
 use crate::state::enums::{Category, ReporterType};
 

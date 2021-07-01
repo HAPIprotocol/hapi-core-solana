@@ -1,7 +1,6 @@
 //#![cfg(feature = "test-bpf")]
 
-use hapi_core_solana::error::HapiError;
-use solana_program_test::*;
+use {hapi_core_solana::error::HapiError, solana_program_test::*};
 
 pub mod program_test;
 use program_test::*;

@@ -1,10 +1,12 @@
 //! Network operation instructions
 
-use borsh::BorshSerialize;
-use solana_program::{
-    instruction::{AccountMeta, Instruction},
-    pubkey::Pubkey,
-    system_program, sysvar,
+use {
+    borsh::BorshSerialize,
+    solana_program::{
+        instruction::{AccountMeta, Instruction},
+        pubkey::Pubkey,
+        system_program, sysvar,
+    },
 };
 
 use crate::{id, instruction::HapiInstruction, state::network::get_network_address};

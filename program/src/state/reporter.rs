@@ -1,9 +1,11 @@
 //! HAPI Reporter Account
 
-use borsh::{BorshDeserialize, BorshSchema, BorshSerialize};
-use solana_program::{
-    account_info::AccountInfo, msg, program_error::ProgramError, program_pack::IsInitialized,
-    pubkey::Pubkey,
+use {
+    borsh::{BorshDeserialize, BorshSchema, BorshSerialize},
+    solana_program::{
+        account_info::AccountInfo, msg, program_error::ProgramError, program_pack::IsInitialized,
+        pubkey::Pubkey,
+    },
 };
 
 use crate::{
@@ -96,7 +98,9 @@ pub fn assert_reporter_can_update_case(
 }
 
 /// Checks reporter's ability to report cases
-pub fn assert_reporter_can_report_case(network_reporter_info: &AccountInfo) -> Result<(), ProgramError> {
+pub fn assert_reporter_can_report_case(
+    network_reporter_info: &AccountInfo,
+) -> Result<(), ProgramError> {
     let reporter_data = get_reporter_data(&network_reporter_info)?;
 
     match reporter_data.reporter_type {

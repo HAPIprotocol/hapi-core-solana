@@ -1,9 +1,11 @@
-use borsh::BorshSerialize;
-use solana_program::{
-    account_info::{next_account_info, AccountInfo},
-    entrypoint::ProgramResult,
-    msg,
-    pubkey::Pubkey,
+use {
+    borsh::BorshSerialize,
+    solana_program::{
+        account_info::{next_account_info, AccountInfo},
+        entrypoint::ProgramResult,
+        msg,
+        pubkey::Pubkey,
+    },
 };
 
 use crate::{

@@ -1,13 +1,12 @@
 //#![cfg(feature = "test-bpf")]
 
-use solana_program_test::*;
+use {solana_program_test::*, std::collections::BTreeSet};
 
 mod program_test;
 
 use program_test::*;
 
 use hapi_core_solana::state::enums::Category;
-use std::collections::BTreeSet;
 
 #[tokio::test]
 async fn test_case_reported() {

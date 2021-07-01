@@ -1,8 +1,10 @@
-use solana_program::pubkey::Pubkey;
-use solana_sdk::signature::Keypair;
-
-use hapi_core_solana::state::{
-    address::Address, case::Case, enums::ReporterType, network::Network, reporter::NetworkReporter,
+use {
+    hapi_core_solana::state::{
+        address::Address, case::Case, enums::ReporterType, network::Network,
+        reporter::NetworkReporter,
+    },
+    solana_program::pubkey::Pubkey,
+    solana_sdk::signature::Keypair,
 };
 
 #[derive(Debug)]

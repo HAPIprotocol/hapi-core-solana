@@ -1,17 +1,23 @@
-use borsh::BorshDeserialize;
-use solana_program::{
-    borsh::try_from_slice_unchecked,
-    instruction::Instruction,
-    program_error::ProgramError,
-    program_pack::{IsInitialized, Pack},
-    pubkey::Pubkey,
-    rent::Rent,
-    system_instruction,
+use {
+    borsh::BorshDeserialize,
+    solana_program::{
+        borsh::try_from_slice_unchecked,
+        instruction::Instruction,
+        program_error::ProgramError,
+        program_pack::{IsInitialized, Pack},
+        pubkey::Pubkey,
+        rent::Rent,
+        system_instruction,
+    },
+    solana_program_test::ProgramTest,
+    solana_program_test::*,
+    solana_sdk::{
+        account::Account,
+        signature::{Keypair, Signer},
+        transaction::Transaction,
+    },
+    std::collections::BTreeSet,
 };
-use std::collections::BTreeSet;
-
-use solana_program_test::ProgramTest;
-use solana_program_test::*;
 
 use hapi_core_solana::{
     instruction::{
@@ -23,11 +29,6 @@ use hapi_core_solana::{
     state::enums::{Category, HapiAccountType, ReporterType},
     state::network::{get_network_address, Network},
     state::reporter::{get_reporter_address, NetworkReporter},
-};
-use solana_sdk::{
-    account::Account,
-    signature::{Keypair, Signer},
-    transaction::Transaction,
 };
 
 pub mod cookies;
