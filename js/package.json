@@ -1,0 +1,23 @@
+{
+  "name": "@hapi.one/solana-client",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Client library for Solana smart contract for #HAPI",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "HAPI",
+  "license": "BSL-1.1",
+  "devDependencies": {
+    "typescript": "^4.3.5"
+  }
+}
