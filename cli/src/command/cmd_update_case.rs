@@ -3,7 +3,10 @@ use {
     colored::*,
     hapi_core_solana::{
         instruction,
-        state::{case::get_case_address, enums::Category, network::get_network_address},
+        state::{
+            case::get_case_address, community::get_community_address, enums::Category,
+            network::get_network_address,
+        },
     },
     solana_client::rpc_client::RpcClient,
     solana_sdk::{signature::Signer, transaction::Transaction},
@@ -13,6 +16,7 @@ use {
 pub fn cmd_update_case(
     rpc_client: &RpcClient,
     config: &Config,
+    community_name: String,
     network_name: String,
     case_id: u64,
     categories: BTreeSet<Category>,
@@ -20,7 +24,8 @@ pub fn cmd_update_case(
     if config.verbose {
         println!("{}: {}", "Network".bright_black(), network_name);
     }
-    let network_account = get_network_address(&network_name);
+    let community_account = get_community_address(&community_name);
+    let network_account = get_network_address(&community_account, &network_name);
     if config.verbose {
         println!("{}: {}", "Network account".bright_black(), network_account);
     }
@@ -35,10 +40,11 @@ pub fn cmd_update_case(
     let mut transaction = Transaction::new_with_payer(
         &[instruction::update_case(
             &config.keypair.pubkey(),
-            network_name,
+            &format!("{}/{}", &community_name, &network_name),
             case_id,
-            categories,
-        )],
+            &categories,
+        )
+        .unwrap()],
         Some(&config.keypair.pubkey()),
     );
     let blockhash = rpc_client.get_recent_blockhash()?.0;

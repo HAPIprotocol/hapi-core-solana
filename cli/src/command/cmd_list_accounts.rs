@@ -5,7 +5,7 @@ use {
         id,
         state::{
             address::Address, case::Case, enums::HapiAccountType, network::Network,
-            reporter::NetworkReporter,
+            reporter::Reporter,
         },
     },
     solana_client::rpc_client::RpcClient,
@@ -23,8 +23,8 @@ pub fn cmd_list_accounts(
             .split_at(std::mem::size_of::<HapiAccountType>());
         let account_type: HapiAccountType = try_from_slice_unchecked(account_type).unwrap();
         let account_data: Box<dyn std::fmt::Debug> = match account_type {
-            HapiAccountType::NetworkReporter => {
-                Box::new(try_from_slice_unchecked::<NetworkReporter>(&account.data)?)
+            HapiAccountType::Reporter => {
+                Box::new(try_from_slice_unchecked::<Reporter>(&account.data)?)
             }
             HapiAccountType::Network => {
                 Box::new(try_from_slice_unchecked::<Network>(&account.data)?)

@@ -2,8 +2,8 @@ use {
     crate::Config,
     colored::*,
     hapi_core_solana::state::{
-        network::get_network_address,
-        reporter::{get_reporter_address, NetworkReporter},
+        community::get_community_address,
+        reporter::{get_reporter_address, Reporter},
     },
     solana_client::rpc_client::RpcClient,
     solana_sdk::{borsh::try_from_slice_unchecked, pubkey::Pubkey},
@@ -12,19 +12,23 @@ use {
 pub fn cmd_view_reporter(
     rpc_client: &RpcClient,
     config: &Config,
-    network_name: String,
+    community_name: String,
     reporter_pubkey: &Pubkey,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if config.verbose {
-        println!("{}: {}", "Network".bright_black(), network_name);
+        println!("{}: {}", "Community".bright_black(), community_name);
     }
 
-    let network_account = get_network_address(&network_name);
+    let community_account = get_community_address(&community_name);
     if config.verbose {
-        println!("{}: {}", "Network account".bright_black(), network_account);
+        println!(
+            "{}: {}",
+            "Community account".bright_black(),
+            community_account
+        );
     }
 
-    let reporter_account = get_reporter_address(&network_account, &reporter_pubkey);
+    let reporter_account = get_reporter_address(&community_account, &reporter_pubkey);
     if config.verbose {
         println!(
             "{}: {}",
@@ -34,7 +38,7 @@ pub fn cmd_view_reporter(
     }
 
     let reporter_data = rpc_client.get_account_data(&reporter_account)?;
-    let reporter: NetworkReporter = try_from_slice_unchecked(&reporter_data)?;
+    let reporter: Reporter = try_from_slice_unchecked(&reporter_data)?;
     println!("{:#?}", reporter);
 
     Ok(())

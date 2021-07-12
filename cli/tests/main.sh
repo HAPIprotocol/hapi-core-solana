@@ -57,35 +57,39 @@ solana airdrop 10 $CAROL_KEYPAIR
 echo "==> Creating network"
 (
   set +e
-  $CLI --keypair $AUTHORITY_KEYPAIR network create test1 ||
+
+  $CLI --keypair $AUTHORITY_KEYPAIR community create hapi.one ||
+    exception "Can't create community hapi.one"
+
+  $CLI --keypair $AUTHORITY_KEYPAIR network create hapi.one test1 ||
     exception "Can't create network test1"
-  $CLI --keypair $AUTHORITY_KEYPAIR network view test1 ||
+  $CLI --keypair $AUTHORITY_KEYPAIR network view hapi.one test1 ||
     exception "Can't view network test1"
 
-  $CLI --keypair $UNINITIALIZED_KEYPAIR network create test2 2>&1 >/dev/null &&
+  $CLI --keypair $UNINITIALIZED_KEYPAIR network create hapi.one test2 2>&1 >/dev/null &&
     exception "Shouldn't be able to create network from uninitialized account"
 
-  $CLI --keypair $AUTHORITY_KEYPAIR reporter add test1 $(solana-keygen pubkey $ALICE_KEYPAIR) Alice Authority &&
-    $CLI --keypair $AUTHORITY_KEYPAIR reporter view test1 $(solana-keygen pubkey $ALICE_KEYPAIR) ||
+  $CLI --keypair $AUTHORITY_KEYPAIR reporter add hapi.one $(solana-keygen pubkey $ALICE_KEYPAIR) Alice Authority &&
+    $CLI --keypair $AUTHORITY_KEYPAIR reporter view hapi.one $(solana-keygen pubkey $ALICE_KEYPAIR) ||
     exception "Can't view reporter Alice"
 
-  $CLI --keypair $AUTHORITY_KEYPAIR reporter add test1 $(solana-keygen pubkey $BOB_KEYPAIR) Bob Full &&
-    $CLI --keypair $AUTHORITY_KEYPAIR reporter view test1 $(solana-keygen pubkey $BOB_KEYPAIR) ||
+  $CLI --keypair $AUTHORITY_KEYPAIR reporter add hapi.one $(solana-keygen pubkey $BOB_KEYPAIR) Bob Full &&
+    $CLI --keypair $AUTHORITY_KEYPAIR reporter view hapi.one $(solana-keygen pubkey $BOB_KEYPAIR) ||
     exception "Can't view reporter Bob"
 
-  $CLI --keypair $AUTHORITY_KEYPAIR reporter add test1 $(solana-keygen pubkey $CAROL_KEYPAIR) Carol Tracer &&
-    $CLI --keypair $AUTHORITY_KEYPAIR reporter view test1 $(solana-keygen pubkey $CAROL_KEYPAIR) ||
+  $CLI --keypair $AUTHORITY_KEYPAIR reporter add hapi.one $(solana-keygen pubkey $CAROL_KEYPAIR) Carol Tracer &&
+    $CLI --keypair $AUTHORITY_KEYPAIR reporter view hapi.one $(solana-keygen pubkey $CAROL_KEYPAIR) ||
     exception "Can't view reporter Carol"
 
-  $CLI --keypair $ALICE_KEYPAIR case report test1 case0 &&
-    $CLI --keypair $ALICE_KEYPAIR case view test1 0 ||
+  $CLI --keypair $ALICE_KEYPAIR case report hapi.one test1 case0 &&
+    $CLI --keypair $ALICE_KEYPAIR case view hapi.one test1 0 ||
     exception "Can't view case0"
 
-  $CLI --keypair $BOB_KEYPAIR case report test1 case1 &&
-    $CLI --keypair $BOB_KEYPAIR case view test1 1 ||
+  $CLI --keypair $BOB_KEYPAIR case report hapi.one test1 case1 &&
+    $CLI --keypair $BOB_KEYPAIR case view hapi.one test1 1 ||
     exception "Can't view case1"
 
-  $CLI --keypair $CAROL_KEYPAIR case report test1 case2 2>&1 >/dev/null &&
+  $CLI --keypair $CAROL_KEYPAIR case report hapi.one test1 case2 2>&1 >/dev/null &&
     exception "Shouldn't be able to report case by tracer"
 
   set -e

@@ -5,6 +5,7 @@ use {
         instruction,
         state::{
             case::get_case_address,
+            community::get_community_address,
             enums::Category,
             network::{get_network_address, Network},
         },
@@ -17,11 +18,13 @@ use {
 pub fn cmd_report_case(
     rpc_client: &RpcClient,
     config: &Config,
+    community_name: String,
     network_name: String,
     case_name: String,
     categories: BTreeSet<Category>,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let network_account = &get_network_address(&network_name);
+    let community_account = get_community_address(&community_name);
+    let network_account = &get_network_address(&community_account, &network_name);
     let network_data = rpc_client.get_account_data(&network_account)?;
     let network: Network = try_from_slice_unchecked(&network_data)?;
     if config.verbose {
@@ -36,11 +39,12 @@ pub fn cmd_report_case(
     let mut transaction = Transaction::new_with_payer(
         &[instruction::report_case(
             &config.keypair.pubkey(),
-            network_name,
+            &format!("{}/{}", &community_name, &network_name),
             network.next_case_id,
-            case_name,
-            categories,
-        )],
+            &case_name,
+            &categories,
+        )
+        .unwrap()],
         Some(&config.keypair.pubkey()),
     );
     let blockhash = rpc_client.get_recent_blockhash()?.0;

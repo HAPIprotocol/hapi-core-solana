@@ -1,4 +1,5 @@
 mod cmd_add_reporter;
+mod cmd_create_community;
 mod cmd_create_network;
 mod cmd_list_accounts;
 mod cmd_report_address;
@@ -12,6 +13,7 @@ mod cmd_view_network;
 mod cmd_view_reporter;
 
 pub use cmd_add_reporter::*;
+pub use cmd_create_community::*;
 pub use cmd_create_network::*;
 pub use cmd_list_accounts::*;
 pub use cmd_report_address::*;

@@ -4,34 +4,35 @@ use {
         Config,
     },
     colored::*,
-    hapi_core_solana::{instruction, state::network::get_network_address},
+    hapi_core_solana::{
+        instruction, state::community::get_community_address, state::network::get_network_address,
+    },
     solana_client::rpc_client::RpcClient,
-    solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction},
+    solana_sdk::{signature::Signer, transaction::Transaction},
 };
 
 pub fn cmd_create_network(
     rpc_client: &RpcClient,
     config: &Config,
+    community_name: String,
     network_name: String,
-    network_authority: &Pubkey,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if config.verbose {
         println!("{}: {}", "Network".bright_black(), network_name.bold());
-        println!(
-            "{} {}",
-            "Network authority pubkey:".bright_black(),
-            network_authority.to_string().bold()
-        );
     }
 
-    assert_is_existing_account(rpc_client, &network_authority)?;
+    let community_account = get_community_address(&community_name);
+    let network_account = get_network_address(&community_account, &network_name);
 
-    let network_account = get_network_address(&network_name);
-
+    assert_is_existing_account(rpc_client, &community_account)?;
     assert_is_empty_account(rpc_client, &network_account)?;
 
     let mut transaction = Transaction::new_with_payer(
-        &[instruction::create_network(network_authority, network_name)],
+        &[instruction::create_network(
+            &config.keypair.pubkey(),
+            &format!("{}/{}", &community_name, &network_name),
+        )
+        .unwrap()],
         Some(&config.keypair.pubkey()),
     );
     let blockhash = rpc_client.get_recent_blockhash()?.0;

@@ -4,8 +4,8 @@ use {
     hapi_core_solana::{
         instruction,
         state::{
+            community::{get_community_address, Community},
             enums::ReporterType,
-            network::{get_network_address, Network},
             reporter::get_reporter_address,
         },
     },
@@ -19,22 +19,22 @@ use {
 pub fn cmd_update_reporter(
     rpc_client: &RpcClient,
     config: &Config,
-    network_name: String,
+    community_name: String,
     reporter_pubkey: &Pubkey,
     name: String,
     reporter_type: ReporterType,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let network_account = &get_network_address(&network_name);
-    let network_data = rpc_client.get_account_data(&network_account)?;
-    let network: Network = try_from_slice_unchecked(&network_data)?;
+    let community_account = get_community_address(&community_name);
+    let community_data = rpc_client.get_account_data(&community_account)?;
+    let community: Community = try_from_slice_unchecked(&community_data)?;
 
     if config.verbose {
-        println!("{}: {}", "Network".bright_black(), network.name);
+        println!("{}: {}", "Community".bright_black(), community.name);
     }
 
     assert_is_existing_account(rpc_client, &reporter_pubkey)?;
 
-    let reporter_account = get_reporter_address(network_account, reporter_pubkey);
+    let reporter_account = get_reporter_address(&community_account, reporter_pubkey);
 
     if config.verbose {
         println!(
@@ -49,11 +49,12 @@ pub fn cmd_update_reporter(
     let mut transaction = Transaction::new_with_payer(
         &[instruction::update_reporter(
             &config.keypair.pubkey(),
-            network_account,
+            &community_name,
+            &name,
             &reporter_account,
-            name,
             reporter_type,
-        )],
+        )
+        .unwrap()],
         Some(&config.keypair.pubkey()),
     );
     let blockhash = rpc_client.get_recent_blockhash()?.0;
