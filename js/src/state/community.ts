@@ -1,7 +1,7 @@
-import { Connection, PublicKey } from '@solana/web3.js';
-import { Schema, serialize, deserialize } from 'borsh';
+import { Connection, PublicKey } from "@solana/web3.js";
+import { serialize, deserialize } from "borsh";
 
-import { HAPI_PROGRAM_ID } from '..';
+import { HAPI_PROGRAM_ID } from "..";
 import { HapiAccountType } from "./enums";
 
 class CommunityState {
@@ -11,16 +11,20 @@ class CommunityState {
   constructor(object: Partial<CommunityState>) {
     Object.assign(this, object);
   }
+  static schema = new Map([
+    [
+      CommunityState,
+      {
+        kind: "struct",
+        fields: [
+          ["account_type", "u8"],
+          ["authority", [32]],
+          ["name", "string"],
+        ],
+      },
+    ],
+  ]);
 }
-
-const CommunitySchema: Schema = new Map([[CommunityState, {
-  kind: 'struct',
-  fields: [
-    ['account_type', 'u8'],
-    ['authority', [32]],
-    ['name', 'string']
-  ]
-}]]);
 
 export class Community {
   /// HAPI account type
@@ -32,14 +36,48 @@ export class Community {
   /// HAPI community name
   name: string;
 
-  constructor(object?: Partial<Community>) {
-    if (object) {
-      Object.assign(this, object);
+  constructor(data?: Partial<Community>) {
+    if (data) {
+      Object.assign(this, data);
     }
   }
 
+  static fromState(state: CommunityState): Community {
+    return new Community({
+      accountType: state.account_type,
+      authority: new PublicKey(state.authority),
+      name: state.name,
+    });
+  }
+
+  static deserialize(buffer: Buffer): Community {
+    return Community.fromState(
+      deserialize(CommunityState.schema, CommunityState, buffer)
+    );
+  }
+
+  static async retrieve(
+    connection: Connection,
+    communityName: string
+  ): Promise<Community> {
+    const [communityAddress] = await PublicKey.findProgramAddress(
+      [Buffer.from("community"), Buffer.from(communityName)],
+      HAPI_PROGRAM_ID
+    );
+
+    const communityAccount = await connection.getAccountInfo(
+      communityAddress,
+      "processed"
+    );
+    if (!communityAccount) {
+      throw new Error("Invalid community account provided");
+    }
+
+    return Community.deserialize(communityAccount.data);
+  }
+
   serialize(): Uint8Array {
-    return serialize(CommunitySchema, this.toState());
+    return serialize(CommunityState.schema, this.toState());
   }
 
   toState(): CommunityState {
@@ -47,39 +85,6 @@ export class Community {
       account_type: this.accountType,
       authority: this.authority.toBytes(),
       name: this.name,
-    })
-  }
-
-  static fromState(state: CommunityState): Community {
-    const community = new Community();
-    community.accountType = state.account_type;
-    community.authority = new PublicKey(state.authority);
-    community.name = state.name;
-    return community;
-  }
-
-  static deserialize(buffer: Buffer): Community {
-    return Community.fromState(deserialize(CommunitySchema, CommunityState, buffer));
-  }
-
-  static async retrieve(
-    connection: Connection,
-    communityName: string,
-  ): Promise<Community> {
-    const [communityAddress] = await PublicKey.findProgramAddress([
-      Buffer.from('community'),
-      Buffer.from(communityName)
-    ], HAPI_PROGRAM_ID);
-
-    const communityAccount = await connection.getAccountInfo(
-      communityAddress,
-      'processed'
-    );
-    if (!communityAccount) {
-      throw new Error('Invalid community account provided');
-    }
-
-    const res: Community = Community.deserialize(communityAccount.data);
-    return res;
+    });
   }
 }

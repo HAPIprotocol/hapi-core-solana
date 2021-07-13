@@ -1,9 +1,9 @@
-import { Connection, PublicKey } from '@solana/web3.js';
+import { Connection, PublicKey } from "@solana/web3.js";
 
-export * from './state';
+export * from "./state";
 
 export const HAPI_PROGRAM_ID = new PublicKey(
-  'hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7'
+  "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7"
 );
 
 export class HapiClient {

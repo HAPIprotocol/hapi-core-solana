@@ -1,6 +1,6 @@
 import { PublicKey } from "@solana/web3.js";
 
-import { Category, HapiAccountType } from "./enums"
+import { Category, HapiAccountType } from "./enums";
 
 export class Case {
   /// HAPI account type

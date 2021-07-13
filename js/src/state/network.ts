@@ -1,13 +1,102 @@
-import { Numberu64 } from "../utils";
+import { Connection, PublicKey } from "@solana/web3.js";
+import BN from "bn.js";
+import { deserialize, Schema, serialize } from "borsh";
+
+import { HAPI_PROGRAM_ID } from "..";
+import { u64 } from "../utils";
 import { HapiAccountType } from "./enums";
+
+class NetworkState {
+  account_type: number;
+  name: string;
+  next_case_id: BN;
+  constructor(object: Partial<NetworkState>) {
+    Object.assign(this, object);
+  }
+  static schema: Schema = new Map([
+    [
+      NetworkState,
+      {
+        kind: "struct",
+        fields: [
+          ["account_type", "u8"],
+          ["name", "string"],
+          ["next_case_id", "u64"],
+        ],
+      },
+    ],
+  ]);
+}
 
 export class Network {
   /// HAPI account type
-  account_type: HapiAccountType;
+  accountType: HapiAccountType;
 
   /// HAPI network name
   name: string;
 
   /// ID for the next reported case
-  next_case_id: Numberu64;
+  nextCaseId: u64;
+
+  constructor(object?: Partial<Network>) {
+    if (object) {
+      Object.assign(this, object);
+    }
+  }
+
+  static fromState(state: NetworkState): Network {
+    const network = new Network();
+    network.accountType = state.account_type;
+    network.name = state.name;
+    network.nextCaseId = state.next_case_id;
+    return network;
+  }
+
+  static deserialize(buffer: Buffer): Network {
+    return Network.fromState(
+      deserialize(NetworkState.schema, NetworkState, buffer)
+    );
+  }
+
+  static async retrieve(
+    connection: Connection,
+    communityName: string,
+    networkName: string
+  ): Promise<Network> {
+    const [communityAddress] = await PublicKey.findProgramAddress(
+      [Buffer.from("community"), Buffer.from(communityName)],
+      HAPI_PROGRAM_ID
+    );
+
+    const [networkAddress] = await PublicKey.findProgramAddress(
+      [
+        Buffer.from("network"),
+        communityAddress.toBuffer(),
+        Buffer.from(networkName),
+      ],
+      HAPI_PROGRAM_ID
+    );
+
+    const account = await connection.getAccountInfo(
+      networkAddress,
+      "processed"
+    );
+    if (!account) {
+      throw new Error("Invalid network account provided");
+    }
+
+    return Network.deserialize(account.data);
+  }
+
+  serialize(): Uint8Array {
+    return serialize(NetworkState.schema, this.toState());
+  }
+
+  toState(): NetworkState {
+    return new NetworkState({
+      account_type: this.accountType,
+      name: this.name,
+      next_case_id: this.nextCaseId,
+    });
+  }
 }
