@@ -118,3 +118,23 @@ export const signAndSendTransactionInstructions = async (
     preflightCommitment: "single",
   });
 };
+
+export function mapToBuffer<K extends number, V extends number | boolean>(
+  map: Map<K, V>
+): Buffer {
+  const buffer = Buffer.alloc(4 + map.size * 2);
+
+  // Write size header
+  buffer.writeUInt32LE(map.size);
+
+  // Write map KVs
+  let i = 4;
+  const keys = Array.from(map.keys()).sort((a, b) => a - b);
+  for (const key of keys) {
+    buffer.writeUInt8(key, i);
+    buffer.writeUInt8(map.get(key) ? 1 : 0, i + 1);
+    i += 2;
+  }
+
+  return buffer;
+}

@@ -77,3 +77,25 @@ export enum Category {
   /// Child abuse and porn materials
   ChildAbuse,
 }
+
+export const Categories = [
+  Category.Safe,
+  Category.WalletService,
+  Category.MerchantService,
+  Category.MiningPool,
+  Category.LowRiskExchange,
+  Category.MediumRiskExchange,
+  Category.DeFi,
+  Category.OTCBroker,
+  Category.ATM,
+  Category.Gambling,
+  Category.IllicitOrganization,
+  Category.Mixer,
+  Category.DarknetService,
+  Category.Scam,
+  Category.Ransomware,
+  Category.Theft,
+  Category.TerroristFinancing,
+  Category.Sanctions,
+  Category.ChildAbuse,
+];
