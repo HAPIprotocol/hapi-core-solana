@@ -12,12 +12,26 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --config=./jest.json",
+    "lint": "eslint . --ext .ts"
   },
   "keywords": [],
   "author": "HAPI",
   "license": "BSL-1.1",
   "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "@types/node": "^16.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
+    "eslint": "^7.30.0",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.3",
     "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.20.2",
+    "assert": "^2.0.0",
+    "bn.js": "^5.2.0",
+    "borsh": "^0.4.0"
   }
 }
