@@ -99,4 +99,4 @@ echo "==> Creating network"
   set -e
 )
 
-# cleanup
+cleanup
