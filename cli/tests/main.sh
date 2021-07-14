@@ -85,14 +85,18 @@ echo "==> Creating network"
     $CLI --keypair $ALICE_KEYPAIR case view hapi.one test1 0 ||
     exception "Can't view case0"
 
-  $CLI --keypair $BOB_KEYPAIR case report hapi.one test1 case1 &&
+  $CLI --keypair $BOB_KEYPAIR case report hapi.one test1 case1 --category Theft --category Scam &&
     $CLI --keypair $BOB_KEYPAIR case view hapi.one test1 1 ||
     exception "Can't view case1"
 
   $CLI --keypair $CAROL_KEYPAIR case report hapi.one test1 case2 2>&1 >/dev/null &&
     exception "Shouldn't be able to report case by tracer"
 
+  $CLI --keypair $CAROL_KEYPAIR address report hapi.one test1 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew 1 5 Theft &&
+    $CLI --keypair $CAROL_KEYPAIR address view hapi.one test1 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew ||
+    exception "Can't view address 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"
+
   set -e
 )
 
-cleanup
+# cleanup

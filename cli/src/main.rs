@@ -75,6 +75,22 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         .value_name("CASE_ID")
         .help("Case ID number");
 
+    let arg_address = Arg::with_name("address")
+        .long("address")
+        .value_name("ADDRESS")
+        .help("Blockchain address (account)");
+
+    let arg_risk = Arg::with_name("risk")
+        .long("risk")
+        .value_name("RISK")
+        .help("Risk factor from 0 to 10");
+
+    let arg_category = Arg::with_name("category")
+        .long("category")
+        .value_name("CATEGORY")
+        .possible_values(CATEGORY_VALUES)
+        .help("Illicitness category");
+
     let subcommand_community = SubCommand::with_name("community")
         .about("Manage communities")
         .subcommand(
@@ -145,9 +161,33 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
 
     let subcommand_address = SubCommand::with_name("address")
         .about("Manage addresses")
-        .subcommand(SubCommand::with_name("report").about("Report a new address"))
-        .subcommand(SubCommand::with_name("update").about("Update an existing address"))
-        .subcommand(SubCommand::with_name("address").about("View address data"));
+        .subcommand(
+            SubCommand::with_name("report")
+                .about("Report a new address")
+                .arg(arg_community_name.clone().index(1).required(true))
+                .arg(arg_network_name.clone().index(2).required(true))
+                .arg(arg_address.clone().index(3).required(true))
+                .arg(arg_case_id.clone().index(4).required(true))
+                .arg(arg_risk.clone().index(5).required(true))
+                .arg(arg_category.clone().index(6).required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("update")
+                .about("Update an existing address")
+                .arg(arg_community_name.clone().index(1).required(true))
+                .arg(arg_network_name.clone().index(2).required(true))
+                .arg(arg_address.clone().index(3).required(true))
+                .arg(arg_case_id.clone().index(4).required(true))
+                .arg(arg_risk.clone().index(5).required(true))
+                .arg(arg_category.clone().index(6).required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("view")
+                .about("View address data")
+                .arg(arg_community_name.clone().index(1).required(true))
+                .arg(arg_network_name.clone().index(2).required(true))
+                .arg(arg_address.clone().index(3).required(true)),
+        );
 
     let app_matches = App::new(crate_name!())
         .about(crate_description!())
@@ -242,8 +282,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 ("report", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
                     let address = pubkey_of(arg_matches, "address").unwrap();
+                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
                     let risk = value_t_or_exit!(arg_matches, "risk", u8);
                     let category = parse_arg_category(arg_matches)?;
 
@@ -252,8 +292,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         &config,
                         community_name,
                         network_name,
-                        case_id,
                         &address,
+                        case_id,
                         risk,
                         category,
                     )
@@ -262,8 +302,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 ("update", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
-                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
                     let address = pubkey_of(arg_matches, "address").unwrap();
+                    let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
                     let risk = value_t_or_exit!(arg_matches, "risk", u8);
                     let category = parse_arg_category(arg_matches)?;
 
@@ -272,8 +312,8 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                         &config,
                         community_name,
                         network_name,
-                        case_id,
                         &address,
+                        case_id,
                         risk,
                         category,
                     )
@@ -431,12 +471,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
 
-                    cmd_view_reporter(
-                        &rpc_client,
-                        &config,
-                        community_name,
-                        &reporter_pubkey,
-                    )
+                    cmd_view_reporter(&rpc_client, &config, community_name, &reporter_pubkey)
                 }
 
                 _ => subcommand_reporter

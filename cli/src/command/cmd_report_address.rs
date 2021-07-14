@@ -17,8 +17,8 @@ pub fn cmd_report_address(
     config: &Config,
     community_name: String,
     network_name: String,
-    case_id: u64,
     address: &Pubkey,
+    case_id: u64,
     risk: u8,
     category: Category,
 ) -> Result<(), Box<dyn std::error::Error>> {
