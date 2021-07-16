@@ -2,7 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { deserialize, Schema, serialize } from "borsh";
 
-import { HAPI_PROGRAM_ID } from "..";
+import { HAPI_PROGRAM_ID } from "../constants";
 import { u64 } from "../utils";
 import { HapiAccountType } from "./enums";
 

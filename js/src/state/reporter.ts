@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { deserialize, serialize } from "borsh";
 
-import { HAPI_PROGRAM_ID } from "..";
+import { HAPI_PROGRAM_ID } from "../constants";
 import { HapiAccountType, ReporterType } from "./enums";
 
 class ReporterState {
