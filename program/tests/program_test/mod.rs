@@ -34,9 +34,7 @@ use hapi_core_solana::{
 };
 
 pub mod cookies;
-use self::cookies::{
-    AddressCookie, CaseCookie, CommunityCookie, NetworkCookie, ReporterCookie,
-};
+use self::cookies::{AddressCookie, CaseCookie, CommunityCookie, NetworkCookie, ReporterCookie};
 
 pub mod tools;
 use self::tools::map_transaction_error;
@@ -141,9 +139,9 @@ impl HapiProgramTest {
         let address = get_community_address(&name);
 
         CommunityCookie {
+            address,
             account,
             name,
-            address,
         }
     }
 
