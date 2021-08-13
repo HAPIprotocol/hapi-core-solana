@@ -257,16 +257,17 @@ impl HapiProgramTest {
             .await
             .unwrap();
 
-        let mut category_map = Category::new_map();
-        for category in category_set.into_iter() {
-            category_map.insert(category, true);
+        // Convert category set to category bitmask
+        let mut categories = 0u32;
+        for category in category_set.iter() {
+            categories |= *category as u32;
         }
 
         let case = Case {
             account_type: HapiAccountType::Case,
             name: name.clone(),
             reporter_key: reporter.reporter_keypair.pubkey(),
-            categories: category_map,
+            categories,
         };
 
         CaseCookie {

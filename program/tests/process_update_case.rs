@@ -6,7 +6,7 @@ mod program_test;
 
 use program_test::*;
 
-use hapi_core_solana::state::enums::Category;
+use hapi_core_solana::state::enums::{Category, CategorySetBitmask};
 
 #[tokio::test]
 async fn test_case_reported() {
@@ -45,15 +45,10 @@ async fn test_case_reported() {
     // Assert
     let updated_account = hapi_test.get_case_account(&case_cookie.address).await;
 
-    let mut actual_category_set: BTreeSet<Category> = BTreeSet::new();
-    for (category, is_present) in updated_account.categories.iter() {
-        if *is_present {
-            actual_category_set.insert(*category);
-        }
-    }
-
-    assert_eq!(24, std::mem::size_of_val(&actual_category_set));
-    assert_eq!(actual_category_set, category_set);
+    assert_eq!(
+        Category::MiningPool | Category::Safe,
+        updated_account.categories
+    );
 }
 
 #[tokio::test]
@@ -112,14 +107,28 @@ async fn test_case_reported_with_all_categories() {
     // Assert
     let updated_account = hapi_test.get_case_account(&case_cookie.address).await;
 
-    let mut actual_category_set: BTreeSet<Category> = BTreeSet::new();
-    for (category, is_present) in updated_account.categories.iter() {
-        if *is_present {
-            actual_category_set.insert(*category);
-        }
-    }
-
-    assert_eq!(88, std::mem::size_of_val(&updated_account));
-    assert_eq!(24, std::mem::size_of_val(&actual_category_set));
-    assert_eq!(actual_category_set, category_set);
+    assert_eq!(
+        Category::Safe
+            | Category::WalletService
+            | Category::MerchantService
+            | Category::MiningPool
+            | Category::LowRiskExchange
+            | Category::MediumRiskExchange
+            | Category::DeFi
+            | Category::OTCBroker
+            | Category::ATM
+            | Category::Gambling
+            | Category::IllicitOrganization
+            | Category::Mixer
+            | Category::DarknetService
+            | Category::Scam
+            | Category::Ransomware
+            | Category::Theft
+            | Category::TerroristFinancing
+            | Category::Sanctions
+            | Category::ChildAbuse,
+        updated_account.categories
+    );
+    assert_eq!(true, updated_account.categories.contains(Category::Mixer));
+    assert_eq!(72, std::mem::size_of_val(&updated_account));
 }

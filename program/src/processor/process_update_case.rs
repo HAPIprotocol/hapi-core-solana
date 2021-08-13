@@ -47,19 +47,15 @@ pub fn process_update_case(
 
     let mut case_data = get_case_data(&case_info)?;
 
-    assert_reporter_can_update_case(
-        &reporter_key_info,
-        &reporter_info,
-        &case_data.reporter_key,
-    )?;
+    assert_reporter_can_update_case(&reporter_key_info, &reporter_info, &case_data.reporter_key)?;
 
-    // Convert category set to category map with blank data
-    let mut category_map = Category::new_map();
+    // Convert category set to category bitmask
+    let mut categories = 0u32;
     for category in category_set.iter() {
-        category_map.insert(*category, true);
+        categories |= *category as u32;
     }
 
-    case_data.categories = category_map;
+    case_data.categories = categories;
     case_data.serialize(&mut *case_info.data.borrow_mut())?;
 
     Ok(())

@@ -58,17 +58,17 @@ pub fn process_report_case(
     network_data.next_case_id += 1;
     network_data.serialize(&mut *network_info.data.borrow_mut())?;
 
-    // Convert category set to category map with blank data
-    let mut category_map = Category::new_map();
+    // Convert category set to category bitmask
+    let mut categories = 0u32;
     for category in category_set.iter() {
-        category_map.insert(*category, true);
+        categories |= *category as u32;
     }
 
     let case_data = Case {
         account_type: HapiAccountType::Case,
         name: name.to_string(),
         reporter_key: *reporter_key_info.key,
-        categories: category_map,
+        categories,
     };
 
     create_and_serialize_account_signed::<Case>(

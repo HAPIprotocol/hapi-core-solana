@@ -6,12 +6,11 @@ use {
         account_info::AccountInfo, program_error::ProgramError, program_pack::IsInitialized,
         pubkey::Pubkey,
     },
-    std::collections::BTreeMap,
 };
 
 use crate::{
     id,
-    state::enums::{Category, HapiAccountType},
+    state::enums::{CategorySet, HapiAccountType},
     tools::account::{assert_is_valid_account, get_account_data, AccountMaxSize},
 };
 
@@ -29,8 +28,8 @@ pub struct Case {
     /// Case reporter key
     pub reporter_key: Pubkey,
 
-    /// Categories
-    pub categories: BTreeMap<Category, bool>,
+    /// Categories bitmask
+    pub categories: CategorySet,
 }
 
 impl AccountMaxSize for Case {}

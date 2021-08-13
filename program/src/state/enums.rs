@@ -1,8 +1,7 @@
 //! State enumerations
-
 use {
     borsh::{BorshDeserialize, BorshSchema, BorshSerialize},
-    std::collections::BTreeMap,
+    std::{collections::BTreeMap, ops::BitOr},
 };
 
 /// Defines all HAPI accounts types
@@ -60,7 +59,7 @@ impl Default for ReporterType {
 }
 
 /// Case category
-#[repr(u8)]
+#[repr(u32)]
 #[derive(
     Copy,
     Clone,
@@ -77,70 +76,112 @@ impl Default for ReporterType {
 pub enum Category {
     // Tier 0
     /// Safe
-    Safe,
+    Safe = 0,
 
     // Tier 1 - Low risk
     /// Wallet service - custodial or mixed wallets
-    WalletService,
+    WalletService = 1,
 
     /// Merchant service
-    MerchantService,
+    MerchantService = 2,
 
     /// Mining pool
-    MiningPool,
+    MiningPool = 4,
 
     /// Exchange (Low Risk) - Exchange with high KYC standards
-    LowRiskExchange,
+    LowRiskExchange = 8,
 
     // Tier 2 - Medium risk
     /// Exchange (Medium Risk)
-    MediumRiskExchange,
+    MediumRiskExchange = 16,
 
     /// DeFi application
-    DeFi,
+    DeFi = 32,
 
     /// OTC Broker
-    OTCBroker,
+    OTCBroker = 64,
 
     /// Cryptocurrency ATM
-    ATM,
+    ATM = 128,
 
     /// Gambling
-    Gambling,
+    Gambling = 256,
 
     // Tier 3 - High risk
     /// Illicit organization
-    IllicitOrganization,
+    IllicitOrganization = 512,
 
     /// Mixer
-    Mixer,
+    Mixer = 1024,
 
     /// Darknet market or service
-    DarknetService,
+    DarknetService = 2048,
 
     /// Scam
-    Scam,
+    Scam = 4096,
 
     /// Ransomware
-    Ransomware,
+    Ransomware = 8192,
 
     /// Theft - stolen funds
-    Theft,
+    Theft = 16384,
 
     // Tier 4 - Severe risk
     /// Terrorist financing
-    TerroristFinancing,
+    TerroristFinancing = 32768,
 
     /// Sanctions
-    Sanctions,
+    Sanctions = 65536,
 
     /// Child abuse and porn materials
-    ChildAbuse,
+    ChildAbuse = 131072,
+}
+
+/// A set bitmasked set of categories
+pub type CategorySet = u32;
+
+/// Bitmast functions trait for category set
+pub trait CategorySetBitmask {
+    /// Checks if category set contains the category
+    fn contains(self, category: Category) -> bool;
+}
+
+impl CategorySetBitmask for CategorySet {
+    fn contains(self, category: Category) -> bool {
+        self & category as u32 != 0
+    }
 }
 
 impl Default for Category {
     fn default() -> Self {
         Category::Safe
+    }
+}
+
+impl BitOr for Category {
+    type Output = CategorySet;
+
+    // rhs is the "right-hand side" of the expression `a | b`
+    fn bitor(self, rhs: Self) -> Self::Output {
+        self as CategorySet | rhs as CategorySet
+    }
+}
+
+impl BitOr<Category> for CategorySet {
+    type Output = CategorySet;
+
+    // rhs is the "right-hand side" of the expression `a | b`
+    fn bitor(self, rhs: Category) -> Self::Output {
+        self as CategorySet | rhs as CategorySet
+    }
+}
+
+impl BitOr<CategorySet> for Category {
+    type Output = CategorySet;
+
+    // rhs is the "right-hand side" of the expression `a | b`
+    fn bitor(self, rhs: CategorySet) -> Self::Output {
+        self as CategorySet | rhs as CategorySet
     }
 }
 
