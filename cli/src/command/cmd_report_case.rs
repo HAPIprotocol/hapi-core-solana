@@ -6,13 +6,12 @@ use {
         state::{
             case::get_case_address,
             community::get_community_address,
-            enums::Category,
+            enums::CategorySet,
             network::{get_network_address, Network},
         },
     },
     solana_client::rpc_client::RpcClient,
     solana_sdk::{borsh::try_from_slice_unchecked, signature::Signer, transaction::Transaction},
-    std::collections::BTreeSet,
 };
 
 pub fn cmd_report_case(
@@ -21,7 +20,7 @@ pub fn cmd_report_case(
     community_name: String,
     network_name: String,
     case_name: String,
-    categories: BTreeSet<Category>,
+    categories: CategorySet,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let community_account = get_community_address(&community_name);
     let network_account = &get_network_address(&community_account, &network_name);

@@ -8,15 +8,16 @@ use {
         rent::Rent,
         sysvar::Sysvar,
     },
-    std::collections::BTreeSet,
 };
 
 use crate::{
     error::HapiError,
-    state::case::{get_case_address_seeds, Case},
-    state::enums::{Category, HapiAccountType},
-    state::network::get_network_data,
-    state::reporter::{assert_reporter_can_report_case, get_reporter_address},
+    state::{
+        case::{get_case_address_seeds, Case},
+        enums::{CategorySet, HapiAccountType},
+        network::get_network_data,
+        reporter::{assert_reporter_can_report_case, get_reporter_address},
+    },
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
@@ -24,7 +25,7 @@ pub fn process_report_case(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     name: &str,
-    category_set: &BTreeSet<Category>,
+    categories: &CategorySet,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
     let reporter_key_info = next_account_info(account_info_iter)?; // 0
@@ -58,17 +59,11 @@ pub fn process_report_case(
     network_data.next_case_id += 1;
     network_data.serialize(&mut *network_info.data.borrow_mut())?;
 
-    // Convert category set to category bitmask
-    let mut categories = 0u32;
-    for category in category_set.iter() {
-        categories |= *category as u32;
-    }
-
     let case_data = Case {
         account_type: HapiAccountType::Case,
         name: name.to_string(),
         reporter_key: *reporter_key_info.key,
-        categories,
+        categories: *categories,
     };
 
     create_and_serialize_account_signed::<Case>(

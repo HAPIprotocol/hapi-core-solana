@@ -4,13 +4,12 @@ use {
     hapi_core_solana::{
         instruction,
         state::{
-            case::get_case_address, community::get_community_address, enums::Category,
+            case::get_case_address, community::get_community_address, enums::CategorySet,
             network::get_network_address,
         },
     },
     solana_client::rpc_client::RpcClient,
     solana_sdk::{signature::Signer, transaction::Transaction},
-    std::collections::BTreeSet,
 };
 
 pub fn cmd_update_case(
@@ -19,7 +18,7 @@ pub fn cmd_update_case(
     community_name: String,
     network_name: String,
     case_id: u64,
-    categories: BTreeSet<Category>,
+    categories: CategorySet,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if config.verbose {
         println!("{}: {}", "Network".bright_black(), network_name);

@@ -12,10 +12,9 @@ pub use reporter::*;
 use {
     borsh::{BorshDeserialize, BorshSerialize},
     solana_program::pubkey::Pubkey,
-    std::collections::BTreeSet,
 };
 
-use crate::state::enums::{Category, ReporterType};
+use crate::state::enums::{Category, CategorySet, ReporterType};
 
 /// Instructions supported by the HAPI program
 #[repr(C)]
@@ -92,7 +91,7 @@ pub enum HapiInstruction {
         name: String,
 
         /// Categories
-        categories: BTreeSet<Category>,
+        categories: CategorySet,
     },
 
     /// Update an existing case
@@ -104,7 +103,7 @@ pub enum HapiInstruction {
     ///
     UpdateCase {
         /// Categories
-        categories: BTreeSet<Category>,
+        categories: CategorySet,
     },
 
     /// Report an address for an existing case
