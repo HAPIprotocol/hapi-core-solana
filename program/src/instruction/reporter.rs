@@ -35,9 +35,9 @@ pub fn report_case(
 
     let accounts = vec![
         AccountMeta::new(*reporter, true),
-        AccountMeta::new(community_address, false),
+        AccountMeta::new_readonly(community_address, false),
         AccountMeta::new(network_address, false),
-        AccountMeta::new(reporter_address, false),
+        AccountMeta::new_readonly(reporter_address, false),
         AccountMeta::new(case_address, false),
         AccountMeta::new_readonly(system_program::id(), false),
         AccountMeta::new_readonly(sysvar::rent::id(), false),

@@ -111,7 +111,7 @@ pub enum HapiInstruction {
     ///
     /// 0. `[signer]` Reporter key
     /// 1. `[]` Community account
-    /// 2. `[]` Network account
+    /// 2. `[writable]` Network account
     /// 3. `[]` Reporter account
     /// 4. `[]` Case account. PDA seeds: ['case', network_account, case_id]
     /// 5. `[writable]` Address account. PDA seeds: ['address', network_account, address]
