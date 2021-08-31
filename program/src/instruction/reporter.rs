@@ -7,13 +7,20 @@ use {
         pubkey::Pubkey,
         system_program, sysvar,
     },
-    std::collections::BTreeSet,
 };
 
 use crate::{
-    error::GenericError, id, instruction::HapiInstruction, state::address::get_address_address,
-    state::case::get_case_address, state::community::get_community_address, state::enums::Category,
-    state::network::get_network_address, state::reporter::get_reporter_address,
+    error::GenericError,
+    id,
+    instruction::HapiInstruction,
+    state::{
+        address::get_address_address,
+        case::get_case_address,
+        community::get_community_address,
+        enums::{Category, CategorySet},
+        network::get_network_address,
+        reporter::get_reporter_address,
+    },
     tools::parse_network_path,
 };
 
@@ -25,7 +32,7 @@ pub fn report_case(
     network_path: &str,
     case_id: u64,
     case_name: &str,
-    categories: &BTreeSet<Category>,
+    categories: &CategorySet,
 ) -> Result<Instruction, GenericError> {
     let (community_name, network_name) = parse_network_path(network_path)?;
     let community_address = get_community_address(&community_name);
@@ -45,7 +52,7 @@ pub fn report_case(
 
     let instruction = HapiInstruction::ReportCase {
         name: case_name.to_string(),
-        categories: categories.clone(),
+        categories: *categories,
     };
 
     Ok(Instruction {
@@ -62,7 +69,7 @@ pub fn update_case(
     // Args
     network_path: &str,
     case_id: u64,
-    categories: &BTreeSet<Category>,
+    categories: &CategorySet,
 ) -> Result<Instruction, GenericError> {
     let (community_name, network_name) = parse_network_path(network_path)?;
     let community_address = get_community_address(&community_name);
@@ -78,7 +85,7 @@ pub fn update_case(
     ];
 
     let instruction = HapiInstruction::UpdateCase {
-        categories: categories.clone(),
+        categories: *categories,
     };
 
     Ok(Instruction {

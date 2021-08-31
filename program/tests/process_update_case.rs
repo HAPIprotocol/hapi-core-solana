@@ -1,12 +1,12 @@
 //#![cfg(feature = "test-bpf")]
 
-use {solana_program_test::*, std::collections::BTreeSet};
+use solana_program_test::*;
 
 mod program_test;
 
 use program_test::*;
 
-use hapi_core_solana::state::enums::{Category, CategorySetBitmask};
+use hapi_core_solana::state::enums::{Category, CategorySet};
 
 #[tokio::test]
 async fn test_case_reported() {
@@ -25,10 +25,7 @@ async fn test_case_reported() {
     let case_cookie = hapi_test
         .with_case(&reporter_cookie, &community_cookie, &network_cookie)
         .await;
-    let category_set: BTreeSet<Category> = vec![Category::MiningPool, Category::Safe]
-        .iter()
-        .cloned()
-        .collect();
+    let categories: CategorySet = Category::MiningPool | Category::Safe;
 
     // Act
     hapi_test
@@ -37,7 +34,7 @@ async fn test_case_reported() {
             &community_cookie,
             &network_cookie,
             &case_cookie,
-            &category_set,
+            &categories,
         )
         .await
         .unwrap();
@@ -67,30 +64,25 @@ async fn test_case_reported_with_all_categories() {
     let case_cookie = hapi_test
         .with_case(&reporter_cookie, &community_cookie, &network_cookie)
         .await;
-    let category_set: BTreeSet<Category> = vec![
-        Category::Safe,
-        Category::WalletService,
-        Category::MerchantService,
-        Category::MiningPool,
-        Category::LowRiskExchange,
-        Category::MediumRiskExchange,
-        Category::DeFi,
-        Category::OTCBroker,
-        Category::ATM,
-        Category::Gambling,
-        Category::IllicitOrganization,
-        Category::Mixer,
-        Category::DarknetService,
-        Category::Scam,
-        Category::Ransomware,
-        Category::Theft,
-        Category::TerroristFinancing,
-        Category::Sanctions,
-        Category::ChildAbuse,
-    ]
-    .iter()
-    .cloned()
-    .collect();
+    let categories: CategorySet = Category::Safe
+        | Category::WalletService
+        | Category::MerchantService
+        | Category::MiningPool
+        | Category::LowRiskExchange
+        | Category::MediumRiskExchange
+        | Category::DeFi
+        | Category::OTCBroker
+        | Category::ATM
+        | Category::Gambling
+        | Category::IllicitOrganization
+        | Category::Mixer
+        | Category::DarknetService
+        | Category::Scam
+        | Category::Ransomware
+        | Category::Theft
+        | Category::TerroristFinancing
+        | Category::Sanctions
+        | Category::ChildAbuse;
 
     // Act
     hapi_test
@@ -99,7 +91,7 @@ async fn test_case_reported_with_all_categories() {
             &community_cookie,
             &network_cookie,
             &case_cookie,
-            &category_set,
+            &categories,
         )
         .await
         .unwrap();
@@ -129,6 +121,6 @@ async fn test_case_reported_with_all_categories() {
             | Category::ChildAbuse,
         updated_account.categories
     );
-    assert_eq!(true, updated_account.categories.contains(Category::Mixer));
+    assert!(Category::Mixer as u32 & updated_account.categories != 0);
     assert_eq!(72, std::mem::size_of_val(&updated_account));
 }

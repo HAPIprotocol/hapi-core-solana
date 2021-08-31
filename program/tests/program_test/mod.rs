@@ -25,12 +25,14 @@ use hapi_core_solana::{
         update_reporter,
     },
     processor::process,
-    state::address::{get_address_address, Address},
-    state::case::{get_case_address, Case},
-    state::community::{get_community_address, Community},
-    state::enums::{Category, HapiAccountType, ReporterType},
-    state::network::{get_network_address, Network},
-    state::reporter::{get_reporter_address, Reporter},
+    state::{
+        address::{get_address_address, Address},
+        case::{get_case_address, Case},
+        community::{get_community_address, Community},
+        enums::{Category, CategorySet, HapiAccountType, ReporterType},
+        network::{get_network_address, Network},
+        reporter::{get_reporter_address, Reporter},
+    },
 };
 
 pub mod cookies;
@@ -242,26 +244,20 @@ impl HapiProgramTest {
 
         let case_address = get_case_address(&network.address, &case_id.to_le_bytes());
 
-        let category_set: BTreeSet<Category> = vec![Category::Safe].into_iter().collect();
+        let categories: CategorySet = Category::Safe as u32;
 
         let report_case_ix = report_case(
             &reporter.reporter_keypair.pubkey(),
             &format!("{}/{}", community.name, network.name),
             case_id,
             &name,
-            &category_set,
+            &categories,
         )
         .unwrap();
 
         self.process_transaction(&[report_case_ix], Some(&[&reporter.reporter_keypair]))
             .await
             .unwrap();
-
-        // Convert category set to category bitmask
-        let mut categories = 0u32;
-        for category in category_set.iter() {
-            categories |= *category as u32;
-        }
 
         let case = Case {
             account_type: HapiAccountType::Case,
@@ -396,7 +392,7 @@ impl HapiProgramTest {
         community_cookie: &CommunityCookie,
         network_cookie: &NetworkCookie,
         case_cookie: &CaseCookie,
-        categories: &BTreeSet<Category>,
+        categories: &CategorySet,
     ) -> Result<(), ProgramError> {
         let update_case_ix = update_case(
             &reporter.pubkey(),
