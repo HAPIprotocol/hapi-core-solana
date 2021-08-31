@@ -4,9 +4,7 @@ use {
     hapi_core_solana::{
         instruction,
         state::{
-            case::get_case_address,
-            community::get_community_address,
-            enums::{Category, CategorySet},
+            case::get_case_address, community::get_community_address, enums::CategorySet,
             network::get_network_address,
         },
     },

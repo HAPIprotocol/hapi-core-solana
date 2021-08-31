@@ -16,7 +16,6 @@ use {
         signature::{Keypair, Signer},
         transaction::Transaction,
     },
-    std::collections::BTreeSet,
 };
 
 use hapi_core_solana::{

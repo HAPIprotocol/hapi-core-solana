@@ -1,8 +1,7 @@
 use {
-    hapi_core_solana::state::enums::{Category, ReporterType},
+    hapi_core_solana::state::enums::{Category, CategorySet, ReporterType},
     solana_client::rpc_client::RpcClient,
     solana_sdk::{program_error::ProgramError, pubkey::Pubkey},
-    std::collections::BTreeSet,
 };
 
 pub fn assert_is_empty_account(
@@ -86,14 +85,14 @@ pub fn category_from_string(input: &str) -> Result<Category, Box<dyn std::error:
 
 pub fn parse_arg_categories(
     matches: &clap::ArgMatches,
-) -> Result<BTreeSet<Category>, Box<dyn std::error::Error>> {
-    let mut tree = BTreeSet::new();
+) -> Result<CategorySet, Box<dyn std::error::Error>> {
+    let mut categories: CategorySet = 0u32;
     if let Some(arg_categories) = matches.values_of("category") {
         for category in arg_categories.clone() {
-            tree.insert(category_from_string(category)?);
+            categories = categories | category_from_string(category)?;
         }
     }
-    Ok(tree)
+    Ok(categories)
 }
 
 pub fn parse_arg_category(

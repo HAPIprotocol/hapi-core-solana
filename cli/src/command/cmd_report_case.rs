@@ -6,7 +6,7 @@ use {
         state::{
             case::get_case_address,
             community::get_community_address,
-            enums::{Category, CategorySet},
+            enums::CategorySet,
             network::{get_network_address, Network},
         },
     },
