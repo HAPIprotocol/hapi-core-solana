@@ -4,6 +4,7 @@ import { deserialize, Schema, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { u64 } from "../utils";
+import { Community } from "./community";
 import { HapiAccountType } from "./enums";
 
 class NetworkState {
@@ -44,6 +45,20 @@ export class Network {
     }
   }
 
+  static getAddress(
+    communityAddress: PublicKey,
+    networkName: string
+  ): Promise<[PublicKey, number]> {
+    return PublicKey.findProgramAddress(
+      [
+        Buffer.from("network"),
+        communityAddress.toBuffer(),
+        Buffer.from(networkName),
+      ],
+      HAPI_PROGRAM_ID
+    );
+  }
+
   static fromState(state: NetworkState): Network {
     const network = new Network();
     network.accountType = state.account_type;
@@ -63,18 +78,11 @@ export class Network {
     communityName: string,
     networkName: string
   ): Promise<Network> {
-    const [communityAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("community"), Buffer.from(communityName)],
-      HAPI_PROGRAM_ID
-    );
+    const [communityAddress] = await Community.getAddress(communityName);
 
-    const [networkAddress] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from("network"),
-        communityAddress.toBuffer(),
-        Buffer.from(networkName),
-      ],
-      HAPI_PROGRAM_ID
+    const [networkAddress] = await Network.getAddress(
+      communityAddress,
+      networkName
     );
 
     const account = await connection.getAccountInfo(

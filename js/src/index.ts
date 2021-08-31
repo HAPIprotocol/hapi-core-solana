@@ -4,21 +4,28 @@ import {
   ConnectionConfig,
   PublicKey,
 } from "@solana/web3.js";
+
 import { Case, Community, Network, Reporter } from "./state";
 import { u64 } from "./utils";
 
 export * from "./state";
+
+export interface HapiReporterClientConfig {
+  endpoint: string;
+  commintment?: Commitment | ConnectionConfig;
+  communityName?: string;
+  networkName?: string;
+}
 
 export class HapiReporterClient {
   private connection: Connection;
   private communityName?: string;
   private networkName?: string;
 
-  constructor(
-    endpoint: string,
-    commitmentOrConfig?: Commitment | ConnectionConfig
-  ) {
-    this.connection = new Connection(endpoint, commitmentOrConfig);
+  constructor(config: HapiReporterClientConfig) {
+    this.connection = new Connection(config.endpoint, config.commintment);
+    this.communityName = config.communityName;
+    this.networkName = config.networkName;
   }
 
   setCommunity(communityName: string): HapiReporterClient {

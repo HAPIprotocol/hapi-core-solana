@@ -42,6 +42,13 @@ export class Community {
     }
   }
 
+  static async getAddress(communityName: string): Promise<[PublicKey, number]> {
+    return PublicKey.findProgramAddress(
+      [Buffer.from("community"), Buffer.from(communityName)],
+      HAPI_PROGRAM_ID
+    );
+  }
+
   static fromState(state: CommunityState): Community {
     return new Community({
       accountType: state.account_type,
@@ -60,10 +67,7 @@ export class Community {
     connection: Connection,
     communityName: string
   ): Promise<Community> {
-    const [communityAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("community"), Buffer.from(communityName)],
-      HAPI_PROGRAM_ID
-    );
+    const [communityAddress] = await Community.getAddress(communityName);
 
     const communityAccount = await connection.getAccountInfo(
       communityAddress,

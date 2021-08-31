@@ -3,7 +3,9 @@ import { deserialize, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { mapToBuffer, u64 } from "../utils";
+import { Community } from "./community";
 import { Categories, Category, HapiAccountType } from "./enums";
+import { Network } from "./network";
 
 class CaseState {
   account_type: number;
@@ -53,6 +55,16 @@ export class Case {
     }
   }
 
+  static async getAddress(
+    networkAddress: PublicKey,
+    caseId: u64
+  ): Promise<[PublicKey, number]> {
+    return PublicKey.findProgramAddress(
+      [Buffer.from("case"), networkAddress.toBuffer(), caseId.toBuffer()],
+      HAPI_PROGRAM_ID
+    );
+  }
+
   static fromState(state: CaseState): Case {
     return new Case({
       accountType: state.account_type,
@@ -72,24 +84,14 @@ export class Case {
     networkName: string,
     caseId: u64
   ): Promise<Case> {
-    const [communityAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("community"), Buffer.from(communityName)],
-      HAPI_PROGRAM_ID
+    const [communityAddress] = await Community.getAddress(communityName);
+
+    const [networkAddress] = await Network.getAddress(
+      communityAddress,
+      networkName
     );
 
-    const [networkAddress] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from("network"),
-        communityAddress.toBuffer(),
-        Buffer.from(networkName),
-      ],
-      HAPI_PROGRAM_ID
-    );
-
-    const [caseAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("case"), networkAddress.toBuffer(), caseId.toBuffer()],
-      HAPI_PROGRAM_ID
-    );
+    const [caseAddress] = await Case.getAddress(networkAddress, caseId);
 
     const account = await connection.getAccountInfo(caseAddress, "processed");
     if (!account) {
