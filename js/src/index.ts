@@ -9,6 +9,7 @@ import { Case, Community, Network, Reporter } from "./state";
 import { u64 } from "./utils";
 
 export * from "./state";
+export * from "./constants";
 
 export interface HapiReporterClientConfig {
   endpoint: string;

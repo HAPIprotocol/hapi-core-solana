@@ -23,7 +23,7 @@ describe("Reporter", () => {
     expect(Reporter.deserialize(BINARY_SAMPLE)).toEqual(REPORTER_SAMPLE);
   });
 
-  xit("shoud retrieve", async () => {
+  xit("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const reporter = await Reporter.retrieve(conn, "hapi.one", ALICE_PUBKEY);
     expect(JSON.stringify(reporter)).toEqual(JSON.stringify(REPORTER_SAMPLE));

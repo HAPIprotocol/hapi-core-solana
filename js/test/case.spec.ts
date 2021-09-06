@@ -41,7 +41,7 @@ describe("Case", () => {
     );
   });
 
-  xit("shoud retrieve - case0", async () => {
+  xit("should retrieve - case0", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Case.retrieve(conn, "hapi.one", "test1", new u64(0));
     expect(JSON.stringify(network)).toEqual(JSON.stringify(CASE_SAMPLE_1));
@@ -57,7 +57,7 @@ describe("Case", () => {
     );
   });
 
-  xit("shoud retrieve - case1", async () => {
+  xit("should retrieve - case1", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Case.retrieve(conn, "hapi.one", "test1", new u64(1));
     expect(JSON.stringify(network)).toEqual(JSON.stringify(CASE_SAMPLE_2));

@@ -22,7 +22,7 @@ describe("Community", () => {
     expect(Community.deserialize(BINARY_SAMPLE)).toEqual(COMMUNITY_SAMPLE);
   });
 
-  xit("shoud retrieve", async () => {
+  xit("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const community = await Community.retrieve(conn, "hapi.one");
     expect(community).toEqual(COMMUNITY_SAMPLE);

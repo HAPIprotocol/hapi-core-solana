@@ -24,7 +24,7 @@ class CaseState {
           ["account_type", "u8"],
           ["name", "string"],
           ["reporter_key", [32]],
-          ["categories", [4 + Categories.length * 2]],
+          ["categories", "u32"],
         ],
       },
     ],

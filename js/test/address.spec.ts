@@ -6,7 +6,6 @@ import { u64 } from "../src/utils";
 
 describe("Address", () => {
   const BINARY_SAMPLE = Buffer.from("050501000000000000000f", "hex");
-
   const ADDRESS_SAMPLE = new Address({
     accountType: HapiAccountType.Address,
     caseId: new u64(1),
@@ -24,7 +23,7 @@ describe("Address", () => {
     );
   });
 
-  xit("shoud retrieve", async () => {
+  xit("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Address.retrieve(
       conn,

@@ -25,7 +25,7 @@ describe("Network", () => {
     );
   });
 
-  xit("shoud retrieve", async () => {
+  xit("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Network.retrieve(conn, "hapi.one", "test1");
     expect(JSON.stringify(network)).toEqual(JSON.stringify(NETWORK_SAMPLE));

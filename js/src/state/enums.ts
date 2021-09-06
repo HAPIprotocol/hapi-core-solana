@@ -17,65 +17,65 @@ export enum ReporterType {
 export enum Category {
   // Tier 0
   /// Safe
-  Safe,
+  Safe = 0,
 
   // Tier 1 - Low risk
   /// Wallet service - custodial or mixed wallets
-  WalletService,
+  WalletService = 1,
 
   /// Merchant service
-  MerchantService,
+  MerchantService = 2,
 
   /// Mining pool
-  MiningPool,
+  MiningPool = 4,
 
   /// Exchange (Low Risk) - Exchange with high KYC standards
-  LowRiskExchange,
+  LowRiskExchange = 8,
 
   // Tier 2 - Medium risk
   /// Exchange (Medium Risk)
-  MediumRiskExchange,
+  MediumRiskExchange = 16,
 
   /// DeFi application
-  DeFi,
+  DeFi = 32,
 
   /// OTC Broker
-  OTCBroker,
+  OTCBroker = 64,
 
   /// Cryptocurrency ATM
-  ATM,
+  ATM = 128,
 
   /// Gambling
-  Gambling,
+  Gambling = 256,
 
   // Tier 3 - High risk
   /// Illicit organization
-  IllicitOrganization,
+  IllicitOrganization = 512,
 
   /// Mixer
-  Mixer,
+  Mixer = 1024,
 
   /// Darknet market or service
-  DarknetService,
+  DarknetService = 2048,
 
   /// Scam
-  Scam,
+  Scam = 4096,
 
   /// Ransomware
-  Ransomware,
+  Ransomware = 8192,
 
   /// Theft - stolen funds
-  Theft,
+  Theft = 16384,
 
   // Tier 4 - Severe risk
   /// Terrorist financing
-  TerroristFinancing,
+  TerroristFinancing = 32768,
 
   /// Sanctions
-  Sanctions,
+  Sanctions = 65536,
 
   /// Child abuse and porn materials
-  ChildAbuse,
+  ChildAbuse = 131072,
 }
 
 export const Categories = [

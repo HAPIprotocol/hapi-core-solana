@@ -19,23 +19,23 @@
   "author": "HAPI",
   "license": "BSL-1.1",
   "devDependencies": {
-    "@types/jest": "^26.0.24",
-    "@types/node": "^16.3.1",
-    "@typescript-eslint/eslint-plugin": "^4.28.3",
-    "@typescript-eslint/parser": "^4.28.3",
-    "eslint": "^7.30.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^3.4.0",
-    "fast-json-stable-stringify": "^2.1.0",
-    "jest": "^27.0.6",
-    "prettier": "^2.3.2",
-    "ts-jest": "^27.0.3",
-    "typescript": "^4.3.5"
+    "@types/jest": "27.x",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "4.x",
+    "@typescript-eslint/parser": "4.x",
+    "eslint": "7.x",
+    "eslint-config-prettier": "8.x",
+    "eslint-plugin-prettier": "4.x",
+    "fast-json-stable-stringify": "2.x",
+    "jest": "27.x",
+    "prettier": "2.x",
+    "ts-jest": "27.x",
+    "typescript": "4.4.x"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.21.0",
-    "assert": "^2.0.0",
-    "bn.js": "^5.2.0",
-    "borsh": "^0.4.0"
+    "@solana/web3.js": "1.x",
+    "assert": "2.x",
+    "bn.js": "5.x",
+    "borsh": "0.6.x"
   }
 }
