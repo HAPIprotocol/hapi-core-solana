@@ -1,5 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { deserialize, deserializeUnchecked, serialize } from "borsh";
+import { deserializeUnchecked, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { u64 } from "../utils";
@@ -58,7 +58,6 @@ export class Address {
   }
 
   static deserialize(buffer: Buffer): Address {
-    console.log('desu', buffer);
     return Address.fromState(
       deserializeUnchecked(AddressState.schema, AddressState, buffer)
     );
