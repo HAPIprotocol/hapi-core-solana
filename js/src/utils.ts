@@ -138,3 +138,13 @@ export function mapToBuffer<K extends number, V extends number | boolean>(
 
   return buffer;
 }
+
+export function setToBuffer<T extends number>(set: Set<T>, size = 4): Buffer {
+  let value = new BN(0);
+
+  for (const i of set.values()) {
+    value = value.or(new BN(i));
+  }
+
+  return value.toBuffer("le", size);
+}

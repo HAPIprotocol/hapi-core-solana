@@ -8,7 +8,7 @@ import {
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { Case, Category, Community, Network, Reporter } from "../state";
-import { mapToBuffer, u64 } from "../utils";
+import { setToBuffer } from "../utils";
 import { HapiInstruction } from "./enums";
 
 export async function reportCaseInstruction(
@@ -17,7 +17,7 @@ export async function reportCaseInstruction(
   communityName: string,
   networkName: string,
   caseName: string,
-  categories: Set<Category>,
+  categories: Set<Category>
 ): Promise<TransactionInstruction> {
   const [communityAddress] = await Community.getAddress(communityName);
 
@@ -82,7 +82,7 @@ export async function reportCaseInstruction(
   const buffers = [
     Buffer.from(Int8Array.from([HapiInstruction.ReportCase])),
     Buffer.from(caseName),
-    mapToBuffer(categories),
+    setToBuffer(categories),
   ];
 
   const data = Buffer.concat(buffers);

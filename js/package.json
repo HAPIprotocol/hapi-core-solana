@@ -5,10 +5,10 @@
     "access": "public"
   },
   "description": "Client library for Solana smart contract for #HAPI",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "/dist"
+    "lib/**/*"
   ],
   "scripts": {
     "build": "tsc",
