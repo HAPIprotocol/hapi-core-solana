@@ -5,9 +5,8 @@ use {
         instruction,
         state::{
             case::get_case_address,
-            community::get_community_address,
+            community::{get_community_address, Community},
             enums::CategorySet,
-            network::{get_network_address, Network},
         },
     },
     solana_client::rpc_client::RpcClient,
@@ -18,28 +17,30 @@ pub fn cmd_report_case(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,
-    network_name: String,
     case_name: String,
     categories: CategorySet,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let community_account = get_community_address(&community_name);
-    let network_account = &get_network_address(&community_account, &network_name);
-    let network_data = rpc_client.get_account_data(&network_account)?;
-    let network: Network = try_from_slice_unchecked(&network_data)?;
+    let community_data = rpc_client.get_account_data(&community_account)?;
+    let community: Community = try_from_slice_unchecked(&community_data)?;
     if config.verbose {
-        println!("{}: {}", "Network".bright_black(), network.name);
-        println!("{}: {}", "New case ID".bright_black(), network.next_case_id);
+        println!("{}: {}", "Community".bright_black(), community.name);
+        println!(
+            "{}: {}",
+            "New case ID".bright_black(),
+            community.next_case_id
+        );
     }
 
-    let case_address = get_case_address(&network_account, &network.next_case_id.to_le_bytes());
+    let case_address = get_case_address(&community_account, &community.next_case_id.to_le_bytes());
 
     assert_is_empty_account(rpc_client, &case_address)?;
 
     let mut transaction = Transaction::new_with_payer(
         &[instruction::report_case(
             &config.keypair.pubkey(),
-            &format!("{}/{}", &community_name, &network_name),
-            network.next_case_id,
+            &community_name,
+            community.next_case_id,
             &case_name,
             &categories,
         )

@@ -4,7 +4,6 @@ use {
     hapi_core_solana::state::{
         case::{get_case_address, Case},
         community::get_community_address,
-        network::get_network_address,
     },
     solana_client::rpc_client::RpcClient,
     solana_sdk::borsh::try_from_slice_unchecked,
@@ -14,18 +13,20 @@ pub fn cmd_view_case(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,
-    network_name: String,
     case_id: u64,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if config.verbose {
-        println!("{}: {}", "Network".bright_black(), network_name);
+        println!("{}: {}", "Community".bright_black(), community_name);
     }
     let community_account = get_community_address(&community_name);
-    let network_account = get_network_address(&community_account, &network_name);
     if config.verbose {
-        println!("{}: {}", "Network account".bright_black(), network_account);
+        println!(
+            "{}: {}",
+            "Community account".bright_black(),
+            community_account
+        );
     }
-    let case_address = get_case_address(&network_account, &case_id.to_le_bytes());
+    let case_address = get_case_address(&community_account, &case_id.to_le_bytes());
     if config.verbose {
         println!("{}: {}", "Case account".bright_black(), case_address);
     }
