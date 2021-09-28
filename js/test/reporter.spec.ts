@@ -3,7 +3,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { Reporter, HapiAccountType, ReporterType } from "../src/state";
 
 describe("Reporter", () => {
-  const BINARY_SAMPLE = Buffer.from("030305000000416c696365", "hex");
+  const BINARY_SAMPLE = Buffer.from("AwMFAAAAQWxpY2U=", "base64");
 
   const REPORTER_SAMPLE = new Reporter({
     accountType: HapiAccountType.Reporter,

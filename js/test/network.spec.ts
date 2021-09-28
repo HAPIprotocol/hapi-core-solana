@@ -4,10 +4,7 @@ import { Network, HapiAccountType } from "../src/state";
 import { u64 } from "../src/utils";
 
 describe("Network", () => {
-  const BINARY_SAMPLE = Buffer.from(
-    "020500000074657374310200000000000000",
-    "hex"
-  );
+  const BINARY_SAMPLE = Buffer.from("AggAAAB0ZXN0Y29pbg==", "base64");
 
   const NETWORK_SAMPLE = new Network({
     accountType: HapiAccountType.Network,
