@@ -40,6 +40,7 @@ pub fn process_create_community(
         account_type: HapiAccountType::Community,
         authority: *authority_info.key,
         name: name.to_string(),
+        next_case_id: 0,
     };
 
     create_and_serialize_account_signed::<Community>(

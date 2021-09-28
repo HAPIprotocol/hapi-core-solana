@@ -20,7 +20,7 @@ async fn test_address_reported() {
         .await
         .unwrap();
     let case_cookie = hapi_test
-        .with_case(&reporter_cookie, &community_cookie, &network_cookie)
+        .with_case(&reporter_cookie, &community_cookie)
         .await;
 
     // Act
@@ -36,7 +36,7 @@ async fn test_address_reported() {
 
     // Assert
     let address_account = hapi_test.get_address_account(&address_cookie.address).await;
-    assert_eq!(address_cookie.account, address_account);
+    assert_eq!(address_cookie.account, address_account, "Address account must match expectations");
 
-    assert_eq!(24, std::mem::size_of_val(&address_account));
+    assert_eq!(24, std::mem::size_of_val(&address_account), "Account size must be correct");
 }

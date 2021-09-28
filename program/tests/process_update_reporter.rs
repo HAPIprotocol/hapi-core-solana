@@ -44,6 +44,6 @@ async fn test_reporter_updated() {
         .get_reporter_account(&reporter_cookie.address)
         .await;
 
-    assert_eq!(reporter.name, updated_account.name);
-    assert_eq!(reporter.reporter_type, updated_account.reporter_type);
+    assert_eq!(reporter.name, updated_account.name, "Reporter name should be correct");
+    assert_eq!(reporter.reporter_type, updated_account.reporter_type, "Reporter type should be correct");
 }

@@ -29,21 +29,18 @@ pub fn report_case(
     // Accounts
     reporter: &Pubkey,
     // Args
-    network_path: &str,
+    community_name: &str,
     case_id: u64,
     case_name: &str,
     categories: &CategorySet,
 ) -> Result<Instruction, GenericError> {
-    let (community_name, network_name) = parse_network_path(network_path)?;
     let community_address = get_community_address(&community_name);
-    let network_address = get_network_address(&community_address, &network_name);
-    let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
+    let case_address = get_case_address(&community_address, &case_id.to_le_bytes());
     let reporter_address = get_reporter_address(&community_address, &reporter);
 
     let accounts = vec![
         AccountMeta::new(*reporter, true),
-        AccountMeta::new_readonly(community_address, false),
-        AccountMeta::new(network_address, false),
+        AccountMeta::new(community_address, false),
         AccountMeta::new_readonly(reporter_address, false),
         AccountMeta::new(case_address, false),
         AccountMeta::new_readonly(system_program::id(), false),
@@ -67,14 +64,12 @@ pub fn update_case(
     // Accounts
     reporter: &Pubkey,
     // Args
-    network_path: &str,
+    community_name: &str,
     case_id: u64,
     categories: &CategorySet,
 ) -> Result<Instruction, GenericError> {
-    let (community_name, network_name) = parse_network_path(network_path)?;
     let community_address = get_community_address(&community_name);
-    let network_address = get_network_address(&community_address, &network_name);
-    let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
+    let case_address = get_case_address(&community_address, &case_id.to_le_bytes());
     let reporter_address = get_reporter_address(&community_address, &reporter);
 
     let accounts = vec![
@@ -111,7 +106,7 @@ pub fn report_address(
     let network_address = get_network_address(&community_address, &network_name);
     let address_address = get_address_address(&network_address, address);
     let reporter_address = get_reporter_address(&community_address, &reporter);
-    let case_address = get_case_address(&network_address, &case_id.to_le_bytes());
+    let case_address = get_case_address(&community_address, &case_id.to_le_bytes());
 
     let accounts = vec![
         AccountMeta::new(*reporter, true),
@@ -159,7 +154,6 @@ pub fn update_address(
     let accounts = vec![
         AccountMeta::new(*reporter, true),
         AccountMeta::new_readonly(community_address, false),
-        AccountMeta::new(network_address, false),
         AccountMeta::new_readonly(reporter_address, false),
         AccountMeta::new_readonly(case_address, false),
         AccountMeta::new_readonly(address_address, false),

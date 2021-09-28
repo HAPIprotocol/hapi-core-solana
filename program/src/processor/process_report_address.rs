@@ -47,7 +47,7 @@ pub fn process_report_address(
 
     // Make sure that case ID and account is fine
     assert_is_valid_case(&case_info)?;
-    if *case_info.key != get_case_address(network_info.key, &case_id.to_le_bytes()) {
+    if *case_info.key != get_case_address(community_info.key, &case_id.to_le_bytes()) {
         msg!("Invalid case ID");
         return Err(HapiError::CaseIDMismatch.into());
     }

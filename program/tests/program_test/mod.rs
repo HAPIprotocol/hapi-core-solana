@@ -132,9 +132,9 @@ impl HapiProgramTest {
 
         let account = Community {
             account_type: HapiAccountType::Community,
-
             authority: authority.pubkey(),
             name: name.clone(),
+            next_case_id: 0,
         };
 
         let address = get_community_address(&name);
@@ -168,7 +168,6 @@ impl HapiProgramTest {
         let account = Network {
             account_type: HapiAccountType::Network,
             name: name.clone(),
-            next_case_id: 0,
         };
 
         let network_address = get_network_address(&community_cookie.address, &name);
@@ -234,20 +233,19 @@ impl HapiProgramTest {
         &mut self,
         reporter: &ReporterCookie,
         community: &CommunityCookie,
-        network: &NetworkCookie,
     ) -> CaseCookie {
         let name = format!("Case #{}", self.next_case_id).to_string();
         self.next_case_id += 1;
 
-        let case_id = network.account.next_case_id;
+        let case_id = community.account.next_case_id;
 
-        let case_address = get_case_address(&network.address, &case_id.to_le_bytes());
+        let case_address = get_case_address(&community.address, &case_id.to_le_bytes());
 
         let categories: CategorySet = Category::Safe as u32;
 
         let report_case_ix = report_case(
             &reporter.reporter_keypair.pubkey(),
-            &format!("{}/{}", community.name, network.name),
+            &community.name,
             case_id,
             &name,
             &categories,
@@ -268,7 +266,6 @@ impl HapiProgramTest {
         CaseCookie {
             address: case_address,
             account: case,
-            network_account: network.address,
             name,
             id: case_id,
         }
@@ -314,6 +311,11 @@ impl HapiProgramTest {
             account: address,
             value,
         }
+    }
+
+    #[allow(dead_code)]
+    pub async fn get_community_account(&mut self, address: &Pubkey) -> Community {
+        self.get_borsh_account::<Community>(address).await
     }
 
     #[allow(dead_code)]
@@ -389,13 +391,12 @@ impl HapiProgramTest {
         &mut self,
         reporter: &Keypair,
         community_cookie: &CommunityCookie,
-        network_cookie: &NetworkCookie,
         case_cookie: &CaseCookie,
         categories: &CategorySet,
     ) -> Result<(), ProgramError> {
         let update_case_ix = update_case(
             &reporter.pubkey(),
-            &format!("{}/{}", &community_cookie.name, &network_cookie.name),
+            &community_cookie.name,
             case_cookie.id,
             categories,
         )

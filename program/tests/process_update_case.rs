@@ -14,16 +14,13 @@ async fn test_case_reported() {
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
     let community_cookie = hapi_test.with_community(&authority_keypair).await;
-    let network_cookie = hapi_test
-        .with_network(&authority_keypair, &community_cookie)
-        .await;
     let reporter_cookie = hapi_test
         .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
 
     let case_cookie = hapi_test
-        .with_case(&reporter_cookie, &community_cookie, &network_cookie)
+        .with_case(&reporter_cookie, &community_cookie)
         .await;
     let categories: CategorySet = Category::MiningPool | Category::Safe;
 
@@ -32,7 +29,6 @@ async fn test_case_reported() {
         .update_case(
             &reporter_cookie.reporter_keypair,
             &community_cookie,
-            &network_cookie,
             &case_cookie,
             &categories,
         )
@@ -54,15 +50,12 @@ async fn test_case_reported_with_all_categories() {
     let mut hapi_test = HapiProgramTest::start_new().await;
     let authority_keypair = hapi_test.create_funded_keypair().await;
     let community_cookie = hapi_test.with_community(&authority_keypair).await;
-    let network_cookie = hapi_test
-        .with_network(&authority_keypair, &community_cookie)
-        .await;
     let reporter_cookie = hapi_test
         .with_reporter(&authority_keypair, &community_cookie)
         .await
         .unwrap();
     let case_cookie = hapi_test
-        .with_case(&reporter_cookie, &community_cookie, &network_cookie)
+        .with_case(&reporter_cookie, &community_cookie)
         .await;
     let categories: CategorySet = Category::Safe
         | Category::WalletService
@@ -89,7 +82,6 @@ async fn test_case_reported_with_all_categories() {
         .update_case(
             &reporter_cookie.reporter_keypair,
             &community_cookie,
-            &network_cookie,
             &case_cookie,
             &categories,
         )
@@ -121,6 +113,6 @@ async fn test_case_reported_with_all_categories() {
             | Category::ChildAbuse,
         updated_account.categories
     );
-    assert!(Category::Mixer as u32 & updated_account.categories != 0);
-    assert_eq!(72, std::mem::size_of_val(&updated_account));
+    assert!(Category::Mixer as u32 & updated_account.categories != 0, "Mixer category should be present");
+    assert_eq!(72, std::mem::size_of_val(&updated_account), "Account size must be correct");
 }
