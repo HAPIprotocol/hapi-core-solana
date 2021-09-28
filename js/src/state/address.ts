@@ -3,13 +3,13 @@ import { deserializeUnchecked, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { u64 } from "../utils";
-import { Category, HapiAccountType } from "./enums";
+import { Category, Categories, HapiAccountType } from "./enums";
 
 export class AddressState {
   account_type: HapiAccountType;
   risk: number;
   case_id: u64;
-  category: Category;
+  category: number;
   constructor(object: Partial<AddressState>) {
     Object.assign(this, object);
   }
@@ -22,7 +22,7 @@ export class AddressState {
           ["account_type", "u8"],
           ["risk", "u8"],
           ["case_id", "u64"],
-          ["category", "u32"],
+          ["category", "u8"],
         ],
       },
     ],
@@ -53,7 +53,7 @@ export class Address {
       accountType: state.account_type,
       risk: state.risk,
       caseId: state.case_id,
-      category: state.category,
+      category: Categories[state.category],
     });
   }
 
@@ -108,7 +108,7 @@ export class Address {
       account_type: this.accountType,
       risk: this.risk,
       case_id: this.caseId,
-      category: this.category,
+      category: Categories.indexOf(this.category),
     });
   }
 }
