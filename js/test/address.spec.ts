@@ -3,9 +3,10 @@ import stringify from "fast-json-stable-stringify";
 
 import { Address, Category, HapiAccountType } from "../src/state";
 import { u64 } from "../src/utils";
+import { assertBuffersEqual } from "./util/comparison";
 
 describe("Address", () => {
-  const BINARY_SAMPLE = Buffer.from("050501000000000000000f", "hex");
+  const BINARY_SAMPLE = Buffer.from("BQUBAAAAAAAAAA8=", "base64");
   const ADDRESS_SAMPLE = new Address({
     accountType: HapiAccountType.Address,
     caseId: new u64(1),
@@ -14,7 +15,7 @@ describe("Address", () => {
   });
 
   it("should serialize", () => {
-    expect(ADDRESS_SAMPLE.serialize()).toEqual(BINARY_SAMPLE);
+    assertBuffersEqual(ADDRESS_SAMPLE.serialize(), BINARY_SAMPLE);
   });
 
   it("should deserialize", () => {

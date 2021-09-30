@@ -21,5 +21,5 @@ async fn test_network_created() {
     // Assert
     let network_account = hapi_test.get_network_account(&network_cookie.address).await;
 
-    assert_eq!(network_cookie.account, network_account);
+    assert_eq!(network_cookie.account, network_account, "Network account must match expectations");
 }

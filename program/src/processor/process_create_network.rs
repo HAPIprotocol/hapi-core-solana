@@ -47,7 +47,6 @@ pub fn process_create_network(
     let network_data = Network {
         account_type: HapiAccountType::Network,
         name: name.to_string(),
-        next_case_id: 0,
     };
 
     create_and_serialize_account_signed::<Network>(

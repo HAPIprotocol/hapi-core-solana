@@ -146,17 +146,21 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             SubCommand::with_name("report")
                 .about("Report a new case")
                 .arg(arg_community_name.clone().index(1).required(true))
-                .arg(arg_network_name.clone().index(2).required(true))
-                .arg(arg_case_name.clone().index(3).required(true))
-                .arg(arg_case_categories),
+                .arg(arg_case_name.clone().index(2).required(true))
+                .arg(arg_case_categories.clone()),
         )
-        .subcommand(SubCommand::with_name("update").about("Update an existing case"))
+        .subcommand(
+            SubCommand::with_name("update")
+                .about("Update an existing case")
+                .arg(arg_community_name.clone().index(1).required(true))
+                .arg(arg_case_id.clone().index(2).required(true))
+                .arg(arg_case_categories.clone()),
+        )
         .subcommand(
             SubCommand::with_name("view")
                 .about("View case data")
                 .arg(arg_community_name.clone().index(1).required(true))
-                .arg(arg_network_name.clone().index(2).required(true))
-                .arg(arg_case_id.clone().index(3).required(true)),
+                .arg(arg_case_id.clone().index(2).required(true)),
         );
 
     let subcommand_address = SubCommand::with_name("address")
@@ -340,42 +344,25 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             match (sub_command, sub_matches) {
                 ("report", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
-                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_name = value_t_or_exit!(arg_matches, "case_name", String);
                     let categories = parse_arg_categories(&arg_matches)?;
 
-                    cmd_report_case(
-                        &rpc_client,
-                        &config,
-                        community_name,
-                        network_name,
-                        case_name,
-                        categories,
-                    )
+                    cmd_report_case(&rpc_client, &config, community_name, case_name, categories)
                 }
 
                 ("update", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
-                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
                     let categories = parse_arg_categories(&arg_matches)?;
 
-                    cmd_update_case(
-                        &rpc_client,
-                        &config,
-                        community_name,
-                        network_name,
-                        case_id,
-                        categories,
-                    )
+                    cmd_update_case(&rpc_client, &config, community_name, case_id, categories)
                 }
 
                 ("view", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
-                    let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
 
-                    cmd_view_case(&rpc_client, &config, community_name, network_name, case_id)
+                    cmd_view_case(&rpc_client, &config, community_name, case_id)
                 }
 
                 _ => subcommand_case

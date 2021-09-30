@@ -35,7 +35,6 @@ pub struct ReporterCookie {
 pub struct CaseCookie {
     pub address: Pubkey,
     pub account: Case,
-    pub network_account: Pubkey,
     pub name: String,
     pub id: u64,
 }

@@ -1,12 +1,12 @@
 {
   "name": "@hapi.one/solana-client",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
       "name": "@hapi.one/solana-client",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "license": "BSL-1.1",
       "dependencies": {
         "@solana/web3.js": "1.x",

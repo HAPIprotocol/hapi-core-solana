@@ -23,7 +23,7 @@ async fn test_reporter_added() {
         .get_reporter_account(&reporter_cookie.address)
         .await;
 
-    assert_eq!(reporter_cookie.account, reporter_account);
+    assert_eq!(reporter_cookie.account, reporter_account, "Reporter account must match expectations");
 }
 
 #[tokio::test]
@@ -42,5 +42,5 @@ async fn test_reporter_not_added_invalid_authority() {
         .unwrap();
 
     // Assert
-    assert_eq!(err, HapiError::InvalidNetworkAuthority.into());
+    assert_eq!(err, HapiError::InvalidNetworkAuthority.into(), "Authority must be invalid");
 }

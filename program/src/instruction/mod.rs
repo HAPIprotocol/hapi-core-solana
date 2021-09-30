@@ -80,9 +80,9 @@ pub enum HapiInstruction {
     /// Report a new case
     ///
     /// 0. `[signer]` Reporter key
-    /// 1. `[writable]` Network account
+    /// 1. `[writable]` Community account
     /// 2. `[]` Reporter account
-    /// 3. `[writable]` Case account. PDA seeds: ['case', network_account, case_id]
+    /// 3. `[writable]` Case account. PDA seeds: ['case', community_account, case_id]
     /// 4. `[]` System
     /// 5. `[]` Sysvar Rent
     ///
@@ -97,9 +97,9 @@ pub enum HapiInstruction {
     /// Update an existing case
     ///
     /// 0. `[signer]` Reporter key
-    /// 1. `[]` Network account
+    /// 1. `[]` Community account
     /// 2. `[]` Reporter account
-    /// 3. `[writable]` Case account. PDA seeds: ['case', network_account, case_id]
+    /// 3. `[writable]` Case account. PDA seeds: ['case', community_account, case_id]
     ///
     UpdateCase {
         /// Categories

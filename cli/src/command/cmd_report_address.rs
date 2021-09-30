@@ -31,7 +31,7 @@ pub fn cmd_report_address(
         println!("{}: {}", "Network".bright_black(), network_name);
     }
 
-    let case_address = get_case_address(&network_account, &case_id.to_le_bytes());
+    let case_address = get_case_address(&community_account, &case_id.to_le_bytes());
 
     assert_is_existing_account(rpc_client, &case_address)?;
 

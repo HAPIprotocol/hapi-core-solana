@@ -4,8 +4,8 @@ import { Community, HapiAccountType } from "../src/state";
 
 describe("Community", () => {
   const BINARY_SAMPLE = Buffer.from(
-    "01ef37a50404b188a96e10f551122753f8ae8906c4ae0983c92727acf25b38f95108000000686170692e6f6e65",
-    "hex"
+    "Ae83pQQEsYipbhD1URInU/iuiQbErgmDyScnrPJbOPlRCAAAAGhhcGkub25lAgAAAAAAAAA=",
+    "base64"
   );
 
   const COMMUNITY_SAMPLE = new Community({

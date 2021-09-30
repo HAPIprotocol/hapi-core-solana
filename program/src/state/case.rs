@@ -15,7 +15,7 @@ use crate::{
 };
 
 /// HAPI Case Account
-/// Account PDA seeds: ['case', network_name, case_id]
+/// Account PDA seeds: ['case', community_address, case_id]
 #[repr(C)]
 #[derive(Clone, Debug, PartialEq, PartialOrd, BorshDeserialize, BorshSerialize)]
 pub struct Case {
@@ -52,13 +52,13 @@ pub fn get_case_data(case_info: &AccountInfo) -> Result<Case, ProgramError> {
 
 /// Returns Case PDA seeds
 pub fn get_case_address_seeds<'a>(
-    network: &'a Pubkey,
+    community_address: &'a Pubkey,
     case_id_le_bytes: &'a [u8],
 ) -> [&'a [u8]; 3] {
-    [b"case", &network.as_ref(), &case_id_le_bytes]
+    [b"case", &community_address.as_ref(), &case_id_le_bytes]
 }
 
 /// Returns Case PDA address
-pub fn get_case_address<'a>(network: &'a Pubkey, case_id_le_bytes: &'a [u8]) -> Pubkey {
-    Pubkey::find_program_address(&get_case_address_seeds(&network, &case_id_le_bytes), &id()).0
+pub fn get_case_address<'a>(community_address: &'a Pubkey, case_id_le_bytes: &'a [u8]) -> Pubkey {
+    Pubkey::find_program_address(&get_case_address_seeds(&community_address, &case_id_le_bytes), &id()).0
 }

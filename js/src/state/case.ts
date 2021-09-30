@@ -2,16 +2,15 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { deserialize, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
-import { mapToBuffer, u64 } from "../utils";
+import { u64 } from "../utils";
 import { Community } from "./community";
 import { Categories, Category, HapiAccountType } from "./enums";
-import { Network } from "./network";
 
 class CaseState {
   account_type: number;
   name: string;
   reporter_key: Uint8Array;
-  categories: Uint8Array;
+  categories: number;
   constructor(object: Partial<CaseState>) {
     Object.assign(this, object);
   }
@@ -42,25 +41,20 @@ export class Case {
   reporterKey: PublicKey;
 
   /// Categories
-  categories: Map<Category, boolean>;
+  categories: Category[];
 
   constructor(data?: Partial<Case>) {
     if (data) {
       Object.assign(this, data);
-      for (const category of Categories) {
-        if (!this.categories.has(category)) {
-          this.categories.set(category, false);
-        }
-      }
     }
   }
 
   static async getAddress(
-    networkAddress: PublicKey,
+    communityAddress: PublicKey,
     caseId: u64
   ): Promise<[PublicKey, number]> {
     return PublicKey.findProgramAddress(
-      [Buffer.from("case"), networkAddress.toBuffer(), caseId.toBuffer()],
+      [Buffer.from("case"), communityAddress.toBuffer(), caseId.toBuffer()],
       HAPI_PROGRAM_ID
     );
   }
@@ -70,7 +64,9 @@ export class Case {
       accountType: state.account_type,
       name: state.name,
       reporterKey: new PublicKey(state.reporter_key),
-      categories: new Map<Category, boolean>(),
+      categories: Categories.filter(
+        (category) => state.categories & category
+      ).sort(),
     });
   }
 
@@ -81,17 +77,11 @@ export class Case {
   static async retrieve(
     connection: Connection,
     communityName: string,
-    networkName: string,
     caseId: u64
   ): Promise<Case> {
     const [communityAddress] = await Community.getAddress(communityName);
 
-    const [networkAddress] = await Network.getAddress(
-      communityAddress,
-      networkName
-    );
-
-    const [caseAddress] = await Case.getAddress(networkAddress, caseId);
+    const [caseAddress] = await Case.getAddress(communityAddress, caseId);
 
     const account = await connection.getAccountInfo(caseAddress, "processed");
     if (!account) {
@@ -110,7 +100,9 @@ export class Case {
       account_type: this.accountType,
       name: this.name,
       reporter_key: this.reporterKey.toBytes(),
-      categories: mapToBuffer(this.categories),
+      categories: this.categories.reduce((acc, category) => {
+        return acc | category;
+      }, 0),
     });
   }
 }

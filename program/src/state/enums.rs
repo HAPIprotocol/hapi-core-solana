@@ -59,7 +59,6 @@ impl Default for ReporterType {
 }
 
 /// Case category
-#[repr(u32)]
 #[derive(
     Copy,
     Clone,

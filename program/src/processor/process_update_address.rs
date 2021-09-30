@@ -26,7 +26,6 @@ pub fn process_update_address(
     let account_info_iter = &mut accounts.iter();
     let reporter_key_info = next_account_info(account_info_iter)?; // 0
     let community_info = next_account_info(account_info_iter)?; // 1
-    let network_info = next_account_info(account_info_iter)?; // 2
     let reporter_info = next_account_info(account_info_iter)?; // 3
     let case_info = next_account_info(account_info_iter)?; // 4
     let address_info = next_account_info(account_info_iter)?; // 5
@@ -43,7 +42,7 @@ pub fn process_update_address(
 
     // Make sure that case ID and account is fine
     assert_is_valid_case(&case_info)?;
-    if *case_info.key != get_case_address(network_info.key, &case_id.to_le_bytes()) {
+    if *case_info.key != get_case_address(community_info.key, &case_id.to_le_bytes()) {
         msg!("Invalid case ID");
         return Err(HapiError::CaseIDMismatch.into());
     }
