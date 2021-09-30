@@ -39,8 +39,8 @@ pub fn process_create_community(
     let community_data = Community {
         account_type: HapiAccountType::Community,
         authority: *authority_info.key,
-        name: name.to_string(),
         next_case_id: 0,
+        name: name.to_string(),
     };
 
     create_and_serialize_account_signed::<Community>(

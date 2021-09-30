@@ -1,16 +1,18 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 
 import { Community, HapiAccountType } from "../src/state";
+import { u64 } from "../src/utils";
 
 describe("Community", () => {
   const BINARY_SAMPLE = Buffer.from(
-    "Ae83pQQEsYipbhD1URInU/iuiQbErgmDyScnrPJbOPlRCAAAAGhhcGkub25lAgAAAAAAAAA=",
+    "Ae83pQQEsYipbhD1URInU/iuiQbErgmDyScnrPJbOPlRAgAAAAAAAAAIAAAAaGFwaS5vbmU=",
     "base64"
   );
 
   const COMMUNITY_SAMPLE = new Community({
     accountType: HapiAccountType.Community,
     authority: new PublicKey("H6oepkMQSZxSGdQUGwtmSy6Z6f4ZuhvjJFsdiz7mpoKn"),
+    nextCaseId: new u64(2),
     name: "hapi.one",
   });
 

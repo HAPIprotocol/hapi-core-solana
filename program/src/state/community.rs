@@ -25,14 +25,23 @@ pub struct Community {
     /// HAPI authority account
     pub authority: Pubkey,
 
-    /// HAPI community name
-    pub name: String,
-
     /// ID for the next reported case
     pub next_case_id: u64,
+
+    /// HAPI community name
+    pub name: String,
 }
 
-impl AccountMaxSize for Community {}
+impl AccountMaxSize for Community {
+    fn get_max_size(&self) -> Option<usize> {
+        Some(
+            std::mem::size_of::<u8>()
+                + std::mem::size_of::<Pubkey>()
+                + std::mem::size_of::<u64>()
+                + 32,
+        )
+    }
+}
 
 impl IsInitialized for Community {
     fn is_initialized(&self) -> bool {

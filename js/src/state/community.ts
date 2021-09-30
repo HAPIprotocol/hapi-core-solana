@@ -1,5 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { serialize, deserialize } from "borsh";
+import { serialize, deserializeUnchecked } from "borsh";
+import { u64 } from "utils";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { HapiAccountType } from "./enums";
@@ -8,6 +9,7 @@ class CommunityState {
   account_type: number;
   authority: Uint8Array;
   name: string;
+  next_case_id: u64;
   constructor(object: Partial<CommunityState>) {
     Object.assign(this, object);
   }
@@ -19,6 +21,7 @@ class CommunityState {
         fields: [
           ["account_type", "u8"],
           ["authority", [32]],
+          ["next_case_id", "u64"],
           ["name", "string"],
         ],
       },
@@ -32,6 +35,9 @@ export class Community {
 
   /// HAPI authority account
   authority: PublicKey;
+
+  /// ID of the next created case
+  nextCaseId: u64;
 
   /// HAPI community name
   name: string;
@@ -53,13 +59,14 @@ export class Community {
     return new Community({
       accountType: state.account_type,
       authority: new PublicKey(state.authority),
+      nextCaseId: state.next_case_id,
       name: state.name,
     });
   }
 
   static deserialize(buffer: Buffer): Community {
     return Community.fromState(
-      deserialize(CommunityState.schema, CommunityState, buffer)
+      deserializeUnchecked(CommunityState.schema, CommunityState, buffer)
     );
   }
 
@@ -88,6 +95,7 @@ export class Community {
     return new CommunityState({
       account_type: this.accountType,
       authority: this.authority.toBytes(),
+      next_case_id: this.nextCaseId,
       name: this.name,
     });
   }
