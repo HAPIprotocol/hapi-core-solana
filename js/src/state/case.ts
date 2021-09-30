@@ -1,5 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { deserialize, serialize } from "borsh";
+import { deserializeUnchecked, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { u64 } from "../utils";
@@ -71,7 +71,9 @@ export class Case {
   }
 
   static deserialize(buffer: Buffer): Case {
-    return Case.fromState(deserialize(CaseState.schema, CaseState, buffer));
+    return Case.fromState(
+      deserializeUnchecked(CaseState.schema, CaseState, buffer)
+    );
   }
 
   static async retrieve(

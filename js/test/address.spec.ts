@@ -29,7 +29,7 @@ describe("Address", () => {
     const network = await Address.retrieve(
       conn,
       "hapi.one",
-      "test1",
+      "testcoin",
       new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew")
     );
     expect(JSON.stringify(network)).toEqual(JSON.stringify(ADDRESS_SAMPLE));

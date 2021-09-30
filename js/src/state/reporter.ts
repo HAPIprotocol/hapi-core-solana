@@ -1,5 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
-import { deserialize, serialize } from "borsh";
+import { deserializeUnchecked, serialize } from "borsh";
 
 import { HAPI_PROGRAM_ID } from "../constants";
 import { Community } from "./community";
@@ -67,7 +67,7 @@ export class Reporter {
 
   static deserialize(buffer: Buffer): Reporter {
     return Reporter.fromState(
-      deserialize(ReporterState.schema, ReporterState, buffer)
+      deserializeUnchecked(ReporterState.schema, ReporterState, buffer)
     );
   }
 

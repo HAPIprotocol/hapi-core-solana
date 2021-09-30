@@ -5,7 +5,7 @@ import { u64 } from "../src/utils";
 
 describe("Community", () => {
   const BINARY_SAMPLE = Buffer.from(
-    "Ae83pQQEsYipbhD1URInU/iuiQbErgmDyScnrPJbOPlRAgAAAAAAAAAIAAAAaGFwaS5vbmU=",
+    "Ae83pQQEsYipbhD1URInU/iuiQbErgmDyScnrPJbOPlRAgAAAAAAAAAIAAAAaGFwaS5vbmUAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
     "base64"
   );
 
