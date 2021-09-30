@@ -126,15 +126,18 @@ pub enum Category {
     /// Theft - stolen funds
     Theft = 16384,
 
+    /// Counterfeit - fake assets
+    Counterfeit = 32768,
+
     // Tier 4 - Severe risk
     /// Terrorist financing
-    TerroristFinancing = 32768,
+    TerroristFinancing = 65536,
 
     /// Sanctions
-    Sanctions = 65536,
+    Sanctions = 131072,
 
     /// Child abuse and porn materials
-    ChildAbuse = 131072,
+    ChildAbuse = 262144,
 }
 
 /// A set bitmasked set of categories
@@ -206,6 +209,7 @@ impl Category {
         map.insert(Category::Scam, false);
         map.insert(Category::Ransomware, false);
         map.insert(Category::Theft, false);
+        map.insert(Category::Counterfeit, false);
         map.insert(Category::TerroristFinancing, false);
         map.insert(Category::Sanctions, false);
         map.insert(Category::ChildAbuse, false);

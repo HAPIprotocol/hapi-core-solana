@@ -80,6 +80,7 @@ async fn test_case_reported_with_all_categories() {
         | Category::Scam
         | Category::Ransomware
         | Category::Theft
+        | Category::Counterfeit
         | Category::TerroristFinancing
         | Category::Sanctions
         | Category::ChildAbuse;
@@ -116,6 +117,7 @@ async fn test_case_reported_with_all_categories() {
             | Category::Scam
             | Category::Ransomware
             | Category::Theft
+            | Category::Counterfeit
             | Category::TerroristFinancing
             | Category::Sanctions
             | Category::ChildAbuse,

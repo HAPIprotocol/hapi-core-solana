@@ -67,15 +67,17 @@ export enum Category {
   /// Theft - stolen funds
   Theft = 16384,
 
+  Counterfeit = 32768,
+
   // Tier 4 - Severe risk
   /// Terrorist financing
-  TerroristFinancing = 32768,
+  TerroristFinancing = 65536,
 
   /// Sanctions
-  Sanctions = 65536,
+  Sanctions = 131072,
 
   /// Child abuse and porn materials
-  ChildAbuse = 131072,
+  ChildAbuse = 262144,
 }
 
 export const Categories = [
