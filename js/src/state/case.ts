@@ -8,9 +8,9 @@ import { Categories, Category, HapiAccountType } from "./enums";
 
 class CaseState {
   account_type: number;
-  name: string;
   reporter_key: Uint8Array;
   categories: number;
+  name: string;
   constructor(object: Partial<CaseState>) {
     Object.assign(this, object);
   }
@@ -21,9 +21,9 @@ class CaseState {
         kind: "struct",
         fields: [
           ["account_type", "u8"],
-          ["name", "string"],
           ["reporter_key", [32]],
           ["categories", "u32"],
+          ["name", "string"],
         ],
       },
     ],
@@ -34,14 +34,14 @@ export class Case {
   /// HAPI account type
   accountType: HapiAccountType;
 
-  /// Case name
-  name: string;
-
   /// Case reporter key
   reporterKey: PublicKey;
 
   /// Categories
   categories: Category[];
+
+  /// Case name
+  name: string;
 
   constructor(data?: Partial<Case>) {
     if (data) {

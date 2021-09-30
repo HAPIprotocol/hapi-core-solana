@@ -31,6 +31,11 @@ pub fn process_add_reporter(
     let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
+    if name.len() > 32 {
+        msg!("Reporter name must not exceed 32 bytes");
+        return Err(HapiError::NameTooLong.into());
+    }
+
     // Authority must sign
     if !authority_info.is_signer {
         msg!("Payer did not sign");

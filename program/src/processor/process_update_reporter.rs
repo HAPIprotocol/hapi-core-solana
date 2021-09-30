@@ -27,6 +27,11 @@ pub fn process_update_reporter(
     let reporter_info = next_account_info(account_info_iter)?; // 2
     let reporter_key_info = next_account_info(account_info_iter)?; // 3
 
+    if name.len() > 32 {
+        msg!("Reporter name must not exceed 32 bytes");
+        return Err(HapiError::NameTooLong.into());
+    }
+
     // Authority must sign
     if !authority_info.is_signer {
         msg!("Authority did not sign initialization");

@@ -56,6 +56,10 @@ pub enum HapiError {
     #[error("InvalidReporterPermissions")]
     InvalidReporterPermissions,
 
+    /// Name of this entity is too long
+    #[error("NameTooLong")]
+    NameTooLong,
+
     /// ---- Account Tools Errors ----
 
     /// Invalid account owner

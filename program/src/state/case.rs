@@ -22,17 +22,27 @@ pub struct Case {
     /// HAPI account type
     pub account_type: HapiAccountType,
 
-    /// Case name
-    pub name: String,
-
     /// Case reporter key
     pub reporter_key: Pubkey,
 
     /// Categories bitmask
     pub categories: CategorySet,
+
+    /// Case name
+    pub name: String,
 }
 
-impl AccountMaxSize for Case {}
+impl AccountMaxSize for Case {
+    fn get_max_size(&self) -> Option<usize> {
+        Some(
+            std::mem::size_of::<u8>()
+                + std::mem::size_of::<u8>()
+                + std::mem::size_of::<Pubkey>()
+                + std::mem::size_of::<u32>()
+                + 32,
+        )
+    }
+}
 
 impl IsInitialized for Case {
     fn is_initialized(&self) -> bool {
@@ -60,5 +70,9 @@ pub fn get_case_address_seeds<'a>(
 
 /// Returns Case PDA address
 pub fn get_case_address<'a>(community_address: &'a Pubkey, case_id_le_bytes: &'a [u8]) -> Pubkey {
-    Pubkey::find_program_address(&get_case_address_seeds(&community_address, &case_id_le_bytes), &id()).0
+    Pubkey::find_program_address(
+        &get_case_address_seeds(&community_address, &case_id_le_bytes),
+        &id(),
+    )
+    .0
 }

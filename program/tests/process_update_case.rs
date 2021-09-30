@@ -116,5 +116,6 @@ async fn test_case_reported_with_all_categories() {
         updated_account.categories
     );
     assert!(Category::Mixer as u32 & updated_account.categories != 0, "Mixer category should be present");
-    assert_eq!(72, std::mem::size_of_val(&updated_account), "Account size must be correct");
+
+    assert_eq!(64, std::mem::size_of_val(&updated_account), "Account size must be correct");
 }

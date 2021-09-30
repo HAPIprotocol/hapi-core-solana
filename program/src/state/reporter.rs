@@ -30,7 +30,11 @@ pub struct Reporter {
     pub name: String,
 }
 
-impl AccountMaxSize for Reporter {}
+impl AccountMaxSize for Reporter {
+    fn get_max_size(&self) -> Option<usize> {
+        Some(std::mem::size_of::<u8>() + std::mem::size_of::<u8>() + 32)
+    }
+}
 
 impl IsInitialized for Reporter {
     fn is_initialized(&self) -> bool {

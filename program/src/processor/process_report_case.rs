@@ -36,6 +36,11 @@ pub fn process_report_case(
     let rent_sysvar_info = next_account_info(account_info_iter)?; // 5
     let rent = &Rent::from_account_info(rent_sysvar_info)?;
 
+    if name.len() > 32 {
+        msg!("Case name must not exceed 32 bytes");
+        return Err(HapiError::NameTooLong.into());
+    }
+
     // Reporter must sign
     if !reporter_key_info.is_signer {
         msg!("Reporter did not sign ReportCase");
@@ -60,9 +65,9 @@ pub fn process_report_case(
 
     let case_data = Case {
         account_type: HapiAccountType::Case,
-        name: name.to_string(),
         reporter_key: *reporter_key_info.key,
         categories: *categories,
+        name: name.to_string(),
     };
 
     create_and_serialize_account_signed::<Case>(
