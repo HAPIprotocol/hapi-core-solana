@@ -25,6 +25,7 @@ class ReporterState {
       },
     ],
   ]);
+  static size = 34;
 }
 
 export class Reporter {
@@ -95,7 +96,9 @@ export class Reporter {
   }
 
   serialize(): Uint8Array {
-    return serialize(ReporterState.schema, this.toState());
+    const buf = Buffer.alloc(ReporterState.size);
+    buf.set(serialize(ReporterState.schema, this.toState()));
+    return buf;
   }
 
   toState(): ReporterState {

@@ -27,6 +27,7 @@ export class AddressState {
       },
     ],
   ]);
+  static size = 11;
 }
 
 export class Address {
@@ -100,7 +101,9 @@ export class Address {
   }
 
   serialize(): Uint8Array {
-    return serialize(AddressState.schema, this.toState());
+    const buf = Buffer.alloc(AddressState.size);
+    buf.set(serialize(AddressState.schema, this.toState()));
+    return buf;
   }
 
   toState(): AddressState {

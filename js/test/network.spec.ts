@@ -3,7 +3,10 @@ import { Connection } from "@solana/web3.js";
 import { Network, HapiAccountType } from "../src/state";
 
 describe("Network", () => {
-  const BINARY_SAMPLE = Buffer.from("AggAAAB0ZXN0Y29pbg==", "base64");
+  const BINARY_SAMPLE = Buffer.from(
+    "AggAAAB0ZXN0Y29pbgAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "base64"
+  );
 
   const NETWORK_SAMPLE = new Network({
     accountType: HapiAccountType.Network,

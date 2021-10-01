@@ -21,7 +21,9 @@ describe("Community", () => {
   });
 
   it("should deserialize", () => {
-    expect(Community.deserialize(BINARY_SAMPLE)).toEqual(COMMUNITY_SAMPLE);
+    expect(JSON.stringify(Community.deserialize(BINARY_SAMPLE))).toEqual(
+      JSON.stringify(COMMUNITY_SAMPLE)
+    );
   });
 
   xit("should retrieve", async () => {

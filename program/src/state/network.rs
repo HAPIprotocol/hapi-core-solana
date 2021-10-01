@@ -26,7 +26,11 @@ pub struct Network {
     pub name: String,
 }
 
-impl AccountMaxSize for Network {}
+impl AccountMaxSize for Network {
+    fn get_max_size(&self) -> Option<usize> {
+        Some(std::mem::size_of::<u8>() + 32)
+    }
+}
 
 impl IsInitialized for Network {
     fn is_initialized(&self) -> bool {

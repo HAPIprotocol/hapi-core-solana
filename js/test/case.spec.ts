@@ -2,6 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 
 import { Case, Category, HapiAccountType } from "../src/state";
 import { u64 } from "../src/utils";
+import { assertBuffersEqual } from "./util/comparison";
 
 describe("Case", () => {
   const BINARY_SAMPLE_1 = Buffer.from(
@@ -29,7 +30,7 @@ describe("Case", () => {
   });
 
   it("should serialize - case0", () => {
-    expect(CASE_SAMPLE_1.serialize()).toEqual(BINARY_SAMPLE_1);
+    assertBuffersEqual(CASE_SAMPLE_1.serialize(), BINARY_SAMPLE_1);
   });
 
   it("should deserialize - case0", () => {
@@ -45,7 +46,7 @@ describe("Case", () => {
   });
 
   it("should serialize - case1", () => {
-    expect(CASE_SAMPLE_2.serialize()).toEqual(BINARY_SAMPLE_2);
+    assertBuffersEqual(CASE_SAMPLE_2.serialize(), BINARY_SAMPLE_2);
   });
 
   it("should deserialize - case1", () => {

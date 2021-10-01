@@ -27,6 +27,7 @@ class CommunityState {
       },
     ],
   ]);
+  static size = 73;
 }
 
 export class Community {
@@ -88,7 +89,9 @@ export class Community {
   }
 
   serialize(): Uint8Array {
-    return serialize(CommunityState.schema, this.toState());
+    const buf = Buffer.alloc(CommunityState.size);
+    buf.set(serialize(CommunityState.schema, this.toState()));
+    return buf;
   }
 
   toState(): CommunityState {

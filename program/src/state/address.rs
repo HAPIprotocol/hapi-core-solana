@@ -32,7 +32,16 @@ pub struct Address {
     pub category: Category,
 }
 
-impl AccountMaxSize for Address {}
+impl AccountMaxSize for Address {
+    fn get_max_size(&self) -> Option<usize> {
+        Some(
+            std::mem::size_of::<u8>()
+                + std::mem::size_of::<u8>()
+                + std::mem::size_of::<u64>()
+                + std::mem::size_of::<u8>(),
+        )
+    }
+}
 
 impl IsInitialized for Address {
     fn is_initialized(&self) -> bool {

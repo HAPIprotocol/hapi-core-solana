@@ -23,6 +23,7 @@ class NetworkState {
       },
     ],
   ]);
+  static size = 33;
 }
 
 export class Network {
@@ -89,7 +90,9 @@ export class Network {
   }
 
   serialize(): Uint8Array {
-    return serialize(NetworkState.schema, this.toState());
+    const buf = Buffer.alloc(NetworkState.size);
+    buf.set(serialize(NetworkState.schema, this.toState()));
+    return buf;
   }
 
   toState(): NetworkState {

@@ -28,6 +28,7 @@ class CaseState {
       },
     ],
   ]);
+  static size = 70;
 }
 
 export class Case {
@@ -94,7 +95,9 @@ export class Case {
   }
 
   serialize(): Uint8Array {
-    return serialize(CaseState.schema, this.toState());
+    const buf = Buffer.alloc(CaseState.size);
+    buf.set(serialize(CaseState.schema, this.toState()));
+    return buf;
   }
 
   toState(): CaseState {
