@@ -1,8 +1,10 @@
 import assert from "assert";
 import BN from "bn.js";
+import b58 from "b58";
 import {
   Connection,
   Keypair,
+  PublicKey,
   Transaction,
   TransactionInstruction,
 } from "@solana/web3.js";
@@ -147,4 +149,9 @@ export function setToBuffer<T extends number>(set: Set<T>, size = 4): Buffer {
   }
 
   return value.toBuffer("le", size);
+}
+
+export function base58ToPublicKey(address: string): PublicKey {
+  const buffer = b58.decode(address);
+  return new PublicKey(buffer);
 }

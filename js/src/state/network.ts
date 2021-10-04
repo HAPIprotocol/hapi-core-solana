@@ -83,7 +83,9 @@ export class Network {
       "processed"
     );
     if (!account) {
-      throw new Error("Invalid network account provided");
+      throw new Error(
+        `Network not found: "${networkName}" (${networkAddress}) in community "${communityName}" (${communityAddress})`
+      );
     }
 
     return Network.deserialize(account.data);

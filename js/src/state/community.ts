@@ -82,7 +82,9 @@ export class Community {
       "processed"
     );
     if (!communityAccount) {
-      throw new Error("Invalid community account provided");
+      throw new Error(
+        `Community not found: ${communityName} (${communityAddress})`
+      );
     }
 
     return Community.deserialize(communityAccount.data);

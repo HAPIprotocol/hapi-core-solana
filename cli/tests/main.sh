@@ -129,6 +129,6 @@ echo "2viJmmn2pEfd6cogyqdDGWS9YkrVdnx87L994Qo3GwLx
 
 echo "==> Tests finished"
 
-if [[ "$NO_CLEANUP" == "1" ]]; then
+if [[ "$NO_CLEANUP" != "1" ]]; then
   cleanup
 fi

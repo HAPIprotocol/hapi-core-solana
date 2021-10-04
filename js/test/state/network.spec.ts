@@ -2,7 +2,7 @@ import { Connection } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Network, HapiAccountType } from "../src/state";
+import { Network, HapiAccountType } from "../../src/state";
 
 describe("Network", () => {
   nock.disableNetConnect();

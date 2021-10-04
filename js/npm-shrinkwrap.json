@@ -19,6 +19,7 @@
         "@types/node": "16.x",
         "@typescript-eslint/eslint-plugin": "4.x",
         "@typescript-eslint/parser": "4.x",
+        "b58": "^4.0.3",
         "eslint": "7.x",
         "eslint-config-prettier": "8.x",
         "eslint-plugin-prettier": "4.x",
@@ -1682,6 +1683,15 @@
       },
       "funding": {
         "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/b58": {
+      "version": "4.0.3",
+      "resolved": "https://registry.npmjs.org/b58/-/b58-4.0.3.tgz",
+      "integrity": "sha512-VDtdiomm0ywbL8YzgevOZ9pcx6LuOZ3d9qYTPDcYUPf7dRYNA8wvK6epYy0FKMWIM5uaDwd3kWt1x+1S9scB1Q==",
+      "dev": true,
+      "dependencies": {
+        "base-x": "^3.0.2"
       }
     },
     "node_modules/babel-jest": {
@@ -7585,6 +7595,15 @@
       "version": "1.0.4",
       "resolved": "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz",
       "integrity": "sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA=="
+    },
+    "b58": {
+      "version": "4.0.3",
+      "resolved": "https://registry.npmjs.org/b58/-/b58-4.0.3.tgz",
+      "integrity": "sha512-VDtdiomm0ywbL8YzgevOZ9pcx6LuOZ3d9qYTPDcYUPf7dRYNA8wvK6epYy0FKMWIM5uaDwd3kWt1x+1S9scB1Q==",
+      "dev": true,
+      "requires": {
+        "base-x": "^3.0.2"
+      }
     },
     "babel-jest": {
       "version": "27.0.6",

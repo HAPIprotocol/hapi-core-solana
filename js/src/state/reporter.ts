@@ -89,7 +89,9 @@ export class Reporter {
       "processed"
     );
     if (!account) {
-      throw new Error("Invalid reporter account provided");
+      throw new Error(
+        `Reporter not found: "${reporterPubkey}" in community "${communityName}" (${communityAddress})`
+      );
     }
 
     return Reporter.deserialize(account.data);

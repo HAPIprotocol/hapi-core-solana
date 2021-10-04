@@ -94,7 +94,9 @@ export class Address {
       "processed"
     );
     if (!account) {
-      throw new Error("Invalid case account provided");
+      throw new Error(
+        `Address not found: "${address}" in network "${networkName}" (${networkAddress}) in community "${communityName}" (${communityAddress})`
+      );
     }
 
     return Address.deserialize(account.data);

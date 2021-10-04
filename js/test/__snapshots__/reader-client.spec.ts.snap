@@ -1,0 +1,106 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReaderClient viewAddress should respond - success (buffer) 1`] = `
+Object {
+  "state": Address {
+    "accountType": 5,
+    "caseId": "01",
+    "category": 16384,
+    "risk": 5,
+  },
+}
+`;
+
+exports[`ReaderClient viewAddress should respond - success (string) 1`] = `
+Object {
+  "state": Address {
+    "accountType": 5,
+    "caseId": "01",
+    "category": 16384,
+    "risk": 5,
+  },
+}
+`;
+
+exports[`ReaderClient viewAddress should throw - invalid community name 1`] = `"Address not found: \\"2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew\\" in network \\"testcoin\\" (7GiNHuwBKg6URcBJXXXRPRtBVgn5q42AiowBEc8uzqBH) in community \\"community404\\" (mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh)"`;
+
+exports[`ReaderClient viewAddress should throw - malformed 1`] = `"Non-base58 character"`;
+
+exports[`ReaderClient viewAddress should throw - not found (buffer) 1`] = `"Address not found: \\"111111111111111111111111111111Hwr\\" in network \\"testcoin\\" (2viJmmn2pEfd6cogyqdDGWS9YkrVdnx87L994Qo3GwLx) in community \\"hapi.one\\" (DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja)"`;
+
+exports[`ReaderClient viewAddress should throw - not found (string) 1`] = `"Address not found: \\"1111111111111111111111111111114o4\\" in network \\"testcoin\\" (2viJmmn2pEfd6cogyqdDGWS9YkrVdnx87L994Qo3GwLx) in community \\"hapi.one\\" (DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja)"`;
+
+exports[`ReaderClient viewCase should respond - success 1`] = `
+Object {
+  "state": Case {
+    "accountType": 4,
+    "categories": Array [],
+    "name": "case0",
+    "reporterKey": PublicKey {
+      "_bn": "c0fdcf81e4689a79e0cb64d88098f5342910652a340ddc0703dbdb10386dc678",
+    },
+  },
+}
+`;
+
+exports[`ReaderClient viewCase should throw - not found 1`] = `"Invalid case account provided"`;
+
+exports[`ReaderClient viewCommunity should respond - success 1`] = `
+Object {
+  "state": Community {
+    "accountType": 1,
+    "authority": PublicKey {
+      "_bn": "ef37a50404b188a96e10f551122753f8ae8906c4ae0983c92727acf25b38f951",
+    },
+    "name": "hapi.one",
+    "nextCaseId": "02",
+  },
+}
+`;
+
+exports[`ReaderClient viewCommunity should throw - not found 1`] = `"Community not found: community404 (mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh)"`;
+
+exports[`ReaderClient viewNetwork should respond - success 1`] = `
+Object {
+  "state": Network {
+    "accountType": 2,
+    "name": "testcoin",
+  },
+}
+`;
+
+exports[`ReaderClient viewNetwork should throw - not found 1`] = `"Network not found: \\"unnetwork\\" (3TGzDJHkCHX5R62wtVh1Jr5TNe775jvSCt8tThbizBKQ) in community \\"hapi.one\\" (DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja)"`;
+
+exports[`ReaderClient viewNetwork should throw - not found 2`] = `"Network not found: \\"testcoin\\" (7GiNHuwBKg6URcBJXXXRPRtBVgn5q42AiowBEc8uzqBH) in community \\"community404\\" (mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh)"`;
+
+exports[`ReaderClient viewReporter should respond - success 1`] = `
+Object {
+  "state": Reporter {
+    "accountType": 3,
+    "name": "Alice",
+    "reporterType": 3,
+  },
+}
+`;
+
+exports[`ReaderClient viewReporter should respond - success 2`] = `
+Object {
+  "state": Reporter {
+    "accountType": 3,
+    "name": "Bob",
+    "reporterType": 2,
+  },
+}
+`;
+
+exports[`ReaderClient viewReporter should respond - success 3`] = `
+Object {
+  "state": Reporter {
+    "accountType": 3,
+    "name": "Carol",
+    "reporterType": 1,
+  },
+}
+`;
+
+exports[`ReaderClient viewReporter should throw - not found 1`] = `"Reporter not found: \\"49B9UtxhbVBKaToxThwQqshbmf2ZfnuJZX3XGjTsNLvb\\" in community \\"hapi.one\\" (DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja)"`;

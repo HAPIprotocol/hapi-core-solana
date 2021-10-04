@@ -2,7 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Reporter, HapiAccountType, ReporterType } from "../src/state";
+import { Reporter, HapiAccountType, ReporterType } from "../../src/state";
 
 describe("Reporter", () => {
   nock.disableNetConnect();
