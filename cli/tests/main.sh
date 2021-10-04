@@ -47,7 +47,7 @@ solana-test-validator \
   --bpf-program $PROGRAM_ID ../../program/target/deploy/hapi_core_solana.so &>"$LOG_FILE" &
 
 mkdir -p $OUTPUT_DIR
-sleep 1
+sleep 2
 
 echo "==> Switching Solana client configuration to local"
 solana config set --url http://127.0.0.1:8899
