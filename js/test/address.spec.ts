@@ -24,7 +24,7 @@ describe("Address", () => {
     );
   });
 
-  xit("should retrieve", async () => {
+  it("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Address.retrieve(
       conn,
@@ -32,6 +32,6 @@ describe("Address", () => {
       "testcoin",
       new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew")
     );
-    expect(JSON.stringify(network)).toEqual(JSON.stringify(ADDRESS_SAMPLE));
+    expect(stringify(network)).toEqual(stringify(ADDRESS_SAMPLE));
   });
 });

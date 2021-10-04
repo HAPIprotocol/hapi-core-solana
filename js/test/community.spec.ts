@@ -1,4 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
+import stringify from "fast-json-stable-stringify";
 
 import { Community, HapiAccountType } from "../src/state";
 import { u64 } from "../src/utils";
@@ -21,14 +22,14 @@ describe("Community", () => {
   });
 
   it("should deserialize", () => {
-    expect(JSON.stringify(Community.deserialize(BINARY_SAMPLE))).toEqual(
-      JSON.stringify(COMMUNITY_SAMPLE)
+    expect(stringify(Community.deserialize(BINARY_SAMPLE))).toEqual(
+      stringify(COMMUNITY_SAMPLE)
     );
   });
 
-  xit("should retrieve", async () => {
+  it("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const community = await Community.retrieve(conn, "hapi.one");
-    expect(community).toEqual(COMMUNITY_SAMPLE);
+    expect(stringify(community)).toEqual(stringify(COMMUNITY_SAMPLE));
   });
 });

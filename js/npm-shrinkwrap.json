@@ -22,7 +22,7 @@
         "eslint": "7.x",
         "eslint-config-prettier": "8.x",
         "eslint-plugin-prettier": "4.x",
-        "fast-json-stable-stringify": "2.x",
+        "fast-json-stable-stringify": "^2.1.0",
         "jest": "27.x",
         "prettier": "2.x",
         "ts-jest": "27.x",

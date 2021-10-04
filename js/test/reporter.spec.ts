@@ -1,4 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
+import stringify from "fast-json-stable-stringify";
 
 import { Reporter, HapiAccountType, ReporterType } from "../src/state";
 
@@ -15,7 +16,7 @@ describe("Reporter", () => {
   });
 
   const ALICE_PUBKEY = new PublicKey(
-    "D9Na2rQcFNDtzUyrpKxDz3dayMprE26aCPorUgcEvGd6"
+    "DzMkTkH6ms7hEzyHisFnLLc2WDJfBb9TNNaPDQ7ADHhy"
   );
 
   it("should serialize", () => {
@@ -26,9 +27,9 @@ describe("Reporter", () => {
     expect(Reporter.deserialize(BINARY_SAMPLE)).toEqual(REPORTER_SAMPLE);
   });
 
-  xit("should retrieve", async () => {
+  it("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const reporter = await Reporter.retrieve(conn, "hapi.one", ALICE_PUBKEY);
-    expect(JSON.stringify(reporter)).toEqual(JSON.stringify(REPORTER_SAMPLE));
+    expect(stringify(reporter)).toEqual(stringify(REPORTER_SAMPLE));
   });
 });

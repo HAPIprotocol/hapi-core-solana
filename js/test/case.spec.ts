@@ -1,4 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js";
+import stringify from "fast-json-stable-stringify";
 
 import { Case, Category, HapiAccountType } from "../src/state";
 import { u64 } from "../src/utils";
@@ -39,10 +40,10 @@ describe("Case", () => {
     );
   });
 
-  xit("should retrieve - case0", async () => {
+  it("should retrieve - case0", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Case.retrieve(conn, "hapi.one", new u64(0));
-    expect(JSON.stringify(network)).toEqual(JSON.stringify(CASE_SAMPLE_1));
+    expect(stringify(network)).toEqual(stringify(CASE_SAMPLE_1));
   });
 
   it("should serialize - case1", () => {
@@ -50,14 +51,14 @@ describe("Case", () => {
   });
 
   it("should deserialize - case1", () => {
-    expect(JSON.stringify(Case.deserialize(BINARY_SAMPLE_2))).toEqual(
-      JSON.stringify(CASE_SAMPLE_2)
+    expect(stringify(Case.deserialize(BINARY_SAMPLE_2))).toEqual(
+      stringify(CASE_SAMPLE_2)
     );
   });
 
-  xit("should retrieve - case1", async () => {
+  it("should retrieve - case1", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Case.retrieve(conn, "hapi.one", new u64(1));
-    expect(JSON.stringify(network)).toEqual(JSON.stringify(CASE_SAMPLE_2));
+    expect(stringify(network)).toEqual(stringify(CASE_SAMPLE_2));
   });
 });

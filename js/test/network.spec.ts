@@ -1,4 +1,5 @@
 import { Connection } from "@solana/web3.js";
+import stringify from "fast-json-stable-stringify";
 
 import { Network, HapiAccountType } from "../src/state";
 
@@ -18,14 +19,14 @@ describe("Network", () => {
   });
 
   it("should deserialize", () => {
-    expect(JSON.stringify(Network.deserialize(BINARY_SAMPLE))).toEqual(
-      JSON.stringify(NETWORK_SAMPLE)
+    expect(stringify(Network.deserialize(BINARY_SAMPLE))).toEqual(
+      stringify(NETWORK_SAMPLE)
     );
   });
 
-  xit("should retrieve", async () => {
+  it("should retrieve", async () => {
     const conn = new Connection("http://localhost:8899");
     const network = await Network.retrieve(conn, "hapi.one", "testcoin");
-    expect(JSON.stringify(network)).toEqual(JSON.stringify(NETWORK_SAMPLE));
+    expect(stringify(network)).toEqual(stringify(NETWORK_SAMPLE));
   });
 });
