@@ -16,40 +16,40 @@ describe("ReaderClient", () => {
     expect(client).toBeDefined();
   });
 
-  describe("viewCommunity", () => {
+  describe("getCommunity", () => {
     it("should throw - not found", async () => {
       await expect(() =>
-        client.viewCommunity("community404")
+        client.getCommunity("community404")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it("should respond - success", async () => {
-      const response = await client.viewCommunity("hapi.one");
+      const response = await client.getCommunity("hapi.one");
       expect(response).toMatchSnapshot();
     });
   });
 
-  describe("viewNetwork", () => {
+  describe("getNetwork", () => {
     it("should throw - not found", async () => {
       await expect(() =>
-        client.viewNetwork("unnetwork", "hapi.one")
+        client.getNetwork("unnetwork", "hapi.one")
       ).rejects.toThrowErrorMatchingSnapshot();
 
       await expect(() =>
-        client.viewNetwork("testcoin", "community404")
+        client.getNetwork("testcoin", "community404")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it("should respond - success", async () => {
-      const response = await client.viewNetwork("testcoin", "hapi.one");
+      const response = await client.getNetwork("testcoin", "hapi.one");
       expect(response).toMatchSnapshot();
     });
   });
 
-  describe("viewReporter", () => {
+  describe("getReporter", () => {
     it("should throw - not found", async () => {
       await expect(() =>
-        client.viewReporter(
+        client.getReporter(
           "49B9UtxhbVBKaToxThwQqshbmf2ZfnuJZX3XGjTsNLvb",
           "hapi.one"
         )
@@ -59,7 +59,7 @@ describe("ReaderClient", () => {
     it("should respond - success", async () => {
       // Alice
       {
-        const response = await client.viewReporter(
+        const response = await client.getReporter(
           "DzMkTkH6ms7hEzyHisFnLLc2WDJfBb9TNNaPDQ7ADHhy",
           "hapi.one"
         );
@@ -68,7 +68,7 @@ describe("ReaderClient", () => {
 
       // Bob
       {
-        const response = await client.viewReporter(
+        const response = await client.getReporter(
           "J5sUnZKuB1a9izNWDb4JEQzdB3J6mhe3sP6Ai6YCiKAZ",
           "hapi.one"
         );
@@ -77,7 +77,7 @@ describe("ReaderClient", () => {
 
       // Carol
       {
-        const response = await client.viewReporter(
+        const response = await client.getReporter(
           "E8E298Dfe79V97ngYkcxXo1BftwduxjkGUWWRePM1Ac2",
           "hapi.one"
         );
@@ -86,29 +86,29 @@ describe("ReaderClient", () => {
     });
   });
 
-  describe("viewCase", () => {
+  describe("getCase", () => {
     it("should throw - not found", async () => {
       await expect(() =>
-        client.viewCase(new u64(404), "hapi.one")
+        client.getCase(new u64(404), "hapi.one")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it("should respond - success", async () => {
-      const response = await client.viewCase(new u64(0), "hapi.one");
+      const response = await client.getCase(new u64(0), "hapi.one");
       expect(response).toMatchSnapshot();
     });
   });
 
-  describe("viewAddress", () => {
+  describe("getAddress", () => {
     it("should throw - not found (string)", async () => {
       await expect(() =>
-        client.viewAddress("4o4", "testcoin", "hapi.one")
+        client.getAddress("4o4", "testcoin", "hapi.one")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it("should throw - not found (buffer)", async () => {
       await expect(() =>
-        client.viewAddress(
+        client.getAddress(
           Buffer.from("deadcode", "hex"),
           "testcoin",
           "hapi.one"
@@ -118,13 +118,13 @@ describe("ReaderClient", () => {
 
     it("should throw - malformed", async () => {
       await expect(() =>
-        client.viewAddress("BAD BASE58", "testcoin", "hapi.one")
+        client.getAddress("BAD BASE58", "testcoin", "hapi.one")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it("should throw - invalid community name", async () => {
       await expect(() =>
-        client.viewAddress(
+        client.getAddress(
           "2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew",
           "testcoin",
           "community404"
@@ -133,7 +133,7 @@ describe("ReaderClient", () => {
     });
 
     it("should respond - success (string)", async () => {
-      const response = await client.viewAddress(
+      const response = await client.getAddress(
         "2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew",
         "testcoin",
         "hapi.one"
@@ -143,7 +143,7 @@ describe("ReaderClient", () => {
 
     it("should respond - success (buffer)", async () => {
       const buffer = b58.decode("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew");
-      const response = await client.viewAddress(buffer, "testcoin", "hapi.one");
+      const response = await client.getAddress(buffer, "testcoin", "hapi.one");
       expect(response).toMatchSnapshot();
     });
   });

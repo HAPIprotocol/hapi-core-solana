@@ -33,12 +33,12 @@ export class ReaderClient {
     this.communityName = config.communityName;
   }
 
-  setCommunity(communityName: string): ReaderClient {
+  switchCommunity(communityName: string): ReaderClient {
     this.communityName = communityName;
     return this;
   }
 
-  async viewCommunity(
+  async getCommunity(
     communityName?: string
   ): Promise<HapiViewResponse<Community>> {
     if (!communityName && !this.communityName) {
@@ -53,7 +53,7 @@ export class ReaderClient {
     return { state };
   }
 
-  async viewNetwork(
+  async getNetwork(
     networkName: string,
     communityName?: string
   ): Promise<HapiViewResponse<Network>> {
@@ -74,7 +74,7 @@ export class ReaderClient {
     return { state };
   }
 
-  async viewReporter(
+  async getReporter(
     reporterPubkey: string,
     communityName?: string
   ): Promise<HapiViewResponse<Reporter>> {
@@ -91,7 +91,7 @@ export class ReaderClient {
     return { state };
   }
 
-  async viewCase(
+  async getCase(
     caseId: u64,
     communityName?: string
   ): Promise<HapiViewResponse<Case>> {
@@ -108,7 +108,7 @@ export class ReaderClient {
     return { state };
   }
 
-  async viewAddress(
+  async getAddress(
     address: string | Buffer,
     networkName: string,
     communityName?: string
