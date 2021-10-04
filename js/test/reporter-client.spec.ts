@@ -9,35 +9,37 @@ describe("ReporterClient", () => {
     expect(client).toBeDefined();
   });
 
-  describe("viewCommunity", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("viewNetwork", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("viewReporter", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("viewCase", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("viewAddress", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("reportCase", () => {
-    it.todo("should throw - invalid community name");
-    it.todo("should throw - invalid case name");
+  describe("createCase", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - invalid id");
+    it.todo("should throw - invalid name");
     it.todo("should throw - invalid categories");
-    it.todo("should exec - success");
+    it.todo("should create a case - success");
+  });
+
+  describe("updateCase", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - case not found");
+    it.todo("should throw - invalid name");
+    it.todo("should throw - invalid categories");
+    it.todo("should update a case - success");
+  });
+
+  describe("createAddress", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - network not found");
+    it.todo("should throw - invalid address");
+    it.todo("should throw - invalid category");
+    it.todo("should throw - invalid risk score");
+    it.todo("should create an address - success");
+  });
+
+  describe("updateAddress", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - network not found");
+    it.todo("should throw - address not found");
+    it.todo("should throw - invalid category");
+    it.todo("should throw - invalid risk score");
+    it.todo("should update an address - success");
   });
 });

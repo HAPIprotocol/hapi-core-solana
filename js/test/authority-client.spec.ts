@@ -9,35 +9,33 @@ describe("AuthorityClient", () => {
     expect(client).toBeDefined();
   });
 
-  describe("viewCommunity", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
+  describe("createCommunity", () => {
+    it.todo("should throw - community already exists");
+    it.todo("should throw - invalid name");
+    it.todo("should create a community - success");
   });
 
-  describe("viewNetwork", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
+  describe("createNetwork", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - network already exists");
+    it.todo("should throw - invalid name");
+    it.todo("should create a network - success");
   });
 
-  describe("viewReporter", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
+  describe("createReporter", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - reporter already exists");
+    it.todo("should throw - invalid type");
+    it.todo("should throw - invalid name");
+    it.todo("should throw - invalid public key");
+    it.todo("should create a reporter - success");
   });
 
-  describe("viewCase", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("viewAddress", () => {
-    it.todo("should throw - not found");
-    it.todo("should respond - success");
-  });
-
-  describe("reportCase", () => {
-    it.todo("should throw - invalid community name");
-    it.todo("should throw - invalid case name");
-    it.todo("should throw - invalid categories");
-    it.todo("should exec - success");
+  describe("updateReporter", () => {
+    it.todo("should throw - community not found");
+    it.todo("should throw - reporter not found");
+    it.todo("should throw - invalid type");
+    it.todo("should throw - invalid name");
+    it.todo("should update a reporter - success");
   });
 });

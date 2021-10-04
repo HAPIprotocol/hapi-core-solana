@@ -4,7 +4,7 @@ import { HapiActionResponse, ReaderClient } from "./reader-client";
 import { Case, Category } from "./state";
 
 export class ReporterClient extends ReaderClient {
-  async reportCase(
+  async createCase(
     name: string,
     categories: Category[],
     communityName?: string
@@ -22,7 +22,7 @@ export class ReporterClient extends ReaderClient {
     // TODO: create an instruction
   }
 
-  async reportAddress(): Promise<void> {
+  async createAddress(): Promise<void> {
     // TODO: create an instruction
   }
 

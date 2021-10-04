@@ -9,7 +9,7 @@ export class AuthorityClient extends ReaderClient {
     // TODO: create an instruction
   }
 
-  async addReporter(): Promise<void> {
+  async createReporter(): Promise<void> {
     // TODO: create an instruction
   }
 
