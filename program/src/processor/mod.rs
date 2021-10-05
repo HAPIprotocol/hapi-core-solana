@@ -8,21 +8,23 @@ use {
     },
 };
 
-mod process_create_reporter;
-mod process_create_community;
-mod process_create_network;
 mod process_create_address;
 mod process_create_case;
+mod process_create_community;
+mod process_create_network;
+mod process_create_reporter;
+mod process_update_community;
 mod process_update_address;
 mod process_update_case;
 mod process_update_reporter;
 
 use crate::instruction::HapiInstruction;
-use process_create_reporter::*;
-use process_create_community::*;
-use process_create_network::*;
 use process_create_address::*;
 use process_create_case::*;
+use process_create_community::*;
+use process_create_network::*;
+use process_create_reporter::*;
+use process_update_community::*;
 use process_update_address::*;
 use process_update_case::*;
 use process_update_reporter::*;
@@ -37,6 +39,10 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
     match instruction {
         HapiInstruction::CreateCommunity { name } => {
             process_create_community(program_id, accounts, &name)
+        }
+
+        HapiInstruction::UpdateCommunity { name } => {
+            process_update_community(program_id, accounts, &name)
         }
 
         HapiInstruction::CreateNetwork { name } => {

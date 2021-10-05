@@ -32,6 +32,16 @@ pub enum HapiInstruction {
         name: String,
     },
 
+    /// Updates an existing HAPI Community
+    ///
+    /// 0. `[signer]` Authority account
+    /// 1. `[writable]` Community account. PDA seeds: ['community', name]
+    /// 2. `[optional]` New authority account
+    UpdateCommunity {
+        /// UTF-8 encoded HAPI Community name
+        name: String,
+    },
+
     /// Creates a new HAPI Network
     ///
     /// 0. `[signer]` Authority account

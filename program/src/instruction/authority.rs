@@ -42,6 +42,37 @@ pub fn create_community(
     })
 }
 
+/// Creates UpdateCommunity instruction
+pub fn update_community(
+    // Accounts
+    authority: &Pubkey,
+    new_authority: Option<&Pubkey>,
+    // Args
+    old_name: &str,
+    new_name: &str,
+) -> Result<Instruction, GenericError> {
+    let community_address = get_community_address(&old_name);
+
+    let mut accounts = vec![
+        AccountMeta::new(*authority, true),
+        AccountMeta::new(community_address, false),
+    ];
+
+    if let Some(new_authority) = new_authority {
+        accounts.push(AccountMeta::new(*new_authority, false));
+    }
+
+    let instruction = HapiInstruction::UpdateCommunity {
+        name: new_name.to_string(),
+    };
+
+    Ok(Instruction {
+        program_id: id(),
+        accounts,
+        data: instruction.try_to_vec().unwrap(),
+    })
+}
+
 /// Creates CreateNetwork instruction
 pub fn create_network(
     // Accounts
