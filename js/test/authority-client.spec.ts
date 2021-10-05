@@ -1,7 +1,10 @@
+import { Keypair } from "@solana/web3.js";
+
 import { AuthorityClient } from "../src";
 
 describe("AuthorityClient", () => {
   let client: AuthorityClient;
+  const payer = new Keypair();
 
   beforeEach(() => {
     client = new AuthorityClient({
@@ -16,12 +19,12 @@ describe("AuthorityClient", () => {
   describe("createCommunity", () => {
     it("should throw - community already exists", async () => {
       await expect(() =>
-        client.createCommunity("hapi.one")
+        client.createCommunity(payer, "hapi.one")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
     it("should throw - invalid name", async () => {
       await expect(() =>
-        client.createCommunity("loooooooooooooooooooooooooooooooooong")
+        client.createCommunity(payer, "loooooooooooooooooooooooooooooooooong")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
     it.todo("should create a community - success");

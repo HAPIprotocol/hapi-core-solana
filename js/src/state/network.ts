@@ -33,6 +33,8 @@ export class Network {
   /// HAPI network name
   name: string;
 
+  static size = NetworkState.size;
+
   constructor(object?: Partial<Network>) {
     if (object) {
       Object.assign(this, object);

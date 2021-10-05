@@ -7,7 +7,7 @@ import {
 } from "@solana/web3.js";
 
 import { HAPI_PROGRAM_ID } from "../constants";
-import { Case, Category, Community, Network, Reporter } from "../state";
+import { Case, Category, Community, Reporter } from "../state";
 import { setToBuffer } from "../utils";
 import { HapiInstruction } from "./enums";
 
@@ -15,31 +15,19 @@ export async function reportCaseInstruction(
   connection: Connection,
   reporterPubkey: PublicKey,
   communityName: string,
-  networkName: string,
   caseName: string,
   categories: Set<Category>
 ): Promise<TransactionInstruction> {
-  const [communityAddress] = await Community.getAddress(communityName);
-
-  const [networkAddress] = await Network.getAddress(
-    communityAddress,
-    networkName
-  );
+  const community = await Community.retrieve(connection, communityName);
 
   const [reporterAddress] = await Reporter.getAddress(
-    communityAddress,
+    community.account,
     reporterPubkey
   );
 
-  const network = await Network.retrieve(
-    connection,
-    communityName,
-    networkName
-  );
+  const caseId = community.data.nextCaseId;
 
-  const caseId = network.nextCaseId;
-
-  const [caseAddress] = await Case.getAddress(networkAddress, caseId);
+  const [caseAddress] = await Case.getAddress(community.account, caseId);
 
   const keys = [
     {
@@ -48,14 +36,9 @@ export async function reportCaseInstruction(
       isWritable: true,
     },
     {
-      pubkey: communityAddress,
+      pubkey: community.account,
       isSigner: false,
       isWritable: false,
-    },
-    {
-      pubkey: networkAddress,
-      isSigner: false,
-      isWritable: true,
     },
     {
       pubkey: reporterAddress,

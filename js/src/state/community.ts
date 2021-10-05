@@ -81,7 +81,7 @@ export class Community {
 
     const communityAccount = await connection.getAccountInfo(
       communityAddress,
-      "processed"
+      "confirmed"
     );
     if (!communityAccount) {
       throw new Error(

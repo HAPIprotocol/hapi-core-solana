@@ -20,11 +20,12 @@ export interface HapiViewResponse<T> {
 }
 
 export interface HapiActionResponse<T> {
-  publicKey: PublicKey;
-  txHash?: string;
-  state?: T;
+  account: PublicKey;
+  txHash: string;
+  data: T;
 }
 
+/** HAPI client to read entity data from Solana */
 export class ReaderClient {
   protected connection: Connection;
   protected communityName?: string;

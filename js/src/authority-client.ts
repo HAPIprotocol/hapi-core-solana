@@ -1,100 +1,163 @@
 import {
   Transaction,
-  TransactionInstruction,
-  PublicKey,
   Keypair,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY,
   sendAndConfirmTransaction,
+  PublicKey,
 } from "@solana/web3.js";
 
-import { Community, HapiAccountType } from "./state";
+import { Community, Network } from "./state";
 import { HapiActionResponse, ReaderClient } from "./reader-client";
-import { HAPI_PROGRAM_ID } from "constants";
+import {
+  createCommunityInstruction,
+  createNetworkInstructions,
+} from "./instructions/authority";
+import { createAccountInstruction } from "./instructions/helpers";
 
+/** HAPI client to operate authority program functions on Solana */
 export class AuthorityClient extends ReaderClient {
-  async createCommunity(
-    communityName: string
-  ): Promise<HapiActionResponse<Community>> {
-    let existingAccount: PublicKey;
-    try {
-      const existing = await this.getCommunity(communityName);
-      existingAccount = existing.account;
-    } catch {
-      // NOP
-    }
+  /** If this is true, entity account creation will not be included in transactions */
+  skipAccountCreation = false;
 
-    if (existingAccount) {
-      throw new Error(
-        `Community already exists: ${communityName} (${existingAccount})`
-      );
-    }
-
-    const authority = new Keypair();
-
+  /**
+   * Create a community creation transaction that can be signed elsewhere
+   * @param payer Public key of the payer account
+   * @param communityName The name of the community to create
+   * @param authority (Optional) Public key of an authority of the community (defaults to payer)
+   * @returns Transaction to sign
+   **/
+  async createCommunityTransaction(
+    payer: PublicKey,
+    communityName: string,
+    authority?: PublicKey
+  ): Promise<Transaction> {
     const [communityAddress] = await Community.getAddress(communityName);
 
     const transaction = new Transaction();
 
-    {
-      SystemProgram.createAccount({
-        space: Community.size,
-        programId: 
+    // Create a community account
+    if (!this.skipAccountCreation) {
+      transaction.add(
+        await createAccountInstruction(payer, communityAddress, Community.size)
+      );
+    }
+
+    // Form a program instruction
+    transaction.add(
+      await createCommunityInstruction({
+        payer: payer,
+        communityName,
+        authority: authority || payer,
       })
+    );
 
-      // TODO: zzzzzzzzzzzzzzz....
+    return transaction;
+  }
 
-      const instruction = new TransactionInstruction({
-        keys: [
-          { pubkey: authority.publicKey, isSigner: true, isWritable: true },
-          { pubkey: communityAddress, isSigner: false, isWritable: true },
-          { pubkey: authority.publicKey, isSigner: false, isWritable: false, }
-        ],
-        programId: HAPI_PROGRAM_ID,
-        data: Buffer.alloc(0),
-      });
-    }
+  /**
+   * Create and sign a community creation transaction
+   * @param payer Payer's key pair to sign the transaction
+   * @param communityName The name of the community to create
+   * @param authority (Optional) Public key of an authority of the community (defaults to payer public key)
+   * @returns Transaction hash, account address and entity data
+   **/
+  async createCommunity(
+    payer: Keypair,
+    communityName: string,
+    authority?: PublicKey
+  ): Promise<HapiActionResponse<Community>> {
+    const transaction = await this.createCommunityTransaction(
+      payer.publicKey,
+      communityName,
+      authority
+    );
 
-    {
-      const community = new Community({
-        accountType: HapiAccountType.Community,
-        name: communityName,
-        authority: authority.publicKey,
-      });
-
-      const instruction = new TransactionInstruction({
-        keys: [
-          { pubkey: authority.publicKey, isSigner: true, isWritable: false },
-          { pubkey: communityAddress, isSigner: false, isWritable: true },
-          {
-            pubkey: SystemProgram.programId,
-            isSigner: false,
-            isWritable: false,
-          },
-          { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
-        ],
-        programId: HAPI_PROGRAM_ID,
-        data: Buffer.from(community.serialize()),
-      });
-
-      transaction.add(instruction);
-    }
-    const signature = await sendAndConfirmTransaction(
+    const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [authority],
+      [payer],
       { commitment: "confirmed" }
     );
 
-    // TODO: create an instruction
-    return {
-      publicKey: communityAddress,
-      txHash: signature,
-    };
+    const { data, account } = await Community.retrieve(
+      this.connection,
+      communityName
+    );
+
+    return { account, data, txHash };
   }
 
-  async createNetwork(): Promise<void> {
-    // TODO: create an instruction
+  /**
+   * Create a network creation transaction that can be signed elsewhere
+   * @param payer Public key of the payer account (must be the community authority)
+   * @param communityName The name of the community that the network should belong to
+   * @param networkName The name of the network to create
+   * @returns Transaction to sign
+   **/
+  async createNetworkTransaction(
+    payer: PublicKey,
+    communityName: string,
+    networkName: string
+  ): Promise<Transaction> {
+    const [communityAddress] = await Community.getAddress(communityName);
+
+    const [networkAddress] = await Network.getAddress(
+      communityAddress,
+      networkName
+    );
+
+    const transaction = new Transaction();
+
+    // Create a network account
+    if (!this.skipAccountCreation) {
+      transaction.add(
+        await createAccountInstruction(payer, networkAddress, Network.size)
+      );
+    }
+
+    // Form a program instruction
+    transaction.add(
+      await createNetworkInstructions({
+        payer: payer,
+        communityName,
+        networkName,
+      })
+    );
+
+    return transaction;
+  }
+
+  /**
+   * Create and sign a network creation transaction
+   * @param payer Payer's key pair to sign the transaction
+   * @param communityName The name of the community that the network should belong to
+   * @param networkName The name of the network to create
+   * @returns Transaction hash, account address and entity data
+   **/
+  async createNetwork(
+    payer: Keypair,
+    communityName: string,
+    networkName: string
+  ): Promise<HapiActionResponse<Network>> {
+    const transaction = await this.createNetworkTransaction(
+      payer.publicKey,
+      communityName,
+      networkName
+    );
+
+    const txHash = await sendAndConfirmTransaction(
+      this.connection,
+      transaction,
+      [payer],
+      { commitment: "confirmed" }
+    );
+
+    const { data, account } = await Network.retrieve(
+      this.connection,
+      communityName,
+      networkName
+    );
+
+    return { account, data, txHash };
   }
 
   async createReporter(): Promise<void> {

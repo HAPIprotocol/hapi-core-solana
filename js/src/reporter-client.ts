@@ -3,6 +3,7 @@ import { PublicKey } from "@solana/web3.js";
 import { HapiActionResponse, ReaderClient } from "./reader-client";
 import { Case, Category } from "./state";
 
+/** HAPI client to operate reporter program functions on Solana */
 export class ReporterClient extends ReaderClient {
   async createCase(
     name: string,
@@ -14,7 +15,7 @@ export class ReporterClient extends ReaderClient {
     communityName;
     // TODO: create an instruction
     return {
-      publicKey: new PublicKey("0"),
+      account: new PublicKey("0"),
     };
   }
 
