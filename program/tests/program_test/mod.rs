@@ -20,7 +20,7 @@ use {
 
 use hapi_core_solana::{
     instruction::{
-        add_reporter, create_community, create_network, report_address, report_case, update_case,
+        create_reporter, create_community, create_network, report_address, create_case, update_case,
         update_reporter,
     },
     processor::process,
@@ -197,7 +197,7 @@ impl HapiProgramTest {
             1000000000,
         );
 
-        let add_reporter_ix = add_reporter(
+        let create_reporter_ix = create_reporter(
             &authority.pubkey(),
             &community_cookie.name,
             &name,
@@ -206,7 +206,7 @@ impl HapiProgramTest {
         )
         .unwrap();
 
-        self.process_transaction(&[fund_reporter_ix, add_reporter_ix], Some(&[&authority]))
+        self.process_transaction(&[fund_reporter_ix, create_reporter_ix], Some(&[&authority]))
             .await?;
 
         let account = Reporter {
@@ -243,7 +243,7 @@ impl HapiProgramTest {
 
         let categories: CategorySet = Category::Safe as u32;
 
-        let report_case_ix = report_case(
+        let create_case_ix = create_case(
             &reporter.reporter_keypair.pubkey(),
             &community.name,
             case_id,
@@ -252,7 +252,7 @@ impl HapiProgramTest {
         )
         .unwrap();
 
-        self.process_transaction(&[report_case_ix], Some(&[&reporter.reporter_keypair]))
+        self.process_transaction(&[create_case_ix], Some(&[&reporter.reporter_keypair]))
             .await
             .unwrap();
 

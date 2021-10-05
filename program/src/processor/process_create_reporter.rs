@@ -16,7 +16,7 @@ use crate::{
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
-pub fn process_add_reporter(
+pub fn process_create_reporter(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     name: &str,

@@ -100,7 +100,7 @@ pub fn assert_reporter_can_update_case(
 }
 
 /// Checks reporter's ability to report cases
-pub fn assert_reporter_can_report_case(reporter_info: &AccountInfo) -> Result<(), ProgramError> {
+pub fn assert_reporter_can_create_case(reporter_info: &AccountInfo) -> Result<(), ProgramError> {
     let reporter_data = get_reporter_data(&reporter_info)?;
 
     match reporter_data.reporter_type {

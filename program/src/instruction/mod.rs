@@ -54,7 +54,7 @@ pub enum HapiInstruction {
     /// 4. `[]` System
     /// 5. `[]` Sysvar Rent
     ///
-    AddReporter {
+    CreateReporter {
         /// UTF-8 encoded Reporter name
         name: String,
 
@@ -86,7 +86,7 @@ pub enum HapiInstruction {
     /// 4. `[]` System
     /// 5. `[]` Sysvar Rent
     ///
-    ReportCase {
+    CreateCase {
         /// UTF-8 encoded case name
         name: String,
 

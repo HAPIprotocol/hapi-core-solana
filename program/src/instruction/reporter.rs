@@ -24,8 +24,8 @@ use crate::{
     tools::parse_network_path,
 };
 
-/// Creates ReportCase instruction
-pub fn report_case(
+/// Creates CreateCase instruction
+pub fn create_case(
     // Accounts
     reporter: &Pubkey,
     // Args
@@ -47,7 +47,7 @@ pub fn report_case(
         AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
-    let instruction = HapiInstruction::ReportCase {
+    let instruction = HapiInstruction::CreateCase {
         name: case_name.to_string(),
         categories: *categories,
     };

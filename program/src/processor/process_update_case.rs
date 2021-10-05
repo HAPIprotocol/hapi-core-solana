@@ -32,7 +32,7 @@ pub fn process_update_case(
 
     // Reporter must sign
     if !reporter_key_info.is_signer {
-        msg!("Reporter did not sign ReportCase");
+        msg!("Reporter did not sign CreateCase");
         return Err(HapiError::SignatureMissing.into());
     }
 

@@ -16,7 +16,7 @@ use crate::{
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
-pub fn process_report_address(
+pub fn process_create_address(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     value: &Pubkey,
@@ -37,7 +37,7 @@ pub fn process_report_address(
 
     // Reporter must sign
     if !reporter_key_info.is_signer {
-        msg!("Reporter did not sign ReportCase");
+        msg!("Reporter did not sign CreateCase");
         return Err(HapiError::SignatureMissing.into());
     }
 

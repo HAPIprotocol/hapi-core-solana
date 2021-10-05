@@ -70,8 +70,8 @@ pub fn create_network(
     })
 }
 
-/// Creates AddReporter instruction
-pub fn add_reporter(
+/// Creates CreateReporter instruction
+pub fn create_reporter(
     // Accounts
     payer: &Pubkey,
     // Args
@@ -92,7 +92,7 @@ pub fn add_reporter(
         AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
-    let instruction = HapiInstruction::AddReporter {
+    let instruction = HapiInstruction::CreateReporter {
         name: reporter_name.to_string(),
         reporter_type,
     };

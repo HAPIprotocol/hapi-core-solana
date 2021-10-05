@@ -16,12 +16,12 @@ use crate::{
         case::{get_case_address_seeds, Case},
         enums::{CategorySet, HapiAccountType},
         community::get_community_data,
-        reporter::{assert_reporter_can_report_case, get_reporter_address},
+        reporter::{assert_reporter_can_create_case, get_reporter_address},
     },
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
-pub fn process_report_case(
+pub fn process_create_case(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
     name: &str,
@@ -43,7 +43,7 @@ pub fn process_report_case(
 
     // Reporter must sign
     if !reporter_key_info.is_signer {
-        msg!("Reporter did not sign ReportCase");
+        msg!("Reporter did not sign CreateCase");
         return Err(HapiError::SignatureMissing.into());
     }
 
@@ -55,7 +55,7 @@ pub fn process_report_case(
     }
 
     assert_is_empty_account(case_info)?;
-    assert_reporter_can_report_case(reporter_info)?;
+    assert_reporter_can_create_case(reporter_info)?;
 
     // Obtain next case ID and increment it in Community account
     let mut community_data = get_community_data(community_info)?;
