@@ -69,7 +69,7 @@ export class Address {
     communityName: string,
     networkName: string,
     address: PublicKey
-  ): Promise<Address> {
+  ): Promise<{ data: Address; account: PublicKey }> {
     const [communityAddress] = await PublicKey.findProgramAddress(
       [Buffer.from("community"), Buffer.from(communityName)],
       HAPI_PROGRAM_ID
@@ -99,7 +99,7 @@ export class Address {
       );
     }
 
-    return Address.deserialize(account.data);
+    return { data: Address.deserialize(account.data), account: addressAddress };
   }
 
   serialize(): Uint8Array {

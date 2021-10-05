@@ -81,7 +81,7 @@ export class Case {
     connection: Connection,
     communityName: string,
     caseId: u64
-  ): Promise<Case> {
+  ): Promise<{ data: Case; account: PublicKey }> {
     const [communityAddress] = await Community.getAddress(communityName);
 
     const [caseAddress] = await Case.getAddress(communityAddress, caseId);
@@ -91,7 +91,7 @@ export class Case {
       throw new Error("Invalid case account provided");
     }
 
-    return Case.deserialize(account.data);
+    return { data: Case.deserialize(account.data), account: communityAddress };
   }
 
   serialize(): Uint8Array {

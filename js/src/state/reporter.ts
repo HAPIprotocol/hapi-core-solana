@@ -76,7 +76,7 @@ export class Reporter {
     connection: Connection,
     communityName: string,
     reporterPubkey: PublicKey
-  ): Promise<Reporter> {
+  ): Promise<{ data: Reporter; account: PublicKey }> {
     const [communityAddress] = await Community.getAddress(communityName);
 
     const [reporterAddress] = await Reporter.getAddress(
@@ -94,7 +94,10 @@ export class Reporter {
       );
     }
 
-    return Reporter.deserialize(account.data);
+    return {
+      data: Reporter.deserialize(account.data),
+      account: reporterAddress,
+    };
   }
 
   serialize(): Uint8Array {

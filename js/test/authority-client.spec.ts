@@ -1,17 +1,29 @@
 import { AuthorityClient } from "../src";
 
 describe("AuthorityClient", () => {
-  it("should initialize", () => {
-    const client = new AuthorityClient({
+  let client: AuthorityClient;
+
+  beforeEach(() => {
+    client = new AuthorityClient({
       endpoint: "http://localhost:8899",
     });
+  });
 
+  it("should initialize", () => {
     expect(client).toBeDefined();
   });
 
   describe("createCommunity", () => {
-    it.todo("should throw - community already exists");
-    it.todo("should throw - invalid name");
+    it("should throw - community already exists", async () => {
+      await expect(() =>
+        client.createCommunity("hapi.one")
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
+    it("should throw - invalid name", async () => {
+      await expect(() =>
+        client.createCommunity("loooooooooooooooooooooooooooooooooong")
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
     it.todo("should create a community - success");
   });
 

@@ -15,7 +15,8 @@ export interface HapiClientConfig {
 }
 
 export interface HapiViewResponse<T> {
-  state?: T;
+  account: PublicKey;
+  data: T;
 }
 
 export interface HapiActionResponse<T> {
@@ -50,7 +51,7 @@ export class ReaderClient {
       communityName || this.communityName
     );
 
-    return { state };
+    return state;
   }
 
   async getNetwork(
@@ -71,7 +72,7 @@ export class ReaderClient {
       networkName
     );
 
-    return { state };
+    return state;
   }
 
   async getReporter(
@@ -88,7 +89,7 @@ export class ReaderClient {
       new PublicKey(reporterPubkey)
     );
 
-    return { state };
+    return state;
   }
 
   async getCase(
@@ -105,7 +106,7 @@ export class ReaderClient {
       caseId
     );
 
-    return { state };
+    return state;
   }
 
   async getAddress(
@@ -133,6 +134,6 @@ export class ReaderClient {
       convertedAddress
     );
 
-    return { state };
+    return state;
   }
 }

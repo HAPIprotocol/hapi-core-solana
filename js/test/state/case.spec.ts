@@ -69,8 +69,8 @@ describe("Case", () => {
         id: "53622823-6bd2-4e0c-aeab-44ca392dcc66",
       });
     const conn = new Connection("http://localhost:8899");
-    const network = await Case.retrieve(conn, "hapi.one", new u64(0));
-    expect(stringify(network)).toEqual(stringify(CASE_SAMPLE_1));
+    const state = await Case.retrieve(conn, "hapi.one", new u64(0));
+    expect(stringify(state.data)).toEqual(stringify(CASE_SAMPLE_1));
   });
 
   it("should serialize - case1", () => {
@@ -110,7 +110,7 @@ describe("Case", () => {
       });
 
     const conn = new Connection("http://localhost:8899");
-    const network = await Case.retrieve(conn, "hapi.one", new u64(1));
-    expect(stringify(network)).toEqual(stringify(CASE_SAMPLE_2));
+    const state = await Case.retrieve(conn, "hapi.one", new u64(1));
+    expect(stringify(state.data)).toEqual(stringify(CASE_SAMPLE_2));
   });
 });

@@ -57,6 +57,6 @@ describe("Address", () => {
       "testcoin",
       new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew")
     );
-    expect(stringify(network)).toEqual(stringify(ADDRESS_SAMPLE));
+    expect(stringify(network.data)).toEqual(stringify(ADDRESS_SAMPLE));
   });
 });

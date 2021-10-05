@@ -70,7 +70,7 @@ export class Network {
     connection: Connection,
     communityName: string,
     networkName: string
-  ): Promise<Network> {
+  ): Promise<{ data: Network; account: PublicKey }> {
     const [communityAddress] = await Community.getAddress(communityName);
 
     const [networkAddress] = await Network.getAddress(
@@ -88,7 +88,7 @@ export class Network {
       );
     }
 
-    return Network.deserialize(account.data);
+    return { data: Network.deserialize(account.data), account: networkAddress };
   }
 
   serialize(): Uint8Array {

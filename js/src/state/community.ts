@@ -43,6 +43,8 @@ export class Community {
   /// HAPI community name
   name: string;
 
+  static size = CommunityState.size;
+
   constructor(data?: Partial<Community>) {
     if (data) {
       Object.assign(this, data);
@@ -74,7 +76,7 @@ export class Community {
   static async retrieve(
     connection: Connection,
     communityName: string
-  ): Promise<Community> {
+  ): Promise<{ data: Community; account: PublicKey }> {
     const [communityAddress] = await Community.getAddress(communityName);
 
     const communityAccount = await connection.getAccountInfo(
@@ -87,7 +89,10 @@ export class Community {
       );
     }
 
-    return Community.deserialize(communityAccount.data);
+    return {
+      data: Community.deserialize(communityAccount.data),
+      account: communityAddress,
+    };
   }
 
   serialize(): Uint8Array {

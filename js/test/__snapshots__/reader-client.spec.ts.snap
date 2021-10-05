@@ -2,7 +2,10 @@
 
 exports[`ReaderClient getAddress should respond - success (buffer) 1`] = `
 Object {
-  "state": Address {
+  "account": PublicKey {
+    "_bn": "c51892d0703b31cdf66396ec41f908351cfda218f07c6f5350d767bf040654f4",
+  },
+  "data": Address {
     "accountType": 5,
     "caseId": "01",
     "category": 16384,
@@ -13,7 +16,10 @@ Object {
 
 exports[`ReaderClient getAddress should respond - success (string) 1`] = `
 Object {
-  "state": Address {
+  "account": PublicKey {
+    "_bn": "c51892d0703b31cdf66396ec41f908351cfda218f07c6f5350d767bf040654f4",
+  },
+  "data": Address {
     "accountType": 5,
     "caseId": "01",
     "category": 16384,
@@ -32,7 +38,10 @@ exports[`ReaderClient getAddress should throw - not found (string) 1`] = `"Addre
 
 exports[`ReaderClient getCase should respond - success 1`] = `
 Object {
-  "state": Case {
+  "account": PublicKey {
+    "_bn": "bc563659f0d64faa3745edf63ead612d47d3ae9f326724afc08388afbe0a90ef",
+  },
+  "data": Case {
     "accountType": 4,
     "categories": Array [],
     "name": "case0",
@@ -47,7 +56,10 @@ exports[`ReaderClient getCase should throw - not found 1`] = `"Invalid case acco
 
 exports[`ReaderClient getCommunity should respond - success 1`] = `
 Object {
-  "state": Community {
+  "account": PublicKey {
+    "_bn": "bc563659f0d64faa3745edf63ead612d47d3ae9f326724afc08388afbe0a90ef",
+  },
+  "data": Community {
     "accountType": 1,
     "authority": PublicKey {
       "_bn": "ef37a50404b188a96e10f551122753f8ae8906c4ae0983c92727acf25b38f951",
@@ -62,7 +74,10 @@ exports[`ReaderClient getCommunity should throw - not found 1`] = `"Community no
 
 exports[`ReaderClient getNetwork should respond - success 1`] = `
 Object {
-  "state": Network {
+  "account": PublicKey {
+    "_bn": "1c9e2cd47719bf0f4982def71c6a39dff80f7eb1f30cf50d7c28e0a8b12ce295",
+  },
+  "data": Network {
     "accountType": 2,
     "name": "testcoin",
   },
@@ -75,7 +90,10 @@ exports[`ReaderClient getNetwork should throw - not found 2`] = `"Network not fo
 
 exports[`ReaderClient getReporter should respond - success 1`] = `
 Object {
-  "state": Reporter {
+  "account": PublicKey {
+    "_bn": "e8d90cfe9173301e5ca4c73615c4ff649b8599d5cd8ca4d370c5ac5ecb6ea59c",
+  },
+  "data": Reporter {
     "accountType": 3,
     "name": "Alice",
     "reporterType": 3,
@@ -85,7 +103,10 @@ Object {
 
 exports[`ReaderClient getReporter should respond - success 2`] = `
 Object {
-  "state": Reporter {
+  "account": PublicKey {
+    "_bn": "5d0eab4fdb1135df313e7485d099bf91edec7576ca3f0943853a3c0d77b6de29",
+  },
+  "data": Reporter {
     "accountType": 3,
     "name": "Bob",
     "reporterType": 2,
@@ -95,7 +116,10 @@ Object {
 
 exports[`ReaderClient getReporter should respond - success 3`] = `
 Object {
-  "state": Reporter {
+  "account": PublicKey {
+    "_bn": "b8d9193b5a70f5cf8932d373ec3e51abb1fe41d2f3a20ba3e579c18eaf1e12a1",
+  },
+  "data": Reporter {
     "accountType": 3,
     "name": "Carol",
     "reporterType": 1,

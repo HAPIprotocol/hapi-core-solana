@@ -58,6 +58,6 @@ describe("Reporter", () => {
 
     const conn = new Connection("http://localhost:8899");
     const reporter = await Reporter.retrieve(conn, "hapi.one", ALICE_PUBKEY);
-    expect(stringify(reporter)).toEqual(stringify(REPORTER_SAMPLE));
+    expect(stringify(reporter.data)).toEqual(stringify(REPORTER_SAMPLE));
   });
 });

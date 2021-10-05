@@ -51,6 +51,6 @@ describe("Network", () => {
       });
     const conn = new Connection("http://localhost:8899");
     const network = await Network.retrieve(conn, "hapi.one", "testcoin");
-    expect(stringify(network)).toEqual(stringify(NETWORK_SAMPLE));
+    expect(stringify(network.data)).toEqual(stringify(NETWORK_SAMPLE));
   });
 });

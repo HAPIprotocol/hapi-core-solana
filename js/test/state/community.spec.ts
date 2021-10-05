@@ -57,6 +57,6 @@ describe("Community", () => {
       });
     const conn = new Connection("http://localhost:8899");
     const community = await Community.retrieve(conn, "hapi.one");
-    expect(stringify(community)).toEqual(stringify(COMMUNITY_SAMPLE));
+    expect(stringify(community.data)).toEqual(stringify(COMMUNITY_SAMPLE));
   });
 });
