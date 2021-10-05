@@ -12,7 +12,7 @@ use {
     solana_sdk::{pubkey::Pubkey, signature::Signer, transaction::Transaction},
 };
 
-pub fn cmd_report_address(
+pub fn cmd_create_address(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,
@@ -40,7 +40,7 @@ pub fn cmd_report_address(
     assert_is_empty_account(rpc_client, &address_address)?;
 
     let mut transaction = Transaction::new_with_payer(
-        &[instruction::report_address(
+        &[instruction::create_address(
             &config.keypair.pubkey(),
             &format!("{}/{}", &community_name, &network_name),
             address,

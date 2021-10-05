@@ -65,7 +65,7 @@ pub fn assert_reporter_belongs_to_community(
 }
 
 /// Checks reporter's ability to report an address
-pub fn assert_reporter_can_report_address(reporter_info: &AccountInfo) -> Result<(), ProgramError> {
+pub fn assert_reporter_can_create_address(reporter_info: &AccountInfo) -> Result<(), ProgramError> {
     let reporter_data = get_reporter_data(&reporter_info)?;
     if reporter_data.reporter_type == ReporterType::Inactive {
         msg!("Reporter doesn't have a permission to report an address in this network");

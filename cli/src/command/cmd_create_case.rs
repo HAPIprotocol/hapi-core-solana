@@ -1,53 +1,48 @@
 use {
-    crate::{
-        tools::{assert_is_empty_account, assert_is_existing_account},
-        Config,
-    },
+    crate::{tools::assert_is_empty_account, Config},
     colored::*,
     hapi_core_solana::{
         instruction,
         state::{
+            case::get_case_address,
             community::{get_community_address, Community},
-            enums::ReporterType,
-            reporter::get_reporter_address,
+            enums::CategorySet,
         },
     },
     solana_client::rpc_client::RpcClient,
-    solana_sdk::{
-        borsh::try_from_slice_unchecked, pubkey::Pubkey, signature::Signer,
-        transaction::Transaction,
-    },
+    solana_sdk::{borsh::try_from_slice_unchecked, signature::Signer, transaction::Transaction},
 };
 
-pub fn cmd_add_reporter(
+pub fn cmd_create_case(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,
-    reporter_pubkey: &Pubkey,
-    name: String,
-    reporter_type: ReporterType,
+    case_name: String,
+    categories: CategorySet,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let community_account = get_community_address(&community_name);
     let community_data = rpc_client.get_account_data(&community_account)?;
     let community: Community = try_from_slice_unchecked(&community_data)?;
-
     if config.verbose {
         println!("{}: {}", "Community".bright_black(), community.name);
+        println!(
+            "{}: {}",
+            "New case ID".bright_black(),
+            community.next_case_id
+        );
     }
 
-    assert_is_existing_account(rpc_client, &reporter_pubkey)?;
+    let case_address = get_case_address(&community_account, &community.next_case_id.to_le_bytes());
 
-    let reporter_address = get_reporter_address(&community_account, reporter_pubkey);
-
-    assert_is_empty_account(rpc_client, &reporter_address)?;
+    assert_is_empty_account(rpc_client, &case_address)?;
 
     let mut transaction = Transaction::new_with_payer(
-        &[instruction::add_reporter(
+        &[instruction::create_case(
             &config.keypair.pubkey(),
             &community_name,
-            &name,
-            reporter_pubkey,
-            reporter_type,
+            community.next_case_id,
+            &case_name,
+            &categories,
         )
         .unwrap()],
         Some(&config.keypair.pubkey()),
@@ -56,7 +51,7 @@ pub fn cmd_add_reporter(
     transaction.try_sign(&[&config.keypair], blockhash)?;
     rpc_client.send_and_confirm_transaction_with_spinner(&transaction)?;
 
-    println!("{}: {}", "Reporter added".green(), reporter_address);
+    println!("{}: {}", "Case reported".green(), case_address);
 
     Ok(())
 }

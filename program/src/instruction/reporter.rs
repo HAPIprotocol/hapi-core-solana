@@ -91,7 +91,7 @@ pub fn update_case(
 }
 
 /// Creates ReportAddress instruction
-pub fn report_address(
+pub fn create_address(
     // Accounts
     reporter: &Pubkey,
     // Args

@@ -13,7 +13,7 @@ use crate::{
     state::address::{assert_is_valid_address, get_address_data},
     state::case::{assert_is_valid_case, get_case_address},
     state::enums::Category,
-    state::reporter::{assert_reporter_belongs_to_community, assert_reporter_can_report_address},
+    state::reporter::{assert_reporter_belongs_to_community, assert_reporter_can_create_address},
 };
 
 pub fn process_update_address(
@@ -38,7 +38,7 @@ pub fn process_update_address(
 
     assert_is_valid_address(address_info)?;
     assert_reporter_belongs_to_community(reporter_info, community_info, &reporter_key_info.key)?;
-    assert_reporter_can_report_address(reporter_info)?;
+    assert_reporter_can_create_address(reporter_info)?;
 
     // Make sure that case ID and account is fine
     assert_is_valid_case(&case_info)?;

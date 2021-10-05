@@ -20,7 +20,7 @@ use {
 
 use hapi_core_solana::{
     instruction::{
-        create_reporter, create_community, create_network, report_address, create_case, update_case,
+        create_reporter, create_community, create_network, create_address, create_case, update_case,
         update_reporter,
     },
     processor::process,
@@ -285,7 +285,7 @@ impl HapiProgramTest {
 
         let address_address = get_address_address(&network.address, &value);
 
-        let report_address_ix = report_address(
+        let create_address_ix = create_address(
             &reporter.reporter_keypair.pubkey(),
             &format!("{}/{}", &community.name, &network.name),
             &value,
@@ -295,7 +295,7 @@ impl HapiProgramTest {
         )
         .unwrap();
 
-        self.process_transaction(&[report_address_ix], Some(&[&reporter.reporter_keypair]))
+        self.process_transaction(&[create_address_ix], Some(&[&reporter.reporter_keypair]))
             .await
             .unwrap();
 

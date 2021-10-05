@@ -12,7 +12,7 @@ use crate::{
     state::address::{get_address_address_seeds, Address},
     state::case::{assert_is_valid_case, get_case_address},
     state::enums::{Category, HapiAccountType},
-    state::reporter::{assert_reporter_belongs_to_community, assert_reporter_can_report_address},
+    state::reporter::{assert_reporter_belongs_to_community, assert_reporter_can_create_address},
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
 };
 
@@ -42,7 +42,7 @@ pub fn process_create_address(
     }
 
     assert_reporter_belongs_to_community(reporter_info, community_info, &reporter_key_info.key)?;
-    assert_reporter_can_report_address(reporter_info)?;
+    assert_reporter_can_create_address(reporter_info)?;
     assert_is_empty_account(address_info)?;
 
     // Make sure that case ID and account is fine

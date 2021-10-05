@@ -283,7 +283,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         ("address", Some(arg_matches)) => {
             let (sub_command, sub_matches) = arg_matches.subcommand();
             match (sub_command, sub_matches) {
-                ("report", Some(arg_matches)) => {
+                ("create", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let address = pubkey_of(arg_matches, "address").unwrap();
@@ -291,7 +291,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     let risk = value_t_or_exit!(arg_matches, "risk", u8);
                     let category = parse_arg_category(arg_matches)?;
 
-                    cmd_report_address(
+                    cmd_create_address(
                         &rpc_client,
                         &config,
                         community_name,
@@ -342,12 +342,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         ("case", Some(arg_matches)) => {
             let (sub_command, sub_matches) = arg_matches.subcommand();
             match (sub_command, sub_matches) {
-                ("report", Some(arg_matches)) => {
+                ("create", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let case_name = value_t_or_exit!(arg_matches, "case_name", String);
                     let categories = parse_arg_categories(&arg_matches)?;
 
-                    cmd_report_case(&rpc_client, &config, community_name, case_name, categories)
+                    cmd_create_case(&rpc_client, &config, community_name, case_name, categories)
                 }
 
                 ("update", Some(arg_matches)) => {
@@ -422,13 +422,13 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         ("reporter", Some(arg_matches)) => {
             let (sub_command, sub_matches) = arg_matches.subcommand();
             match (sub_command, sub_matches) {
-                ("add", Some(arg_matches)) => {
+                ("create", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
                     let reporter_name = value_t_or_exit!(arg_matches, "reporter_name", String);
                     let reporter_type = parse_arg_reporter_type(&arg_matches)?;
 
-                    cmd_add_reporter(
+                    cmd_create_reporter(
                         &rpc_client,
                         &config,
                         community_name,
