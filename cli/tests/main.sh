@@ -37,6 +37,7 @@ cargo build-bpf
 echo "==> Building cli"
 cd $BASE_DIR/..
 cargo build
+mkdir -p $OUTPUT_DIR
 
 echo "==> Starting test validator in $LEDGER_DIR"
 cd $BASE_DIR
@@ -46,10 +47,8 @@ solana-test-validator \
   --ledger $LEDGER_DIR \
   --bpf-program $PROGRAM_ID ../../program/target/deploy/hapi_core_solana.so &>"$LOG_FILE" &
 
-mkdir -p $OUTPUT_DIR
-
 while ! nc -z 127.0.0.1 8899; do   
-  sleep 1
+  sleep 0.1
 done
 
 echo "==> Switching Solana client configuration to local"
