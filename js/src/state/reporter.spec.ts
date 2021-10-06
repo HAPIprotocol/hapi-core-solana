@@ -3,9 +3,12 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { Reporter, HapiAccountType, ReporterType } from ".";
+import { mockRpc } from "../../test/util/mocks";
 
 describe("Reporter", () => {
   nock.disableNetConnect();
+
+  const endpoint = "http://localhost:8899";
 
   const BINARY_SAMPLE = Buffer.from(
     "AwMFAAAAQWxpY2UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
@@ -31,32 +34,22 @@ describe("Reporter", () => {
   });
 
   it("should retrieve", async () => {
-    nock("http://localhost:8899")
-      .post(
-        "/",
-        ({ method, params: [address] }) =>
-          method === "getAccountInfo" &&
-          address === "GfwYi1NaoMFJUHzEXtTkXAQewxxqs7PbseAYnsfiNnS7"
-      )
-      .reply(200, {
-        jsonrpc: "2.0",
-        result: {
-          context: { slot: 1113 },
-          value: {
-            data: [
-              "AwMFAAAAQWxpY2UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "base64",
-            ],
-            executable: false,
-            lamports: 1127520,
-            owner: "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7",
-            rentEpoch: 0,
-          },
+    mockRpc(
+      endpoint,
+      "getAccountInfo",
+      ["GfwYi1NaoMFJUHzEXtTkXAQewxxqs7PbseAYnsfiNnS7"],
+      {
+        context: { slot: 1113 },
+        value: {
+          data: ["AwMFAAAAQWxpY2UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==", "base64"],
+          executable: false,
+          lamports: 1127520,
+          owner: "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7",
+          rentEpoch: 0,
         },
-        id: "413a33f5-d343-4dad-9a58-826cef44bda7",
-      });
-
-    const conn = new Connection("http://localhost:8899");
+      }
+    );
+    const conn = new Connection(endpoint);
     const reporter = await Reporter.retrieve(conn, "hapi.one", ALICE_PUBKEY);
     expect(stringify(reporter.data)).toEqual(stringify(REPORTER_SAMPLE));
   });
