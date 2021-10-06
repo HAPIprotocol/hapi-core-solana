@@ -39,6 +39,7 @@ cargo build-bpf
 echo "==> Building cli"
 cd $BASE_DIR/..
 cargo build
+mkdir -p $OUTPUT_DIR
 
 if nc -z $NODE_HOST $NODE_PORT; then
   echo "==> Stopping previous instance of test validator"
@@ -56,7 +57,7 @@ solana-test-validator \
 mkdir -p $OUTPUT_DIR
 
 while ! nc -z $NODE_HOST $NODE_PORT; do
-  sleep 1
+  sleep 0.1
 done
 
 echo "==> Switching Solana client configuration to local"
