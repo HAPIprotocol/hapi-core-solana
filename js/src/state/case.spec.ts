@@ -2,9 +2,9 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Case, Category, HapiAccountType } from "../../src/state";
-import { u64 } from "../../src/utils";
-import { assertBuffersEqual } from "../util/comparison";
+import { Case, Category, HapiAccountType } from ".";
+import { u64 } from "../utils";
+import { assertBuffersEqual } from "../../test/util/comparison";
 
 describe("Case", () => {
   nock.disableNetConnect();

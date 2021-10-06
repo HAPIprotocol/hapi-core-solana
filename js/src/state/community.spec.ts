@@ -2,8 +2,8 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Community, HapiAccountType } from "../../src/state";
-import { u64 } from "../../src/utils";
+import { Community, HapiAccountType } from ".";
+import { u64 } from "../utils";
 
 describe("Community", () => {
   nock.disableNetConnect();

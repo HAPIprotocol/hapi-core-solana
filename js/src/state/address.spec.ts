@@ -2,12 +2,12 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Address, Category, HapiAccountType } from "../../src/state";
-import { u64 } from "../../src/utils";
-import { assertBuffersEqual } from "../util/comparison";
+import { Address, Category, HapiAccountType } from ".";
+import { u64 } from "../utils";
+import { assertBuffersEqual } from "../../test/util/comparison";
 
 describe("Address", () => {
-  // nock.disableNetConnect();
+  nock.disableNetConnect();
 
   const BINARY_SAMPLE = Buffer.from("BQUBAAAAAAAAAA8=", "base64");
   const ADDRESS_SAMPLE = new Address({
