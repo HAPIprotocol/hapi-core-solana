@@ -47,7 +47,10 @@ solana-test-validator \
   --bpf-program $PROGRAM_ID ../../program/target/deploy/hapi_core_solana.so &>"$LOG_FILE" &
 
 mkdir -p $OUTPUT_DIR
-sleep 2
+
+while ! nc -z 127.0.0.1 8899; do   
+  sleep 1
+done
 
 echo "==> Switching Solana client configuration to local"
 solana config set --url http://127.0.0.1:8899
@@ -70,7 +73,7 @@ solana airdrop 10 $CAROL_KEYPAIR
   echo "==> Creating network testcoin"
   $CLI --keypair $AUTHORITY_KEYPAIR network create hapi.one testcoin ||
     exception "Can't create network testcoin"
-  $CLI --keypair $AUTHORITY_KEYPAIR network view hapi.one testcoin ||
+  $CLI --keypair $AUTHORITY_KEYPAIR network get hapi.one testcoin ||
     exception "Can't view network testcoin"
 
   echo "==> Attempting to create network without correct credentials"
@@ -79,38 +82,38 @@ solana airdrop 10 $CAROL_KEYPAIR
     echo "Passed"
 
   echo "==> Creating reporter Alice"
-  $CLI --keypair $AUTHORITY_KEYPAIR reporter add hapi.one $(solana-keygen pubkey $ALICE_KEYPAIR) Alice Authority &&
-    $CLI --keypair $AUTHORITY_KEYPAIR reporter view hapi.one $(solana-keygen pubkey $ALICE_KEYPAIR) ||
+  $CLI --keypair $AUTHORITY_KEYPAIR reporter create hapi.one $(solana-keygen pubkey $ALICE_KEYPAIR) Alice Authority &&
+    $CLI --keypair $AUTHORITY_KEYPAIR reporter get hapi.one $(solana-keygen pubkey $ALICE_KEYPAIR) ||
     exception "Can't view reporter Alice"
 
   echo "==> Creating reporter Bob"
-  $CLI --keypair $AUTHORITY_KEYPAIR reporter add hapi.one $(solana-keygen pubkey $BOB_KEYPAIR) Bob Full &&
-    $CLI --keypair $AUTHORITY_KEYPAIR reporter view hapi.one $(solana-keygen pubkey $BOB_KEYPAIR) ||
+  $CLI --keypair $AUTHORITY_KEYPAIR reporter create hapi.one $(solana-keygen pubkey $BOB_KEYPAIR) Bob Full &&
+    $CLI --keypair $AUTHORITY_KEYPAIR reporter get hapi.one $(solana-keygen pubkey $BOB_KEYPAIR) ||
     exception "Can't view reporter Bob"
 
   echo "==> Creating reporter Carol"
-  $CLI --keypair $AUTHORITY_KEYPAIR reporter add hapi.one $(solana-keygen pubkey $CAROL_KEYPAIR) Carol Tracer &&
-    $CLI --keypair $AUTHORITY_KEYPAIR reporter view hapi.one $(solana-keygen pubkey $CAROL_KEYPAIR) ||
+  $CLI --keypair $AUTHORITY_KEYPAIR reporter create hapi.one $(solana-keygen pubkey $CAROL_KEYPAIR) Carol Tracer &&
+    $CLI --keypair $AUTHORITY_KEYPAIR reporter get hapi.one $(solana-keygen pubkey $CAROL_KEYPAIR) ||
     exception "Can't view reporter Carol"
 
   echo "==> Creating case 0"
-  $CLI --keypair $ALICE_KEYPAIR case report hapi.one case0 &&
-    $CLI --keypair $ALICE_KEYPAIR case view hapi.one 0 ||
+  $CLI --keypair $ALICE_KEYPAIR case create hapi.one case0 &&
+    $CLI --keypair $ALICE_KEYPAIR case get hapi.one 0 ||
     exception "Can't view case0"
 
   echo "==> Creating case 1"
-  $CLI --keypair $BOB_KEYPAIR case report hapi.one case1 --category Theft --category Scam &&
-    $CLI --keypair $BOB_KEYPAIR case view hapi.one 1 ||
+  $CLI --keypair $BOB_KEYPAIR case create hapi.one case1 --category Theft --category Scam &&
+    $CLI --keypair $BOB_KEYPAIR case get hapi.one 1 ||
     exception "Can't view case1"
 
   echo "==> Attempting to create case 2 without correct credentials"
-  $CLI --keypair $CAROL_KEYPAIR case report hapi.one case2 2>&1 >/dev/null &&
+  $CLI --keypair $CAROL_KEYPAIR case create hapi.one case2 2>&1 >/dev/null &&
     exception "Shouldn't be able to report case by tracer" ||
     echo "Passed"
 
   echo "==> Reporting address 2Yy2..FRew"
-  $CLI --keypair $CAROL_KEYPAIR address report hapi.one testcoin 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew 1 5 Theft &&
-    $CLI --keypair $CAROL_KEYPAIR address view hapi.one testcoin 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew ||
+  $CLI --keypair $CAROL_KEYPAIR address create hapi.one testcoin 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew 1 5 Theft &&
+    $CLI --keypair $CAROL_KEYPAIR address get hapi.one testcoin 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew ||
     exception "Can't view address 2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"
 
   set -e

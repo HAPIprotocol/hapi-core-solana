@@ -9,7 +9,7 @@ use {
     solana_sdk::borsh::try_from_slice_unchecked,
 };
 
-pub fn cmd_view_case(
+pub fn cmd_get_case(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,

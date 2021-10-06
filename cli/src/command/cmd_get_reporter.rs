@@ -9,7 +9,7 @@ use {
     solana_sdk::{borsh::try_from_slice_unchecked, pubkey::Pubkey},
 };
 
-pub fn cmd_view_reporter(
+pub fn cmd_get_reporter(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,

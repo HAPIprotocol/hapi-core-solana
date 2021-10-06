@@ -9,7 +9,7 @@ use {
     solana_sdk::borsh::try_from_slice_unchecked,
 };
 
-pub fn cmd_view_network(
+pub fn cmd_get_network(
     rpc_client: &RpcClient,
     config: &Config,
     community_name: String,

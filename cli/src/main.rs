@@ -109,7 +109,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .arg(arg_community_authority.clone().index(3).required(false)),
         )
         .subcommand(
-            SubCommand::with_name("view")
+            SubCommand::with_name("get")
                 .about("View network data")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_network_name.clone().index(2).required(true)),
@@ -118,7 +118,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let subcommand_reporter = SubCommand::with_name("reporter")
         .about("Manage reporters")
         .subcommand(
-            SubCommand::with_name("add")
+            SubCommand::with_name("create")
                 .about("Add a new reporter public key to a network")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_reporter_pubkey.clone().index(2).required(true))
@@ -134,7 +134,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .arg(arg_reporter_type.clone().index(4).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("view")
+            SubCommand::with_name("get")
                 .about("View reporter data")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_reporter_pubkey.clone().index(2).required(true)),
@@ -143,7 +143,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let subcommand_case = SubCommand::with_name("case")
         .about("Manage cases")
         .subcommand(
-            SubCommand::with_name("report")
+            SubCommand::with_name("create")
                 .about("Report a new case")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_case_name.clone().index(2).required(true))
@@ -157,7 +157,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .arg(arg_case_categories.clone()),
         )
         .subcommand(
-            SubCommand::with_name("view")
+            SubCommand::with_name("get")
                 .about("View case data")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_case_id.clone().index(2).required(true)),
@@ -166,7 +166,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let subcommand_address = SubCommand::with_name("address")
         .about("Manage addresses")
         .subcommand(
-            SubCommand::with_name("report")
+            SubCommand::with_name("create")
                 .about("Report a new address")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_network_name.clone().index(2).required(true))
@@ -186,7 +186,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .arg(arg_category.clone().index(6).required(true)),
         )
         .subcommand(
-            SubCommand::with_name("view")
+            SubCommand::with_name("get")
                 .about("View address data")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_network_name.clone().index(2).required(true))
@@ -323,12 +323,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     )
                 }
 
-                ("view", Some(arg_matches)) => {
+                ("get", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
                     let address = pubkey_of(arg_matches, "address").unwrap();
 
-                    cmd_view_address(&rpc_client, &config, community_name, network_name, &address)
+                    cmd_get_address(&rpc_client, &config, community_name, network_name, &address)
                 }
 
                 _ => subcommand_address
@@ -358,11 +358,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     cmd_update_case(&rpc_client, &config, community_name, case_id, categories)
                 }
 
-                ("view", Some(arg_matches)) => {
+                ("get", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
 
-                    cmd_view_case(&rpc_client, &config, community_name, case_id)
+                    cmd_get_case(&rpc_client, &config, community_name, case_id)
                 }
 
                 _ => subcommand_case
@@ -404,11 +404,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     cmd_create_network(&rpc_client, &config, community_name, network_name)
                 }
 
-                ("view", Some(arg_matches)) => {
+                ("get", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let network_name = value_t_or_exit!(arg_matches, "network_name", String);
 
-                    cmd_view_network(&rpc_client, &config, community_name, network_name)
+                    cmd_get_network(&rpc_client, &config, community_name, network_name)
                 }
 
                 _ => subcommand_network
@@ -454,11 +454,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     )
                 }
 
-                ("view", Some(arg_matches)) => {
+                ("get", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let reporter_pubkey = pubkey_of(arg_matches, "reporter_pubkey").unwrap();
 
-                    cmd_view_reporter(&rpc_client, &config, community_name, &reporter_pubkey)
+                    cmd_get_reporter(&rpc_client, &config, community_name, &reporter_pubkey)
                 }
 
                 _ => subcommand_reporter
