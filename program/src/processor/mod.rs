@@ -13,9 +13,9 @@ mod process_create_case;
 mod process_create_community;
 mod process_create_network;
 mod process_create_reporter;
-mod process_update_community;
 mod process_update_address;
 mod process_update_case;
+mod process_update_community;
 mod process_update_reporter;
 
 use crate::instruction::HapiInstruction;
@@ -24,9 +24,9 @@ use process_create_case::*;
 use process_create_community::*;
 use process_create_network::*;
 use process_create_reporter::*;
-use process_update_community::*;
 use process_update_address::*;
 use process_update_case::*;
+use process_update_community::*;
 use process_update_reporter::*;
 
 /// Processes an instruction
@@ -50,16 +50,16 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
         }
 
         HapiInstruction::CreateReporter {
-            name,
             reporter_type,
+            name,
         } => process_create_reporter(program_id, accounts, &name, reporter_type),
 
         HapiInstruction::UpdateReporter {
-            name,
             reporter_type,
+            name,
         } => process_update_reporter(program_id, accounts, &name, reporter_type),
 
-        HapiInstruction::CreateCase { name, categories } => {
+        HapiInstruction::CreateCase { categories, name } => {
             process_create_case(program_id, accounts, &name, &categories)
         }
 
@@ -67,7 +67,7 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
             process_update_case(program_id, accounts, &categories)
         }
 
-        HapiInstruction::ReportAddress {
+        HapiInstruction::CreateAddress {
             address,
             risk,
             case_id,

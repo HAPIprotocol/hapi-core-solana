@@ -1,4 +1,5 @@
 import {
+  Connection,
   PublicKey,
   SystemProgram,
   TransactionInstruction,
@@ -8,19 +9,19 @@ import { HAPI_PROGRAM_ID } from "../constants";
 
 /**
  * Create an instruction for the system program to create an entity state account
+ * @param connection Web3 connection to fetch rent exemption data
  * @param payer Public key of the payer account
  * @param publicKey Public key of an account to create
  * @param space Size in bytes of an account to create
  * @returns An instruction to append to a transaction
  **/
 export async function createAccountInstruction(
+  connection: Connection,
   payer: PublicKey,
   publicKey: PublicKey,
   space: number
 ): Promise<TransactionInstruction> {
-  const lamports = await this.connection.getMinimumBalanceForRentExemption(
-    space
-  );
+  const lamports = await connection.getMinimumBalanceForRentExemption(space);
 
   return SystemProgram.createAccount({
     fromPubkey: payer,

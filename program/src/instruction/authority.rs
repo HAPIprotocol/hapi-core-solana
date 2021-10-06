@@ -124,8 +124,8 @@ pub fn create_reporter(
     ];
 
     let instruction = HapiInstruction::CreateReporter {
-        name: reporter_name.to_string(),
         reporter_type,
+        name: reporter_name.to_string(),
     };
 
     Ok(Instruction {
@@ -156,8 +156,8 @@ pub fn update_reporter(
     ];
 
     let instruction = HapiInstruction::UpdateReporter {
-        name: reporter_name.to_string(),
         reporter_type,
+        name: reporter_name.to_string(),
     };
 
     Ok(Instruction {

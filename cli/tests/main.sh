@@ -8,6 +8,8 @@ OUTPUT_DIR="$BASE_DIR/output"
 LOG_FILE="$OUTPUT_DIR/test.log"
 PROGRAM_ID="hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7"
 CLI="$BASE_DIR/../target/debug/hapi-core-solana-cli -v"
+NODE_HOST=localhost
+NODE_PORT=8899
 
 AUTHORITY_KEYPAIR=./keys/authority.json
 NOBODY_KEYPAIR=./keys/nobody.json
@@ -38,22 +40,27 @@ echo "==> Building cli"
 cd $BASE_DIR/..
 cargo build
 
+if nc -z $NODE_HOST $NODE_PORT; then
+  echo "==> Stopping previous instance of test validator"
+
+  killall -w solana-test-validator
+fi
+
 echo "==> Starting test validator in $LEDGER_DIR"
 cd $BASE_DIR
 solana-test-validator \
-  --log \
   --reset \
   --ledger $LEDGER_DIR \
   --bpf-program $PROGRAM_ID ../../program/target/deploy/hapi_core_solana.so &>"$LOG_FILE" &
 
 mkdir -p $OUTPUT_DIR
 
-while ! nc -z 127.0.0.1 8899; do   
+while ! nc -z $NODE_HOST $NODE_PORT; do
   sleep 1
 done
 
 echo "==> Switching Solana client configuration to local"
-solana config set --url http://127.0.0.1:8899
+solana config set --url "http://$NODE_HOST:$NODE_PORT"
 
 echo "==> Airdropping"
 cd $BASE_DIR

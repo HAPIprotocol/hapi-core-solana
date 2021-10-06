@@ -1,3 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AuthorityClient createCommunity should throw - community already exists 1`] = `"Community already exists: hapi.one (DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja)"`;
+exports[`AuthorityClient createCommunity should throw - community already exists 1`] = `"Signature verification failed"`;
+
+exports[`AuthorityClient createCommunity should throw - invalid name 1`] = `"Max seed length exceeded"`;

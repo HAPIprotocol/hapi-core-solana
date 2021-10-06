@@ -90,7 +90,7 @@ pub fn update_case(
     })
 }
 
-/// Creates ReportAddress instruction
+/// Creates CreateAddress instruction
 pub fn create_address(
     // Accounts
     reporter: &Pubkey,
@@ -119,7 +119,7 @@ pub fn create_address(
         AccountMeta::new_readonly(sysvar::rent::id(), false),
     ];
 
-    let instruction = HapiInstruction::ReportAddress {
+    let instruction = HapiInstruction::CreateAddress {
         address: *address,
         risk,
         case_id,
@@ -133,7 +133,7 @@ pub fn create_address(
     })
 }
 
-/// Creates ReportAddress instruction
+/// Creates UpdateAddress instruction
 pub fn update_address(
     // Accounts
     reporter: &Pubkey,

@@ -38,6 +38,8 @@ export class Reporter {
   /// Reporter name
   name: string;
 
+  static size = ReporterState.size;
+
   constructor(data?: Partial<Reporter>) {
     if (data) {
       Object.assign(this, data);

@@ -5,8 +5,14 @@ import {
   TransactionInstruction,
 } from "@solana/web3.js";
 
-import { Community, Network, HapiAccountType } from "../state";
+import { Community, Network, Reporter, ReporterType } from "../state";
 import { HAPI_PROGRAM_ID } from "../constants";
+import {
+  CreateCommunityIx,
+  CreateNetworkIx,
+  CreateReporterIx,
+  UpdateReporterIx,
+} from "./instructions";
 
 export async function createCommunityInstruction({
   payer,
@@ -19,29 +25,37 @@ export async function createCommunityInstruction({
 }): Promise<TransactionInstruction> {
   const [communityAddress] = await Community.getAddress(communityName);
 
-  const community = new Community({
-    accountType: HapiAccountType.Community,
-    name: communityName,
-    authority: authority || payer,
-  });
+  const ix = new CreateCommunityIx();
+  ix.name = communityName;
 
   const keys = [
-    { pubkey: payer, isSigner: true, isWritable: false },
+    { pubkey: payer, isSigner: true, isWritable: true },
     { pubkey: communityAddress, isSigner: false, isWritable: true },
-    {
-      pubkey: SystemProgram.programId,
-      isSigner: false,
-      isWritable: false,
-    },
-    { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
   ];
 
-  const data = Buffer.from(community.serialize());
+  if (authority) {
+    keys.push({
+      pubkey: authority,
+      isSigner: false,
+      isWritable: false,
+    });
+  }
+
+  keys.push(
+    ...[
+      {
+        pubkey: SystemProgram.programId,
+        isSigner: false,
+        isWritable: false,
+      },
+      { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+    ]
+  );
 
   const instruction = new TransactionInstruction({
     keys,
     programId: HAPI_PROGRAM_ID,
-    data,
+    data: ix.serialize(),
   });
 
   return instruction;
@@ -63,10 +77,8 @@ export async function createNetworkInstructions({
     networkName
   );
 
-  const network = new Network({
-    accountType: HapiAccountType.Network,
-    name: networkName,
-  });
+  const ix = new CreateNetworkIx();
+  ix.name = networkName;
 
   const keys = [
     { pubkey: payer, isSigner: true, isWritable: false },
@@ -80,36 +92,96 @@ export async function createNetworkInstructions({
     { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
   ];
 
-  const data = Buffer.from(network.serialize());
+  const instruction = new TransactionInstruction({
+    keys,
+    programId: HAPI_PROGRAM_ID,
+    data: ix.serialize(),
+  });
+
+  return instruction;
+}
+
+export async function createReporterInstructions({
+  payer,
+  communityName,
+  reporterPubkey,
+  reporterType,
+  reporterName,
+}: {
+  payer: PublicKey;
+  communityName: string;
+  reporterPubkey: PublicKey;
+  reporterType: ReporterType;
+  reporterName: string;
+}): Promise<TransactionInstruction> {
+  const [communityAddress] = await Community.getAddress(communityName);
+
+  const [reporterAddress] = await Reporter.getAddress(
+    communityAddress,
+    reporterPubkey
+  );
+
+  const ix = new CreateReporterIx();
+  ix.reporter_type = reporterType;
+  ix.name = reporterName;
+
+  const keys = [
+    { pubkey: payer, isSigner: true, isWritable: false },
+    { pubkey: communityAddress, isSigner: false, isWritable: true },
+    { pubkey: reporterPubkey, isSigner: false, isWritable: false },
+    { pubkey: reporterAddress, isSigner: false, isWritable: true },
+    {
+      pubkey: SystemProgram.programId,
+      isSigner: false,
+      isWritable: false,
+    },
+    { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+  ];
 
   const instruction = new TransactionInstruction({
     keys,
     programId: HAPI_PROGRAM_ID,
-    data,
+    data: ix.serialize(),
   });
 
   return instruction;
 }
 
-export async function createReporterInstructions(): Promise<TransactionInstruction> {
-  const data = Buffer.alloc(0);
+export async function updateReporterInstructions({
+  payer,
+  communityName,
+  reporterPubkey,
+  reporterType,
+  reporterName,
+}: {
+  payer: PublicKey;
+  communityName: string;
+  reporterPubkey: PublicKey;
+  reporterType: ReporterType;
+  reporterName: string;
+}): Promise<TransactionInstruction> {
+  const [communityAddress] = await Community.getAddress(communityName);
+
+  const [reporterAddress] = await Reporter.getAddress(
+    communityAddress,
+    reporterPubkey
+  );
+
+  const ix = new UpdateReporterIx();
+  ix.name = reporterName;
+  ix.reporter_type = reporterType;
+
+  const keys = [
+    { pubkey: payer, isSigner: true, isWritable: false },
+    { pubkey: communityAddress, isSigner: false, isWritable: true },
+    { pubkey: reporterPubkey, isSigner: false, isWritable: false },
+    { pubkey: reporterAddress, isSigner: false, isWritable: true },
+  ];
 
   const instruction = new TransactionInstruction({
-    keys: [],
+    keys,
     programId: HAPI_PROGRAM_ID,
-    data,
-  });
-
-  return instruction;
-}
-
-export async function updateReporterInstructions(): Promise<TransactionInstruction> {
-  const data = Buffer.alloc(0);
-
-  const instruction = new TransactionInstruction({
-    keys: [],
-    programId: HAPI_PROGRAM_ID,
-    data,
+    data: ix.serialize(),
   });
 
   return instruction;

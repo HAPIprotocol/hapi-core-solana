@@ -65,11 +65,11 @@ pub enum HapiInstruction {
     /// 5. `[]` Sysvar Rent
     ///
     CreateReporter {
-        /// UTF-8 encoded Reporter name
-        name: String,
-
         /// Reporter type
         reporter_type: ReporterType,
+
+        /// UTF-8 encoded Reporter name
+        name: String,
     },
 
     /// Update reporter name and type
@@ -80,11 +80,11 @@ pub enum HapiInstruction {
     /// 3. `[]` Reporter key
     ///
     UpdateReporter {
-        /// UTF-8 encoded Reporter name
-        name: String,
-
         /// Reporter type
         reporter_type: ReporterType,
+
+        /// UTF-8 encoded Reporter name
+        name: String,
     },
 
     /// Report a new case
@@ -97,11 +97,11 @@ pub enum HapiInstruction {
     /// 5. `[]` Sysvar Rent
     ///
     CreateCase {
-        /// UTF-8 encoded case name
-        name: String,
-
         /// Categories
         categories: CategorySet,
+
+        /// UTF-8 encoded case name
+        name: String,
     },
 
     /// Update an existing case
@@ -127,7 +127,7 @@ pub enum HapiInstruction {
     /// 6. `[]` System
     /// 7. `[]` Sysvar Rent
     ///
-    ReportAddress {
+    CreateAddress {
         /// Address value
         address: Pubkey,
 

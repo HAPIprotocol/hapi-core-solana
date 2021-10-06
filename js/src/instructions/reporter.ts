@@ -11,7 +11,7 @@ import { Case, Category, Community, Reporter } from "../state";
 import { setToBuffer } from "../utils";
 import { HapiInstruction } from "./enums";
 
-export async function reportCaseInstruction(
+export async function createCaseInstruction(
   connection: Connection,
   reporterPubkey: PublicKey,
   communityName: string,

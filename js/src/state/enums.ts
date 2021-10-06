@@ -1,3 +1,4 @@
+// This enum must match the order of a smart contract enum
 export enum HapiAccountType {
   Uninitialized,
   Community,
@@ -7,6 +8,7 @@ export enum HapiAccountType {
   Address,
 }
 
+// This enum must match the order of a smart contract enum
 export enum ReporterType {
   Inactive,
   Tracer,
@@ -14,6 +16,7 @@ export enum ReporterType {
   Authority,
 }
 
+// This enum must match the order of a smart contract enum
 export enum Category {
   // Tier 0
   /// Safe

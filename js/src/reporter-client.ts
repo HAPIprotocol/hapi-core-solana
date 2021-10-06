@@ -16,6 +16,8 @@ export class ReporterClient extends ReaderClient {
     // TODO: create an instruction
     return {
       account: new PublicKey("0"),
+      data: {} as any,
+      txHash: "",
     };
   }
 

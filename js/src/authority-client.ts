@@ -5,11 +5,13 @@ import {
   PublicKey,
 } from "@solana/web3.js";
 
-import { Community, Network } from "./state";
+import { Community, Network, Reporter, ReporterType } from "./state";
 import { HapiActionResponse, ReaderClient } from "./reader-client";
 import {
   createCommunityInstruction,
   createNetworkInstructions,
+  createReporterInstructions,
+  updateReporterInstructions,
 } from "./instructions/authority";
 import { createAccountInstruction } from "./instructions/helpers";
 
@@ -37,14 +39,19 @@ export class AuthorityClient extends ReaderClient {
     // Create a community account
     if (!this.skipAccountCreation) {
       transaction.add(
-        await createAccountInstruction(payer, communityAddress, Community.size)
+        await createAccountInstruction(
+          this.connection,
+          payer,
+          communityAddress,
+          Community.size
+        )
       );
     }
 
     // Form a program instruction
     transaction.add(
       await createCommunityInstruction({
-        payer: payer,
+        payer,
         communityName,
         authority: authority || payer,
       })
@@ -110,7 +117,12 @@ export class AuthorityClient extends ReaderClient {
     // Create a network account
     if (!this.skipAccountCreation) {
       transaction.add(
-        await createAccountInstruction(payer, networkAddress, Network.size)
+        await createAccountInstruction(
+          this.connection,
+          payer,
+          networkAddress,
+          Network.size
+        )
       );
     }
 
@@ -160,11 +172,130 @@ export class AuthorityClient extends ReaderClient {
     return { account, data, txHash };
   }
 
-  async createReporter(): Promise<void> {
-    // TODO: create an instruction
+  async createReporterTransaction(
+    payer: PublicKey,
+    communityName: string,
+    reporterPubkey: PublicKey,
+    reporterType: ReporterType,
+    reporterName: string
+  ): Promise<Transaction> {
+    const [communityAddress] = await Community.getAddress(communityName);
+
+    const [reporterAddress] = await Reporter.getAddress(
+      communityAddress,
+      reporterPubkey
+    );
+
+    const transaction = new Transaction();
+
+    // Create a reporter account
+    if (!this.skipAccountCreation) {
+      transaction.add(
+        await createAccountInstruction(
+          this.connection,
+          payer,
+          reporterAddress,
+          Reporter.size
+        )
+      );
+    }
+
+    // Form a program instruction
+    transaction.add(
+      await createReporterInstructions({
+        payer: payer,
+        communityName,
+        reporterPubkey,
+        reporterType,
+        reporterName,
+      })
+    );
+
+    return transaction;
   }
 
-  async updateReporter(): Promise<void> {
-    // TODO: create an instruction
+  async createReporter(
+    payer: Keypair,
+    communityName: string,
+    reporterPubkey: PublicKey,
+    reporterType: ReporterType,
+    reporterName: string
+  ): Promise<HapiActionResponse<Reporter>> {
+    const transaction = await this.createReporterTransaction(
+      payer.publicKey,
+      communityName,
+      reporterPubkey,
+      reporterType,
+      reporterName
+    );
+
+    const txHash = await sendAndConfirmTransaction(
+      this.connection,
+      transaction,
+      [payer],
+      { commitment: "confirmed" }
+    );
+
+    const { data, account } = await Reporter.retrieve(
+      this.connection,
+      communityName,
+      reporterPubkey
+    );
+
+    return { account, data, txHash };
+  }
+
+  async updateReporterTransaction(
+    payer: PublicKey,
+    communityName: string,
+    reporterPubkey: PublicKey,
+    reporterType: ReporterType,
+    reporterName: string
+  ): Promise<Transaction> {
+    const transaction = new Transaction();
+
+    // Form a program instruction
+    transaction.add(
+      await updateReporterInstructions({
+        payer: payer,
+        communityName,
+        reporterPubkey,
+        reporterType,
+        reporterName,
+      })
+    );
+
+    return transaction;
+  }
+
+  async updateReporter(
+    payer: Keypair,
+    communityName: string,
+    reporterPubkey: PublicKey,
+    reporterType: ReporterType,
+    reporterName: string
+  ): Promise<HapiActionResponse<Reporter>> {
+    const transaction = await this.updateReporterTransaction(
+      payer.publicKey,
+      communityName,
+      reporterPubkey,
+      reporterType,
+      reporterName
+    );
+
+    const txHash = await sendAndConfirmTransaction(
+      this.connection,
+      transaction,
+      [payer],
+      { commitment: "confirmed" }
+    );
+
+    const { data, account } = await Reporter.retrieve(
+      this.connection,
+      communityName,
+      reporterPubkey
+    );
+
+    return { account, data, txHash };
   }
 }

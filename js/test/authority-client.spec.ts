@@ -1,15 +1,19 @@
-import { Keypair } from "@solana/web3.js";
+import { Connection, Keypair } from "@solana/web3.js";
 
 import { AuthorityClient } from "../src";
 
 describe("AuthorityClient", () => {
   let client: AuthorityClient;
-  const payer = new Keypair();
+  let payer: Keypair;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     client = new AuthorityClient({
       endpoint: "http://localhost:8899",
     });
+    payer = new Keypair();
+    await (
+      client as unknown as { connection: Connection }
+    ).connection.requestAirdrop(payer.publicKey, 100e9);
   });
 
   it("should initialize", () => {
