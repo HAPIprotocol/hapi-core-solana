@@ -21,7 +21,7 @@ use {
 use hapi_core_solana::{
     instruction::{
         create_address, create_case, create_community, create_network, create_reporter,
-        update_case, update_community, update_reporter,
+        update_case, update_community, update_network, update_reporter,
     },
     processor::process,
     state::{
@@ -369,17 +369,31 @@ impl HapiProgramTest {
         authority: &Keypair,
         new_authority: Option<&Pubkey>,
         community_cookie: &CommunityCookie,
-        updated_community: &Community,
     ) -> Result<(), ProgramError> {
-        let update_community_ix = update_community(
+        let update_community_ix =
+            update_community(&authority.pubkey(), new_authority, &community_cookie.name).unwrap();
+
+        self.process_transaction(&[update_community_ix], Some(&[&authority]))
+            .await?;
+
+        Ok(())
+    }
+
+    #[allow(dead_code)]
+    pub async fn update_network(
+        &mut self,
+        authority: &Keypair,
+        community_cookie: &CommunityCookie,
+        network_cookie: &NetworkCookie,
+    ) -> Result<(), ProgramError> {
+        let update_network_ix = update_network(
             &authority.pubkey(),
-            new_authority,
             &community_cookie.name,
-            &updated_community.name,
+            &network_cookie.name,
         )
         .unwrap();
 
-        self.process_transaction(&[update_community_ix], Some(&[&authority]))
+        self.process_transaction(&[update_network_ix], Some(&[&authority]))
             .await?;
 
         Ok(())

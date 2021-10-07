@@ -36,11 +36,8 @@ pub enum HapiInstruction {
     ///
     /// 0. `[signer]` Authority account
     /// 1. `[writable]` Community account. PDA seeds: ['community', name]
-    /// 2. `[optional]` New authority account
-    UpdateCommunity {
-        /// UTF-8 encoded HAPI Community name
-        name: String,
-    },
+    /// 2. `[]` New authority account
+    UpdateCommunity {},
 
     /// Creates a new HAPI Network
     ///
@@ -54,6 +51,14 @@ pub enum HapiInstruction {
         /// UTF-8 encoded HAPI Network name
         name: String,
     },
+
+    /// Updates an existing HAPI Network
+    ///
+    /// 0. `[signer]` Authority account
+    /// 1. `[]` Community account. PDA seeds: ['community', name]
+    /// 2. `[writable]` Network account. PDA seeds: ['network', community_address, network_name]
+    ///
+    UpdateNetwork {},
 
     /// Add reporter to network
     ///
@@ -142,6 +147,14 @@ pub enum HapiInstruction {
     },
 
     /// Update an existing address
+    ///
+    /// 0. `[signer]` Reporter key
+    /// 1. `[]` Community account
+    /// 2. `[writable]` Network account
+    /// 3. `[]` Reporter account
+    /// 4. `[]` Case account. PDA seeds: ['case', network_account, case_id]
+    /// 5. `[writable]` Address account. PDA seeds: ['address', network_account, address]
+    ///
     UpdateAddress {
         /// Address risk score: 0 is safe, 10 is maximum risk
         risk: u8,

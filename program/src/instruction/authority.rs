@@ -48,10 +48,9 @@ pub fn update_community(
     authority: &Pubkey,
     new_authority: Option<&Pubkey>,
     // Args
-    old_name: &str,
-    new_name: &str,
+    network_name: &str,
 ) -> Result<Instruction, GenericError> {
-    let community_address = get_community_address(&old_name);
+    let community_address = get_community_address(&network_name);
 
     let mut accounts = vec![
         AccountMeta::new(*authority, true),
@@ -62,9 +61,7 @@ pub fn update_community(
         accounts.push(AccountMeta::new(*new_authority, false));
     }
 
-    let instruction = HapiInstruction::UpdateCommunity {
-        name: new_name.to_string(),
-    };
+    let instruction = HapiInstruction::UpdateCommunity {};
 
     Ok(Instruction {
         program_id: id(),
@@ -93,6 +90,32 @@ pub fn create_network(
     ];
 
     let instruction = HapiInstruction::CreateNetwork { name: network_name };
+
+    Ok(Instruction {
+        program_id: id(),
+        accounts,
+        data: instruction.try_to_vec().unwrap(),
+    })
+}
+
+/// Creates UpdateNetwork instruction
+pub fn update_network(
+    // Accounts
+    authority: &Pubkey,
+    // Args
+    community_name: &str,
+    network_name: &str,
+) -> Result<Instruction, GenericError> {
+    let community_address = get_community_address(&community_name);
+    let network_address = get_network_address(&community_address, &network_name);
+
+    let accounts = vec![
+        AccountMeta::new_readonly(*authority, true),
+        AccountMeta::new_readonly(community_address, false),
+        AccountMeta::new(network_address, false),
+    ];
+
+    let instruction = HapiInstruction::UpdateNetwork {};
 
     Ok(Instruction {
         program_id: id(),

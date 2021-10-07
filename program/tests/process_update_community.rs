@@ -6,8 +6,6 @@ mod program_test;
 
 use program_test::*;
 
-use hapi_core_solana::state::{community::Community, enums::HapiAccountType};
-
 use solana_sdk::signature::Signer;
 
 #[tokio::test]
@@ -17,16 +15,9 @@ async fn test_community_updated() {
     let authority_keypair = hapi_test.create_funded_keypair().await;
     let community_cookie = hapi_test.with_community(&authority_keypair).await;
 
-    let community = Community {
-        account_type: HapiAccountType::Community,
-        name: "Updated".to_string(),
-        authority: authority_keypair.pubkey(),
-        next_case_id: community_cookie.account.next_case_id,
-    };
-
     // Act
     hapi_test
-        .update_community(&authority_keypair, None, &community_cookie, &community)
+        .update_community(&authority_keypair, None, &community_cookie)
         .await
         .unwrap();
 
@@ -36,7 +27,8 @@ async fn test_community_updated() {
         .await;
 
     assert_eq!(
-        community.name, updated_account.name,
-        "Community name should be correct"
+        authority_keypair.pubkey(),
+        updated_account.authority,
+        "Community authority should be updated"
     );
 }

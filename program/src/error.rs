@@ -60,6 +60,10 @@ pub enum HapiError {
     #[error("NameTooLong")]
     NameTooLong,
 
+    /// Not implemented
+    #[error("NotImplemented")]
+    NotImplemented,
+
     /// ---- Account Tools Errors ----
 
     /// Invalid account owner
