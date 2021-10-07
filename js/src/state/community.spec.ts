@@ -3,7 +3,7 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { Community, HapiAccountType } from ".";
-import { mockRpc } from "../../test/util/mocks";
+import { mockRpcOk } from "../../test/util/mocks";
 import { u64 } from "../utils";
 
 describe("Community", () => {
@@ -34,7 +34,7 @@ describe("Community", () => {
   });
 
   it("should retrieve", async () => {
-    mockRpc(
+    mockRpcOk(
       endpoint,
       "getAccountInfo",
       ["DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja"],

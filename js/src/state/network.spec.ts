@@ -3,7 +3,7 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { Network, HapiAccountType } from ".";
-import { mockRpc } from "../../test/util/mocks";
+import { mockRpcOk } from "../../test/util/mocks";
 
 describe("Network", () => {
   nock.disableNetConnect();
@@ -31,7 +31,7 @@ describe("Network", () => {
   });
 
   it("should retrieve", async () => {
-    mockRpc(
+    mockRpcOk(
       endpoint,
       "getAccountInfo",
       ["2viJmmn2pEfd6cogyqdDGWS9YkrVdnx87L994Qo3GwLx"],

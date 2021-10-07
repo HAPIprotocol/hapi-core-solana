@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthorityClient createCommunity should throw - community already exists 1`] = `"failed to send transaction: Transaction simulation failed: Error processing Instruction 0: instruction requires an uninitialized account"`;
+
+exports[`AuthorityClient createCommunity should throw - invalid name 1`] = `"Max seed length exceeded"`;

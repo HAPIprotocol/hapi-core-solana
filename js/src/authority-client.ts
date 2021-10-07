@@ -30,21 +30,7 @@ export class AuthorityClient extends ReaderClient {
     payer: PublicKey,
     communityName: string
   ): Promise<Transaction> {
-    const [communityAddress] = await Community.getAddress(communityName);
-
     const transaction = new Transaction();
-
-    // Create a community account
-    if (!this.skipAccountCreation) {
-      transaction.add(
-        await createAccountInstruction(
-          this.connection,
-          payer,
-          communityAddress,
-          Community.size
-        )
-      );
-    }
 
     // Form a program instruction
     transaction.add(

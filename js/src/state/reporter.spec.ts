@@ -3,7 +3,7 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { Reporter, HapiAccountType, ReporterType } from ".";
-import { mockRpc } from "../../test/util/mocks";
+import { mockRpcOk } from "../../test/util/mocks";
 
 describe("Reporter", () => {
   nock.disableNetConnect();
@@ -34,7 +34,7 @@ describe("Reporter", () => {
   });
 
   it("should retrieve", async () => {
-    mockRpc(
+    mockRpcOk(
       endpoint,
       "getAccountInfo",
       ["GfwYi1NaoMFJUHzEXtTkXAQewxxqs7PbseAYnsfiNnS7"],

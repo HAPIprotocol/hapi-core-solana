@@ -53,9 +53,13 @@ export class Community {
 
   static async getAddress(communityName: string): Promise<[PublicKey, number]> {
     return PublicKey.findProgramAddress(
-      [Buffer.from("community"), Buffer.from(communityName)],
+      Community.getAddressSeeds(communityName),
       HAPI_PROGRAM_ID
     );
+  }
+
+  static getAddressSeeds(communityName: string): Uint8Array[] {
+    return [Buffer.from("community"), Buffer.from(communityName)];
   }
 
   static fromState(state: CommunityState): Community {

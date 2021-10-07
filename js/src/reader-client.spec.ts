@@ -3,7 +3,7 @@ import nock from "nock";
 
 import { ReaderClient } from "./reader-client";
 import { u64 } from "./utils";
-import { mockRpc } from "../test/util/mocks";
+import { mockRpcOk } from "../test/util/mocks";
 
 describe("ReaderClient", () => {
   let client: ReaderClient;
@@ -25,7 +25,7 @@ describe("ReaderClient", () => {
 
   describe("getCommunity", () => {
     it("should throw - not found", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh"],
@@ -38,7 +38,7 @@ describe("ReaderClient", () => {
     });
 
     it("should respond - success", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja"],
@@ -64,14 +64,14 @@ describe("ReaderClient", () => {
 
   describe("getNetwork", () => {
     it("should throw - not found", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["3TGzDJHkCHX5R62wtVh1Jr5TNe775jvSCt8tThbizBKQ"],
         { context: { slot: 4682 }, value: null }
       );
 
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja"],
@@ -90,7 +90,7 @@ describe("ReaderClient", () => {
         }
       );
 
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["7GiNHuwBKg6URcBJXXXRPRtBVgn5q42AiowBEc8uzqBH"],
@@ -107,7 +107,7 @@ describe("ReaderClient", () => {
     });
 
     it("should respond - success", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["2viJmmn2pEfd6cogyqdDGWS9YkrVdnx87L994Qo3GwLx"],
@@ -130,7 +130,7 @@ describe("ReaderClient", () => {
 
   describe("getReporter", () => {
     it("should throw - not found", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["DUALaTZpDYtct73t8D9AirPYnPc4TzSCmqwcNjxmSf9j"],
@@ -148,7 +148,7 @@ describe("ReaderClient", () => {
     it("should respond - success", async () => {
       // Alice
       {
-        mockRpc(
+        mockRpcOk(
           endpoint,
           "getAccountInfo",
           ["GfwYi1NaoMFJUHzEXtTkXAQewxxqs7PbseAYnsfiNnS7"],
@@ -176,7 +176,7 @@ describe("ReaderClient", () => {
 
       // Bob
       {
-        mockRpc(
+        mockRpcOk(
           endpoint,
           "getAccountInfo",
           ["7GFtavi6PpFjqmvhKMtW8D6W4JgFv69VhUurrnBQRbUL"],
@@ -204,7 +204,7 @@ describe("ReaderClient", () => {
 
       // Carol
       {
-        mockRpc(
+        mockRpcOk(
           endpoint,
           "getAccountInfo",
           ["DSa28TFYUaomAUNTnRRcsxxmZmvrf1Pfim7obB21m5Jx"],
@@ -234,7 +234,7 @@ describe("ReaderClient", () => {
 
   describe("getCase", () => {
     it("should throw - not found", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
@@ -250,7 +250,7 @@ describe("ReaderClient", () => {
         }
       );
 
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
@@ -266,7 +266,7 @@ describe("ReaderClient", () => {
         }
       );
 
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["5yGEyZT2WwuLD6BJuvP7TXRcR2ojZTpFVv2TkQm6eX2P"],
@@ -278,7 +278,7 @@ describe("ReaderClient", () => {
     });
 
     it("should respond - success", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["63G8TLWGQpd26UZj7L9Qr9e3R1MPbybLcW3A7LXtG1Sk"],
@@ -304,7 +304,7 @@ describe("ReaderClient", () => {
 
   describe("getAddress", () => {
     it("should throw - not found (string)", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["5Q3FZTD9Vs2xXG7GDVeyT1GcdpGfV9ux7XaBWFAfqWWK"],
@@ -317,7 +317,7 @@ describe("ReaderClient", () => {
     });
 
     it("should throw - not found (buffer)", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["JCoiJf6CgqhvL3WjzUZ1v6j9tSDTVo3VaKBQvVosXmQZ"],
@@ -340,7 +340,7 @@ describe("ReaderClient", () => {
     });
 
     it("should throw - invalid community name", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["C4cz5pxVZ9eyqqMYSoRu3DmcCMSjgZ24noo1KukZ9LNF"],
@@ -357,7 +357,7 @@ describe("ReaderClient", () => {
     });
 
     it("should respond - success (string)", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
@@ -382,7 +382,7 @@ describe("ReaderClient", () => {
     });
 
     it("should respond - success (buffer)", async () => {
-      mockRpc(
+      mockRpcOk(
         endpoint,
         "getAccountInfo",
         ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],

@@ -5,7 +5,7 @@ import nock from "nock";
 import { Case, Category, HapiAccountType } from ".";
 import { u64 } from "../utils";
 import { assertBuffersEqual } from "../../test/util/comparison";
-import { mockRpc } from "../../test/util/mocks";
+import { mockRpcOk } from "../../test/util/mocks";
 
 describe("Case", () => {
   nock.disableNetConnect();
@@ -47,7 +47,7 @@ describe("Case", () => {
   });
 
   it("should retrieve - case0", async () => {
-    mockRpc(
+    mockRpcOk(
       endpoint,
       "getAccountInfo",
       ["63G8TLWGQpd26UZj7L9Qr9e3R1MPbybLcW3A7LXtG1Sk"],
@@ -81,7 +81,7 @@ describe("Case", () => {
   });
 
   it("should retrieve - case1", async () => {
-    mockRpc(
+    mockRpcOk(
       endpoint,
       "getAccountInfo",
       ["6vGsVQ1YMu5zkNUMJ5j5H1TVimfennBcYuYP9hXw1kB2"],

@@ -5,7 +5,7 @@ import nock from "nock";
 import { Address, Category, HapiAccountType } from ".";
 import { u64 } from "../utils";
 import { assertBuffersEqual } from "../../test/util/comparison";
-import { mockRpc } from "../../test/util/mocks";
+import { mockRpcOk } from "../../test/util/mocks";
 
 describe("Address", () => {
   nock.disableNetConnect();
@@ -31,7 +31,7 @@ describe("Address", () => {
   });
 
   it("should retrieve", async () => {
-    mockRpc(
+    mockRpcOk(
       endpoint,
       "getAccountInfo",
       ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
