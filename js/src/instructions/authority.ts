@@ -17,11 +17,9 @@ import {
 export async function createCommunityInstruction({
   payer,
   communityName,
-  authority,
 }: {
   payer: PublicKey;
   communityName: string;
-  authority?: PublicKey;
 }): Promise<TransactionInstruction> {
   const [communityAddress] = await Community.getAddress(communityName);
 
@@ -31,26 +29,13 @@ export async function createCommunityInstruction({
   const keys = [
     { pubkey: payer, isSigner: true, isWritable: true },
     { pubkey: communityAddress, isSigner: false, isWritable: true },
-  ];
-
-  if (authority) {
-    keys.push({
-      pubkey: authority,
+    {
+      pubkey: SystemProgram.programId,
       isSigner: false,
       isWritable: false,
-    });
-  }
-
-  keys.push(
-    ...[
-      {
-        pubkey: SystemProgram.programId,
-        isSigner: false,
-        isWritable: false,
-      },
-      { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
-    ]
-  );
+    },
+    { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+  ];
 
   const instruction = new TransactionInstruction({
     keys,

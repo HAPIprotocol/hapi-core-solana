@@ -24,13 +24,11 @@ export class AuthorityClient extends ReaderClient {
    * Create a community creation transaction that can be signed elsewhere
    * @param payer Public key of the payer account
    * @param communityName The name of the community to create
-   * @param authority (Optional) Public key of an authority of the community (defaults to payer)
    * @returns Transaction to sign
    **/
   async createCommunityTransaction(
     payer: PublicKey,
-    communityName: string,
-    authority?: PublicKey
+    communityName: string
   ): Promise<Transaction> {
     const [communityAddress] = await Community.getAddress(communityName);
 
@@ -53,7 +51,6 @@ export class AuthorityClient extends ReaderClient {
       await createCommunityInstruction({
         payer,
         communityName,
-        authority: authority || payer,
       })
     );
 
@@ -69,13 +66,11 @@ export class AuthorityClient extends ReaderClient {
    **/
   async createCommunity(
     payer: Keypair,
-    communityName: string,
-    authority?: PublicKey
+    communityName: string
   ): Promise<HapiActionResponse<Community>> {
     const transaction = await this.createCommunityTransaction(
       payer.publicKey,
-      communityName,
-      authority
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
