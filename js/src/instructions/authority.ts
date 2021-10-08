@@ -66,9 +66,9 @@ export async function createNetworkInstructions({
   ix.name = networkName;
 
   const keys = [
-    { pubkey: payer, isSigner: true, isWritable: false },
+    { pubkey: payer, isSigner: true, isWritable: true },
     { pubkey: networkAddress, isSigner: false, isWritable: true },
-    { pubkey: communityAddress, isSigner: false, isWritable: true },
+    { pubkey: communityAddress, isSigner: false, isWritable: false },
     {
       pubkey: SystemProgram.programId,
       isSigner: false,

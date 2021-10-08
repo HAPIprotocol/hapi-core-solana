@@ -14,11 +14,10 @@ describe("AuthorityClient", () => {
 
   const endpoint = "http://localhost:8899";
 
-  nock.disableNetConnect();
-
   let i = 0;
   const seed = Buffer.alloc(32);
   beforeEach(async () => {
+    nock.disableNetConnect();
     seed.writeUInt32BE(i++);
     client = new AuthorityClient({ endpoint });
     payer = Keypair.fromSeed(seed);
@@ -26,7 +25,7 @@ describe("AuthorityClient", () => {
 
   afterEach(() => {
     nock.cleanAll();
-    jest.resetAllMocks();
+    jest.clearAllMocks();
   });
 
   it("should initialize", () => {
@@ -75,7 +74,6 @@ describe("AuthorityClient", () => {
     });
 
     it("should create a community - success", async () => {
-      jest.spyOn(Date, "now").mockReturnValue(1633624165684);
       let t0 = 1633624165684;
       jest.spyOn(Date, "now").mockImplementation(() => (t0 += 1));
 
@@ -138,8 +136,50 @@ describe("AuthorityClient", () => {
     });
   });
 
-  describe("createNetwork", () => {
+  describe("updateCommunity", () => {
     it.todo("should throw - community not found");
+    it.todo("should update a community - success");
+  });
+
+  describe("createNetwork", () => {
+    it("should throw - community not found", async () => {
+      mockRpcOk(endpoint, "getRecentBlockhash", [], {
+        context: { slot: 159 },
+        value: {
+          blockhash: "FMjzqMLtuECN4cKNZcu221QCBVExhJZqrKACi7pmw4qL",
+          feeCalculator: { lamportsPerSignature: 5000 },
+        },
+      });
+
+      mockRpcError(endpoint, "sendTransaction", [], {
+        code: -32002,
+        message:
+          "Transaction simulation failed: Error processing Instruction 0: instruction requires an initialized account",
+        data: {
+          accounts: null,
+          err: { InstructionError: [0, "UninitializedAccount"] },
+          logs: [
+            "Program hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7 invoke [1]",
+            'Program log: HAPI-INSTRUCTION: CreateNetwork { name: "testcoin" }',
+            "Program log: Error: UninitializedAccount",
+            "Program hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7 consumed 6155 of 200000 compute units",
+            "Program hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7 failed: instruction requires an initialized account",
+          ],
+        },
+      });
+
+      let errorStack = "";
+      jest.spyOn(console, "error").mockImplementationOnce((error, stack) => {
+        errorStack = stack;
+      });
+
+      await expect(() =>
+        client.createNetwork(payer, "community404", "testcoin")
+      ).rejects.toThrowErrorMatchingSnapshot();
+
+      expect(errorStack).toContain("Error: UninitializedAccount");
+    });
+
     it.todo("should throw - network already exists");
     it.todo("should throw - invalid name");
     it.todo("should create a network - success");

@@ -13,13 +13,9 @@ import {
   createReporterInstructions,
   updateReporterInstructions,
 } from "./instructions/authority";
-import { createAccountInstruction } from "./instructions/helpers";
 
 /** HAPI client to operate authority program functions on Solana */
 export class AuthorityClient extends ReaderClient {
-  /** If this is true, entity account creation will not be included in transactions */
-  skipAccountCreation = false;
-
   /**
    * Create a community creation transaction that can be signed elsewhere
    * @param payer Public key of the payer account
@@ -86,26 +82,7 @@ export class AuthorityClient extends ReaderClient {
     communityName: string,
     networkName: string
   ): Promise<Transaction> {
-    const [communityAddress] = await Community.getAddress(communityName);
-
-    const [networkAddress] = await Network.getAddress(
-      communityAddress,
-      networkName
-    );
-
     const transaction = new Transaction();
-
-    // Create a network account
-    if (!this.skipAccountCreation) {
-      transaction.add(
-        await createAccountInstruction(
-          this.connection,
-          payer,
-          networkAddress,
-          Network.size
-        )
-      );
-    }
 
     // Form a program instruction
     transaction.add(
@@ -160,26 +137,7 @@ export class AuthorityClient extends ReaderClient {
     reporterType: ReporterType,
     reporterName: string
   ): Promise<Transaction> {
-    const [communityAddress] = await Community.getAddress(communityName);
-
-    const [reporterAddress] = await Reporter.getAddress(
-      communityAddress,
-      reporterPubkey
-    );
-
     const transaction = new Transaction();
-
-    // Create a reporter account
-    if (!this.skipAccountCreation) {
-      transaction.add(
-        await createAccountInstruction(
-          this.connection,
-          payer,
-          reporterAddress,
-          Reporter.size
-        )
-      );
-    }
 
     // Form a program instruction
     transaction.add(
