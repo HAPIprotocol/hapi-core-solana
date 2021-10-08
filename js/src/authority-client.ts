@@ -130,6 +130,15 @@ export class AuthorityClient extends ReaderClient {
     return { account, data, txHash };
   }
 
+  /**
+   * Create a reporter creation transaction that can be signed elsewhere
+   * @param payer Public key of the payer account (must be the community authority)
+   * @param communityName The name of the community that the network should belong to
+   * @param reporterPubkey Public key of the reporter
+   * @param reporterType Type of the reporter
+   * @param reporterName The name of the reporter to create
+   * @returns Transaction to sign
+   **/
   async createReporterTransaction(
     payer: PublicKey,
     communityName: string,
@@ -153,6 +162,15 @@ export class AuthorityClient extends ReaderClient {
     return transaction;
   }
 
+  /**
+   * Create and sign a reporter creation transaction
+   * @param payer Payer's key pair to sign the transaction
+   * @param communityName The name of the community that the network should belong to
+   * @param reporterPubkey Public key of the reporter
+   * @param reporterType Type of the reporter
+   * @param reporterName The name of the reporter to create
+   * @returns Transaction hash, account address and entity data
+   **/
   async createReporter(
     payer: Keypair,
     communityName: string,
@@ -184,6 +202,15 @@ export class AuthorityClient extends ReaderClient {
     return { account, data, txHash };
   }
 
+  /**
+   * Create a reporter updating transaction that can be signed elsewhere
+   * @param payer Public key of the payer account (must be the community authority)
+   * @param communityName The name of the community that the network should belong to
+   * @param reporterPubkey Public key of the reporter
+   * @param reporterType New type of the reporter
+   * @param reporterName New name of the reporter
+   * @returns Transaction to sign
+   **/
   async updateReporterTransaction(
     payer: PublicKey,
     communityName: string,
@@ -207,6 +234,15 @@ export class AuthorityClient extends ReaderClient {
     return transaction;
   }
 
+  /**
+   * Create and sign a reporter updating transaction
+   * @param payer Public key of the payer account (must be the community authority)
+   * @param communityName The name of the community that the network should belong to
+   * @param reporterPubkey Public key of the reporter
+   * @param reporterType New type of the reporter
+   * @param reporterName New name of the reporter
+   * @returns Transaction hash, account address and updated entity data
+   **/
   async updateReporter(
     payer: Keypair,
     communityName: string,

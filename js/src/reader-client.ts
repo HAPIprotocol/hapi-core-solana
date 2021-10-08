@@ -35,11 +35,21 @@ export class ReaderClient {
     this.communityName = config.communityName;
   }
 
+  /**
+   * Sets community name for context
+   * @param communityName Community name
+   * @returns Self
+   */
   switchCommunity(communityName: string): ReaderClient {
     this.communityName = communityName;
     return this;
   }
 
+  /**
+   * Fetch community info from blockchain
+   * @param communityName (Optional) The name of the community to fetch (defaults to context)
+   * @returns Community info
+   **/
   async getCommunity(
     communityName?: string
   ): Promise<HapiViewResponse<Community>> {
@@ -55,6 +65,12 @@ export class ReaderClient {
     return state;
   }
 
+  /**
+   * Fetch network info from blockchain
+   * @param networkName The name of the network to fetch
+   * @param communityName (Optional) The name of the community to fetch network from (defaults to context)
+   * @returns Network info
+   **/
   async getNetwork(
     networkName: string,
     communityName?: string
@@ -76,6 +92,12 @@ export class ReaderClient {
     return state;
   }
 
+  /**
+   * Fetch reporter info from blockchain
+   * @param reporterPubkey Public key of the reporter to fetch
+   * @param communityName (Optional) The name of the community to fetch reporter from (defaults to context)
+   * @returns Reporter info
+   **/
   async getReporter(
     reporterPubkey: string,
     communityName?: string
@@ -93,6 +115,12 @@ export class ReaderClient {
     return state;
   }
 
+  /**
+   * Fetch case info from blockchain
+   * @param caseId ID of the case to fetch
+   * @param communityName (Optional) The name of the community to fetch case from (defaults to context)
+   * @returns Case info
+   **/
   async getCase(
     caseId: u64,
     communityName?: string
@@ -110,6 +138,13 @@ export class ReaderClient {
     return state;
   }
 
+  /**
+   * Fetch address info from blockchain
+   * @param address The address to fetch info for (string for Solana addresses, Buffer for others)
+   * @param networkName The name of the network to which address belongs to
+   * @param communityName (Optional) The name of the community to fetch case from (defaults to context)
+   * @returns Address info
+   **/
   async getAddress(
     address: string | Buffer,
     networkName: string,

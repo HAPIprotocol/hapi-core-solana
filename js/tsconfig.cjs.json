@@ -3,6 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "inlineSourceMap": true,
+    "removeComments": false,
     "sourceRoot": "./src",
     "rootDir": "./src",
     "outDir": "./lib"
