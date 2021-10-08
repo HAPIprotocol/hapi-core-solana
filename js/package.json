@@ -16,7 +16,7 @@
     "test": "jest --config=./jest.json",
     "lint": "eslint . --ext .ts"
   },
-  "keywords": [],
+  "keywords": ["HAPI", "cybersecurity", "Solana", "client"],
   "author": "HAPI",
   "license": "BSL-1.1",
   "devDependencies": {
