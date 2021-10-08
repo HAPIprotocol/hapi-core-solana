@@ -8,7 +8,7 @@ This library provides three types of clients of [HAPI](https://hapi.one) smart c
 ## Usage examples
 
 ```typescript
-import { ReaderClient, u64, base58ToPublicKey } from '@hapi.one/solana-client';
+import { ReaderClient, u64 } from '@hapi.one/solana-client';
 
 // Create a client that connects to a Solana API endpoint
 const reader = new ReaderClient({ endpoint: "https://api.mainnet-beta.solana.com" });
