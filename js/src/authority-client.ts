@@ -6,7 +6,11 @@ import {
 } from "@solana/web3.js";
 
 import { Community, Network, Reporter, ReporterType } from "./state";
-import { HapiActionResponse, ReaderClient } from "./reader-client";
+import {
+  HapiActionResponse,
+  ReaderClient,
+  HapiClientConfig,
+} from "./reader-client";
 import {
   createCommunityInstruction,
   createNetworkInstructions,
@@ -14,8 +18,30 @@ import {
   updateReporterInstructions,
 } from "./instructions/authority";
 
+export interface HapiClientAuthorityConfig extends HapiClientConfig {
+  payer: Keypair | PublicKey;
+}
+
 /** HAPI client to operate authority program functions on Solana */
 export class AuthorityClient extends ReaderClient {
+  payer: Keypair | PublicKey;
+
+  get payerPublicKey(): PublicKey {
+    return this.payer instanceof Keypair ? this.payer.publicKey : this.payer;
+  }
+
+  get payerKeypair(): Keypair | undefined {
+    if (this.payer instanceof Keypair) {
+      return this.payer;
+    }
+    throw new Error(`Client is not initialized with payer secret key`);
+  }
+
+  constructor(config: HapiClientAuthorityConfig) {
+    super(config);
+    this.payer = config.payer;
+  }
+
   /**
    * Create a community creation transaction that can be signed elsewhere
    * @param payer Public key of the payer account
@@ -23,21 +49,22 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async createCommunityTransaction(
-    payer: PublicKey,
-    communityName: string
-  ): Promise<Transaction> {
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     // Form a program instruction
     transaction.add(
       await createCommunityInstruction({
         programId: this.programId,
-        payer,
+        payer: this.payerPublicKey,
         communityName,
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -48,18 +75,18 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async createCommunity(
-    payer: Keypair,
-    communityName: string
+    communityName?: string
   ): Promise<HapiActionResponse<Community>> {
-    const transaction = await this.createCommunityTransaction(
-      payer.publicKey,
+    communityName = this.ensureCommunityName(communityName);
+
+    const { transaction } = await this.createCommunityTransaction(
       communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 
@@ -80,23 +107,24 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async createNetworkTransaction(
-    payer: PublicKey,
-    communityName: string,
-    networkName: string
-  ): Promise<Transaction> {
+    networkName: string,
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     // Form a program instruction
     transaction.add(
       await createNetworkInstructions({
         programId: this.programId,
-        payer: payer,
+        payer: this.payerPublicKey,
         communityName,
         networkName,
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -107,20 +135,20 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async createNetwork(
-    payer: Keypair,
-    communityName: string,
-    networkName: string
+    networkName: string,
+    communityName?: string
   ): Promise<HapiActionResponse<Network>> {
-    const transaction = await this.createNetworkTransaction(
-      payer.publicKey,
-      communityName,
-      networkName
+    communityName = this.ensureCommunityName(communityName);
+
+    const { transaction } = await this.createNetworkTransaction(
+      networkName,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 
@@ -144,19 +172,20 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async createReporterTransaction(
-    payer: PublicKey,
-    communityName: string,
     reporterPubkey: PublicKey,
     reporterType: ReporterType,
-    reporterName: string
-  ): Promise<Transaction> {
+    reporterName: string,
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     // Form a program instruction
     transaction.add(
       await createReporterInstructions({
         programId: this.programId,
-        payer: payer,
+        payer: this.payerPublicKey,
         communityName,
         reporterPubkey,
         reporterType,
@@ -164,7 +193,7 @@ export class AuthorityClient extends ReaderClient {
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -177,24 +206,24 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async createReporter(
-    payer: Keypair,
-    communityName: string,
     reporterPubkey: PublicKey,
     reporterType: ReporterType,
-    reporterName: string
+    reporterName: string,
+    communityName?: string
   ): Promise<HapiActionResponse<Reporter>> {
-    const transaction = await this.createReporterTransaction(
-      payer.publicKey,
-      communityName,
+    communityName = this.ensureCommunityName(communityName);
+
+    const { transaction } = await this.createReporterTransaction(
       reporterPubkey,
       reporterType,
-      reporterName
+      reporterName,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 
@@ -218,19 +247,20 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async updateReporterTransaction(
-    payer: PublicKey,
-    communityName: string,
     reporterPubkey: PublicKey,
     reporterType: ReporterType,
-    reporterName: string
-  ): Promise<Transaction> {
+    reporterName: string,
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     // Form a program instruction
     transaction.add(
       await updateReporterInstructions({
         programId: this.programId,
-        payer: payer,
+        payer: this.payerPublicKey,
         communityName,
         reporterPubkey,
         reporterType,
@@ -238,7 +268,7 @@ export class AuthorityClient extends ReaderClient {
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -251,24 +281,24 @@ export class AuthorityClient extends ReaderClient {
    * @returns Transaction hash, account address and updated entity data
    **/
   async updateReporter(
-    payer: Keypair,
-    communityName: string,
     reporterPubkey: PublicKey,
     reporterType: ReporterType,
-    reporterName: string
+    reporterName: string,
+    communityName?: string
   ): Promise<HapiActionResponse<Reporter>> {
-    const transaction = await this.updateReporterTransaction(
-      payer.publicKey,
-      communityName,
+    communityName = this.ensureCommunityName(communityName);
+
+    const { transaction } = await this.updateReporterTransaction(
       reporterPubkey,
       reporterType,
-      reporterName
+      reporterName,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 

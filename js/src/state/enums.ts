@@ -84,6 +84,7 @@ export enum Category {
   /// Theft - stolen funds
   Theft = 16384,
 
+  /// Counterfeit - fake assets that try to appear as something else
   Counterfeit = 32768,
 
   // Tier 4 - Severe risk

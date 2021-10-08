@@ -47,3 +47,13 @@ export function mockRpcError(
       id: "f2653441-fed8-4e4f-ac1e-dcc560ab5abc",
     });
 }
+
+export function mockConfirmTransaction(client: unknown): jest.SpyInstance {
+  if (client["connection"]) {
+    return jest
+      .spyOn(client["connection"], "confirmTransaction")
+      .mockResolvedValue({ context: { slot: 1 }, value: { err: null } });
+  } else {
+    throw new Error(`Object doesn't have "connection" attribute`);
+  }
+}

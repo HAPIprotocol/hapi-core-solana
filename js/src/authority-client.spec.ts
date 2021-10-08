@@ -1,10 +1,14 @@
 jest.mock("rpc-websockets"); // disable web3's websocket connections
 
-import { Connection, Keypair } from "@solana/web3.js";
+import { Keypair } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { mockRpcError, mockRpcOk } from "../test/util/mocks";
+import {
+  mockConfirmTransaction,
+  mockRpcError,
+  mockRpcOk,
+} from "../test/util/mocks";
 import { HapiAccountType } from "./state";
 import { AuthorityClient } from ".";
 
@@ -19,8 +23,8 @@ describe("AuthorityClient", () => {
   beforeEach(async () => {
     nock.disableNetConnect();
     seed.writeUInt32BE(i++);
-    client = new AuthorityClient({ endpoint });
     payer = Keypair.fromSeed(seed);
+    client = new AuthorityClient({ endpoint, payer });
   });
 
   afterEach(() => {
@@ -63,13 +67,13 @@ describe("AuthorityClient", () => {
 
       jest.spyOn(console, "error").mockImplementationOnce(() => null);
       await expect(() =>
-        client.createCommunity(payer, "hapi.one")
+        client.createCommunity("hapi.one")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
     it("should throw - invalid name", async () => {
       await expect(() =>
-        client.createCommunity(payer, "loooooooooooooooooooooooooooooooooong")
+        client.createCommunity("loooooooooooooooooooooooooooooooooong")
       ).rejects.toThrowErrorMatchingSnapshot();
     });
 
@@ -77,12 +81,7 @@ describe("AuthorityClient", () => {
       let t0 = 1633624165684;
       jest.spyOn(Date, "now").mockImplementation(() => (t0 += 1));
 
-      jest
-        .spyOn(
-          (client as unknown as { connection: Connection }).connection,
-          "confirmTransaction"
-        )
-        .mockResolvedValue({ context: { slot: 1 }, value: { err: null } });
+      mockConfirmTransaction(client);
 
       mockRpcOk(endpoint, "getRecentBlockhash", [], {
         context: { slot: 159 },
@@ -118,10 +117,7 @@ describe("AuthorityClient", () => {
         }
       );
 
-      const { account, data } = await client.createCommunity(
-        payer,
-        "hapi.test"
-      );
+      const { account, data } = await client.createCommunity("hapi.test");
       expect(account.toString()).toEqual(
         "Bwv5tFYijy58tNWKDv64Rs2i1Wun5C6LbxQEL2N35J59"
       );
@@ -174,7 +170,7 @@ describe("AuthorityClient", () => {
       });
 
       await expect(() =>
-        client.createNetwork(payer, "community404", "testcoin")
+        client.createNetwork("testcoin", "community404")
       ).rejects.toThrowErrorMatchingSnapshot();
 
       expect(errorStack).toContain("Error: UninitializedAccount");

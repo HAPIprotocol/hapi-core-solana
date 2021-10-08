@@ -22,9 +22,16 @@ export interface HapiViewResponse<T> {
 }
 
 export interface HapiActionResponse<T> {
-  account: PublicKey;
   txHash: string;
+  account: PublicKey;
   data: T;
+}
+
+export interface HapiActionResponseWithMeta<T, U> {
+  txHash: string;
+  account: PublicKey;
+  data: T;
+  meta: U;
 }
 
 /** HAPI client to read entity data from Solana */
@@ -37,6 +44,16 @@ export class ReaderClient {
     this.connection = new Connection(config.endpoint, config.commintment);
     this.communityName = config.communityName;
     this.programId = new PublicKey(this.programId || HAPI_PROGRAM_ID);
+  }
+
+  protected ensureCommunityName(communityName?: string): string {
+    if (!communityName) {
+      communityName = this.communityName;
+    }
+    if (!communityName) {
+      throw new Error("Community name not set");
+    }
+    return communityName;
   }
 
   /**
@@ -57,9 +74,7 @@ export class ReaderClient {
   async getCommunity(
     communityName?: string
   ): Promise<HapiViewResponse<Community>> {
-    if (!communityName && !this.communityName) {
-      throw new Error("Community name not specified");
-    }
+    communityName = this.ensureCommunityName(communityName);
 
     const state = await Community.retrieve(
       this.programId,
@@ -80,9 +95,7 @@ export class ReaderClient {
     networkName: string,
     communityName?: string
   ): Promise<HapiViewResponse<Network>> {
-    if (!communityName && !this.communityName) {
-      throw new Error("Community name not specified");
-    }
+    communityName = this.ensureCommunityName(communityName);
 
     if (!networkName) {
       throw new Error("Network name not specified");
@@ -108,9 +121,7 @@ export class ReaderClient {
     reporterPubkey: string,
     communityName?: string
   ): Promise<HapiViewResponse<Reporter>> {
-    if (!communityName && !this.communityName) {
-      throw new Error("Community name not specified");
-    }
+    communityName = this.ensureCommunityName(communityName);
 
     const state = await Reporter.retrieve(
       this.programId,
@@ -132,9 +143,7 @@ export class ReaderClient {
     caseId: u64,
     communityName?: string
   ): Promise<HapiViewResponse<Case>> {
-    if (!communityName && !this.communityName) {
-      throw new Error("Community name not specified");
-    }
+    communityName = this.ensureCommunityName(communityName);
 
     const state = await Case.retrieve(
       this.programId,
@@ -158,9 +167,7 @@ export class ReaderClient {
     networkName: string,
     communityName?: string
   ): Promise<HapiViewResponse<Address>> {
-    if (!communityName && !this.communityName) {
-      throw new Error("Community name not specified");
-    }
+    communityName = this.ensureCommunityName(communityName);
 
     if (!networkName) {
       throw new Error("Network name not specified");

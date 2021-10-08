@@ -12,11 +12,38 @@ import {
   updateAddressInstruction,
   updateCaseInstruction,
 } from "./instructions/reporter";
-import { HapiActionResponse, ReaderClient } from "./reader-client";
+import {
+  HapiActionResponse,
+  ReaderClient,
+  HapiClientConfig,
+  HapiActionResponseWithMeta,
+} from "./reader-client";
 import { Address, Case, Category, Community } from "./state";
+
+export interface HapiClientReporterConfig extends HapiClientConfig {
+  payer: Keypair | PublicKey;
+}
 
 /** HAPI client to operate reporter program functions on Solana */
 export class ReporterClient extends ReaderClient {
+  payer: Keypair | PublicKey;
+
+  get payerPublicKey(): PublicKey {
+    return this.payer instanceof Keypair ? this.payer.publicKey : this.payer;
+  }
+
+  get payerKeypair(): Keypair | undefined {
+    if (this.payer instanceof Keypair) {
+      return this.payer;
+    }
+    throw new Error(`Client is not initialized with payer secret key`);
+  }
+
+  constructor(config: HapiClientReporterConfig) {
+    super(config);
+    this.payer = config.payer;
+  }
+
   /**
    * Create a case creation transaction that can be signed elsewhere
    * @param payer Public key of the payer account
@@ -26,31 +53,34 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async createCaseTransaction(
-    payer: PublicKey,
-    communityName: string,
     caseName: string,
-    categories: Category[]
-  ): Promise<Transaction> {
+    categories: Category[],
+    communityName?: string
+  ): Promise<{ transaction: Transaction; caseId: u64 }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const community = await Community.retrieve(
       this.programId,
       this.connection,
       communityName
     );
 
+    const caseId = community.data.nextCaseId;
+
     const transaction = new Transaction();
 
     transaction.add(
       await createCaseInstruction({
         programId: this.programId,
-        payer,
-        caseId: community.data.nextCaseId,
+        payer: this.payerPublicKey,
+        caseId,
         caseName,
         categories,
         communityName,
       })
     );
 
-    return transaction;
+    return { transaction, caseId };
   }
 
   /**
@@ -62,28 +92,22 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async createCase(
-    payer: Keypair,
-    communityName: string,
     caseName: string,
-    caseCategories: Category[]
-  ): Promise<HapiActionResponse<Case>> {
-    const community = await Community.retrieve(
-      this.programId,
-      this.connection,
-      communityName
-    );
+    caseCategories: Category[],
+    communityName?: string
+  ): Promise<HapiActionResponseWithMeta<Case, { caseId: u64 }>> {
+    communityName = this.ensureCommunityName(communityName);
 
-    const transaction = await this.createCaseTransaction(
-      payer.publicKey,
-      communityName,
+    const { transaction, caseId } = await this.createCaseTransaction(
       caseName,
-      caseCategories
+      caseCategories,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 
@@ -91,10 +115,10 @@ export class ReporterClient extends ReaderClient {
       this.programId,
       this.connection,
       communityName,
-      community.data.nextCaseId
+      caseId
     );
 
-    return { account, data, txHash };
+    return { account, data, txHash, meta: { caseId } };
   }
 
   /**
@@ -106,24 +130,25 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async updateCaseTransaction(
-    payer: PublicKey,
-    communityName: string,
     caseId: u64,
-    categories: Category[]
-  ): Promise<Transaction> {
+    categories: Category[],
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     transaction.add(
       await updateCaseInstruction({
         programId: this.programId,
-        payer,
+        payer: this.payerPublicKey,
         communityName,
         caseId,
         categories,
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -135,28 +160,28 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async updateCase(
-    payer: Keypair,
-    communityName: string,
     caseId: u64,
-    caseCategories: Category[]
+    caseCategories: Category[],
+    communityName?: string
   ): Promise<HapiActionResponse<Case>> {
+    communityName = this.ensureCommunityName(communityName);
+
     const community = await Community.retrieve(
       this.programId,
       this.connection,
       communityName
     );
 
-    const transaction = await this.updateCaseTransaction(
-      payer.publicKey,
-      communityName,
+    const { transaction } = await this.updateCaseTransaction(
       caseId,
-      caseCategories
+      caseCategories,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 
@@ -182,14 +207,15 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async createAddressTransaction(
-    payer: PublicKey,
-    communityName: string,
     networkName: string,
     address: PublicKey,
     caseId: u64,
     category: Category,
-    risk: number
-  ): Promise<Transaction> {
+    risk: number,
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     risk = parseInt(risk.toString());
@@ -200,7 +226,7 @@ export class ReporterClient extends ReaderClient {
     transaction.add(
       await createAddressInstruction({
         programId: this.programId,
-        payer,
+        payer: this.payerPublicKey,
         communityName,
         networkName,
         address,
@@ -210,7 +236,7 @@ export class ReporterClient extends ReaderClient {
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -225,28 +251,28 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async createAddress(
-    payer: Keypair,
-    communityName: string,
     networkName: string,
     address: PublicKey,
     caseId: u64,
     category: Category,
-    risk: number
+    risk: number,
+    communityName?: string
   ): Promise<HapiActionResponse<Address>> {
-    const transaction = await this.createAddressTransaction(
-      payer.publicKey,
-      communityName,
+    communityName = this.ensureCommunityName(communityName);
+
+    const { transaction } = await this.createAddressTransaction(
       networkName,
       address,
       caseId,
       category,
-      risk
+      risk,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 
@@ -273,20 +299,21 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction to sign
    **/
   async updateAddressTransaction(
-    payer: PublicKey,
-    communityName: string,
     networkName: string,
     address: PublicKey,
     caseId: u64,
     category: Category,
-    risk: number
-  ): Promise<Transaction> {
+    risk: number,
+    communityName?: string
+  ): Promise<{ transaction: Transaction }> {
+    communityName = this.ensureCommunityName(communityName);
+
     const transaction = new Transaction();
 
     transaction.add(
       await updateAddressInstruction({
         programId: this.programId,
-        payer,
+        payer: this.payerPublicKey,
         communityName,
         networkName,
         address,
@@ -296,7 +323,7 @@ export class ReporterClient extends ReaderClient {
       })
     );
 
-    return transaction;
+    return { transaction };
   }
 
   /**
@@ -311,28 +338,28 @@ export class ReporterClient extends ReaderClient {
    * @returns Transaction hash, account address and entity data
    **/
   async updateAddress(
-    payer: Keypair,
-    communityName: string,
     networkName: string,
     address: PublicKey,
     caseId: u64,
     category: Category,
-    risk: number
+    risk: number,
+    communityName?: string
   ): Promise<HapiActionResponse<Address>> {
-    const transaction = await this.updateAddressTransaction(
-      payer.publicKey,
-      communityName,
+    communityName = this.ensureCommunityName(communityName);
+
+    const { transaction } = await this.updateAddressTransaction(
       networkName,
       address,
       caseId,
       category,
-      risk
+      risk,
+      communityName
     );
 
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [payer],
+      [this.payerKeypair],
       { commitment: "confirmed" }
     );
 

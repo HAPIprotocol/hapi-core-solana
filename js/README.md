@@ -7,6 +7,8 @@ This library provides three types of clients of [HAPI](https://hapi.one) smart c
 
 ## Usage examples
 
+### ReaderClient
+
 ```typescript
 import { ReaderClient, u64 } from '@hapi.one/solana-client';
 
@@ -21,6 +23,9 @@ const networkInfo1 = await reader.getNetwork("solana", "hapi.one");
 
 // You can set a contextual community
 reader.switchCommunity("hapi.one");
+
+// Alternatively, you can initialize the client with default community name specified
+const reader2 = new ReaderClient({ endpoint: "https://api.mainnet-beta.solana.com", communityName: "hapi.one" });
 
 // This and next calls to methods will use "hapi.one" community implicitly
 const networkInfo2 = await reader.getNetwork("bitcoin");
@@ -43,4 +48,48 @@ buffer.set(pizzaTransactionAddress);
 
 // ... then you can get that address info
 const addressInfo2 = await reader.getAddress(buffer, "bitcoin-mainnet");
+```
+
+### ReporterClient
+
+`ReporterClient` extends `ReaderClient`, so all the getter methods are the same.
+
+```typescript
+import { Keypair, PublicKey, Connection } from '@solana/web3.js';
+import { ReporterClient, u64, Category } from '@hapi.one/solana-client';
+
+// You'll need a keypair to operate reporter client
+const payer = Keypair.generate();
+
+// Payer should be passed to the client on instantiation
+const reporter = new ReporterClient({ endpoint: "https://api.mainnet-beta.solana.com", payer });
+
+// You can set community name contextually, as in ReaderClient
+reporter.switchCommunity("hapi.one");
+
+// Create a new case with a name and a category
+const resultCase = await reporter.createCase("Exchange hack 2021-10-08", [Category.Theft]);
+
+// Create a new address record for an address exposed in this case
+const resultAddress = await reporter.createAddress(
+    "solana",
+    new PublicKey("vwiVuBCPvFW5GJTM9Z2CbAuard5xP4Cyjn8gFjnUxy4"),
+    resultCase.meta.caseId,
+    Category.Theft,
+    5,
+);
+
+// Alternatively, you can set up a client with only a public key of the payer, 
+// but you'll need to sign transactions externally (e.g. via wallet)
+const payer2 = new PublicKey("9Y9eHFk6tyadkz3e4zpYxvAuTumkLHSXV2tZQhxjb6xf");
+const reporter2 = new ReporterClient({ endpoint: "https://api.mainnet-beta.solana.com", payer: payer2 });
+
+// You can create an unsigned transaction so you can sign it with a connected wallet and 
+const transaction = await reporter2.createCaseTransaction("Rug pull", [Category.Scam]);
+
+// ...sign transaction here
+
+// Send signed transaction via @solana/web3.js
+const conn = new Connection("https://api.mainnet-beta.solana.com");
+await conn.sendRawTransaction(transaction.serialize());
 ```
