@@ -124,8 +124,8 @@ pub enum HapiInstruction {
     /// Report an address for an existing case
     ///
     /// 0. `[signer]` Reporter key
-    /// 1. `[]` Community account
-    /// 2. `[writable]` Network account
+    /// 1. `[writable]` Community account
+    /// 2. `[]` Network account
     /// 3. `[]` Reporter account
     /// 4. `[]` Case account. PDA seeds: ['case', network_account, case_id]
     /// 5. `[writable]` Address account. PDA seeds: ['address', network_account, address]
@@ -150,7 +150,7 @@ pub enum HapiInstruction {
     ///
     /// 0. `[signer]` Reporter key
     /// 1. `[]` Community account
-    /// 2. `[writable]` Network account
+    /// 2. `[]` Network account
     /// 3. `[]` Reporter account
     /// 4. `[]` Case account. PDA seeds: ['case', network_account, case_id]
     /// 5. `[writable]` Address account. PDA seeds: ['address', network_account, address]

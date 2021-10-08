@@ -1,20 +1,7 @@
 import { serialize } from "borsh";
 
-import { Category, ReporterType } from "../state";
-import { u64 } from "../utils";
-
-// This enum must match the order of a smart contract enum
-export enum HapiInstruction {
-  CreateCommunity,
-  UpdateCommunity,
-  CreateNetwork,
-  CreateReporter,
-  UpdateReporter,
-  CreateCase,
-  UpdateCase,
-  CreateAddress,
-  UpdateAddress,
-}
+import { ReporterType, HapiInstruction } from "../state";
+import { u32, u64, u8 } from "../utils";
 
 abstract class Ix {
   protected tag: HapiInstruction;
@@ -144,7 +131,7 @@ export class UpdateReporterIx extends Ix {
 export class CreateCaseIx extends Ix {
   protected tag = HapiInstruction.CreateCase;
 
-  categories: number;
+  categories: u32;
   name: string;
 
   static schema = new Map([
@@ -169,7 +156,7 @@ export class CreateCaseIx extends Ix {
 export class UpdateCaseIx extends Ix {
   protected tag = HapiInstruction.UpdateCase;
 
-  categories: number;
+  categories: u32;
 
   static schema = new Map([
     [
@@ -195,7 +182,7 @@ export class CreateAddressIx extends Ix {
   address: Uint8Array;
   risk: number;
   case_id: u64;
-  category: Category;
+  category: u8;
 
   static schema = new Map([
     [
@@ -222,7 +209,7 @@ export class UpdateAddressIx extends Ix {
 
   risk: number;
   case_id: u64;
-  category: Category;
+  category: u8;
 
   static schema = new Map([
     [

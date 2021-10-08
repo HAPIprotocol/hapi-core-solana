@@ -2,6 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
+import { HAPI_PROGRAM_ID } from "../constants";
 import { Community, HapiAccountType } from ".";
 import { mockRpcOk } from "../../test/util/mocks";
 import { u64 } from "../utils";
@@ -10,6 +11,7 @@ describe("Community", () => {
   nock.disableNetConnect();
 
   const endpoint = "http://localhost:8899";
+  const programId = HAPI_PROGRAM_ID;
 
   const BINARY_SAMPLE = Buffer.from(
     "Ae83pQQEsYipbhD1URInU/iuiQbErgmDyScnrPJbOPlRAgAAAAAAAAAIAAAAaGFwaS5vbmUAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
@@ -53,7 +55,7 @@ describe("Community", () => {
       }
     );
     const conn = new Connection(endpoint);
-    const community = await Community.retrieve(conn, "hapi.one");
+    const community = await Community.retrieve(programId, conn, "hapi.one");
     expect(stringify(community.data)).toEqual(stringify(COMMUNITY_SAMPLE));
   });
 });

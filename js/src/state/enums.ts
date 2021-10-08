@@ -1,6 +1,20 @@
 // This enum must match the order of a smart contract enum
+export enum HapiInstruction {
+  CreateCommunity = 0,
+  UpdateCommunity,
+  CreateNetwork,
+  UpdateNetwork,
+  CreateReporter,
+  UpdateReporter,
+  CreateCase,
+  UpdateCase,
+  CreateAddress,
+  UpdateAddress,
+}
+
+// This enum must match the order of a smart contract enum
 export enum HapiAccountType {
-  Uninitialized,
+  Uninitialized = 0,
   Community,
   Network,
   Reporter,
@@ -10,7 +24,7 @@ export enum HapiAccountType {
 
 // This enum must match the order of a smart contract enum
 export enum ReporterType {
-  Inactive,
+  Inactive = 0,
   Tracer,
   Full,
   Authority,
@@ -100,6 +114,7 @@ export const Categories = [
   Category.Scam,
   Category.Ransomware,
   Category.Theft,
+  Category.Counterfeit,
   Category.TerroristFinancing,
   Category.Sanctions,
   Category.ChildAbuse,

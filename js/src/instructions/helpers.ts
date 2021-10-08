@@ -1,10 +1,15 @@
 import {
+  AccountMeta,
   Connection,
   PublicKey,
   SystemProgram,
+  SYSVAR_RENT_PUBKEY,
   TransactionInstruction,
 } from "@solana/web3.js";
+import BN from "bn.js";
 
+import { Category, Categories } from "../state";
+import { u32, u8 } from "../utils";
 import { HAPI_PROGRAM_ID } from "../constants";
 
 /**
@@ -31,3 +36,24 @@ export async function createAccountInstruction(
     programId: HAPI_PROGRAM_ID,
   });
 }
+
+export function categoriesToBitmask(categories: Category[]): u32 {
+  let bitmask = new u32(0);
+  for (const category of categories) {
+    bitmask = bitmask.or(new BN(category));
+  }
+  return bitmask;
+}
+
+export function categoryToBinary(category: Category): u8 {
+  return new u8(Categories.indexOf(category));
+}
+
+export const SYSTEM_RENT_KEYS: AccountMeta[] = [
+  {
+    pubkey: SystemProgram.programId,
+    isSigner: false,
+    isWritable: false,
+  },
+  { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false },
+];

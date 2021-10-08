@@ -1,7 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { deserializeUnchecked, serialize } from "borsh";
 
-import { HAPI_PROGRAM_ID } from "../constants";
 import { Community } from "./community";
 import { HapiAccountType, ReporterType } from "./enums";
 
@@ -47,6 +46,7 @@ export class Reporter {
   }
 
   static async getAddress(
+    programId: PublicKey,
     communityAddress: PublicKey,
     reporterPubkey: PublicKey
   ): Promise<[PublicKey, number]> {
@@ -56,7 +56,7 @@ export class Reporter {
         communityAddress.toBuffer(),
         reporterPubkey.toBuffer(),
       ],
-      HAPI_PROGRAM_ID
+      programId
     );
   }
 
@@ -75,13 +75,18 @@ export class Reporter {
   }
 
   static async retrieve(
+    programId: PublicKey,
     connection: Connection,
     communityName: string,
     reporterPubkey: PublicKey
   ): Promise<{ data: Reporter; account: PublicKey }> {
-    const [communityAddress] = await Community.getAddress(communityName);
+    const [communityAddress] = await Community.getAddress(
+      programId,
+      communityName
+    );
 
     const [reporterAddress] = await Reporter.getAddress(
+      programId,
       communityAddress,
       reporterPubkey
     );

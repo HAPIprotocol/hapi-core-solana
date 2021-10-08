@@ -2,6 +2,7 @@ import { Connection } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
+import { HAPI_PROGRAM_ID } from "../constants";
 import { Network, HapiAccountType } from ".";
 import { mockRpcOk } from "../../test/util/mocks";
 
@@ -9,6 +10,7 @@ describe("Network", () => {
   nock.disableNetConnect();
 
   const endpoint = "http://localhost:8899";
+  const programId = HAPI_PROGRAM_ID;
 
   const BINARY_SAMPLE = Buffer.from(
     "AggAAAB0ZXN0Y29pbgAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -47,7 +49,12 @@ describe("Network", () => {
       }
     );
     const conn = new Connection(endpoint);
-    const network = await Network.retrieve(conn, "hapi.one", "testcoin");
+    const network = await Network.retrieve(
+      programId,
+      conn,
+      "hapi.one",
+      "testcoin"
+    );
     expect(stringify(network.data)).toEqual(stringify(NETWORK_SAMPLE));
   });
 });

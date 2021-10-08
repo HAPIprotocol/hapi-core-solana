@@ -31,6 +31,7 @@ export class AuthorityClient extends ReaderClient {
     // Form a program instruction
     transaction.add(
       await createCommunityInstruction({
+        programId: this.programId,
         payer,
         communityName,
       })
@@ -63,6 +64,7 @@ export class AuthorityClient extends ReaderClient {
     );
 
     const { data, account } = await Community.retrieve(
+      this.programId,
       this.connection,
       communityName
     );
@@ -87,6 +89,7 @@ export class AuthorityClient extends ReaderClient {
     // Form a program instruction
     transaction.add(
       await createNetworkInstructions({
+        programId: this.programId,
         payer: payer,
         communityName,
         networkName,
@@ -122,6 +125,7 @@ export class AuthorityClient extends ReaderClient {
     );
 
     const { data, account } = await Network.retrieve(
+      this.programId,
       this.connection,
       communityName,
       networkName
@@ -151,6 +155,7 @@ export class AuthorityClient extends ReaderClient {
     // Form a program instruction
     transaction.add(
       await createReporterInstructions({
+        programId: this.programId,
         payer: payer,
         communityName,
         reporterPubkey,
@@ -194,6 +199,7 @@ export class AuthorityClient extends ReaderClient {
     );
 
     const { data, account } = await Reporter.retrieve(
+      this.programId,
       this.connection,
       communityName,
       reporterPubkey
@@ -223,6 +229,7 @@ export class AuthorityClient extends ReaderClient {
     // Form a program instruction
     transaction.add(
       await updateReporterInstructions({
+        programId: this.programId,
         payer: payer,
         communityName,
         reporterPubkey,
@@ -266,6 +273,7 @@ export class AuthorityClient extends ReaderClient {
     );
 
     const { data, account } = await Reporter.retrieve(
+      this.programId,
       this.connection,
       communityName,
       reporterPubkey

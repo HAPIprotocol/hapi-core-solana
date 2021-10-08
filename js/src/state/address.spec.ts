@@ -6,11 +6,13 @@ import { Address, Category, HapiAccountType } from ".";
 import { u64 } from "../utils";
 import { assertBuffersEqual } from "../../test/util/comparison";
 import { mockRpcOk } from "../../test/util/mocks";
+import { HAPI_PROGRAM_ID } from "../constants";
 
 describe("Address", () => {
   nock.disableNetConnect();
 
   const endpoint = "http://localhost:8899";
+  const programId = HAPI_PROGRAM_ID;
 
   const BINARY_SAMPLE = Buffer.from("BQUBAAAAAAAAAA8=", "base64");
   const ADDRESS_SAMPLE = new Address({
@@ -34,7 +36,7 @@ describe("Address", () => {
     mockRpcOk(
       endpoint,
       "getAccountInfo",
-      ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
+      ["C5Srms9M3eHy5XbzEgRgEEHFZ3rKxdAEaH2DZSSXLGDD"],
       {
         context: { slot: 2223 },
         value: {
@@ -49,6 +51,7 @@ describe("Address", () => {
 
     const conn = new Connection(endpoint);
     const network = await Address.retrieve(
+      programId,
       conn,
       "hapi.one",
       "testcoin",

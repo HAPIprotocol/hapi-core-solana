@@ -6,11 +6,13 @@ import { Case, Category, HapiAccountType } from ".";
 import { u64 } from "../utils";
 import { assertBuffersEqual } from "../../test/util/comparison";
 import { mockRpcOk } from "../../test/util/mocks";
+import { HAPI_PROGRAM_ID } from "../constants";
 
 describe("Case", () => {
   nock.disableNetConnect();
 
   const endpoint = "http://localhost:8899";
+  const programId = HAPI_PROGRAM_ID;
 
   const BINARY_SAMPLE_1 = Buffer.from(
     "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAUAAABjYXNlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
@@ -66,7 +68,7 @@ describe("Case", () => {
       }
     );
     const conn = new Connection(endpoint);
-    const state = await Case.retrieve(conn, "hapi.one", new u64(0));
+    const state = await Case.retrieve(programId, conn, "hapi.one", new u64(0));
     expect(stringify(state.data)).toEqual(stringify(CASE_SAMPLE_1));
   });
 
@@ -101,7 +103,7 @@ describe("Case", () => {
     );
 
     const conn = new Connection(endpoint);
-    const state = await Case.retrieve(conn, "hapi.one", new u64(1));
+    const state = await Case.retrieve(programId, conn, "hapi.one", new u64(1));
     expect(stringify(state.data)).toEqual(stringify(CASE_SAMPLE_2));
   });
 });

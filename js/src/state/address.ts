@@ -1,9 +1,9 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { deserializeUnchecked, serialize } from "borsh";
 
-import { HAPI_PROGRAM_ID } from "../constants";
+import { Community, Network } from "../state";
 import { u64 } from "../utils";
-import { Category, Categories, HapiAccountType } from "./enums";
+import { Categories, Category, HapiAccountType } from "./enums";
 
 export class AddressState {
   account_type: HapiAccountType;
@@ -49,6 +49,23 @@ export class Address {
     }
   }
 
+  static async getAddress(
+    programId: PublicKey,
+    communityAddress: PublicKey,
+    networkAddress: PublicKey,
+    address: PublicKey
+  ): Promise<[PublicKey, number]> {
+    return PublicKey.findProgramAddress(
+      [
+        Buffer.from("address"),
+        communityAddress.toBuffer(),
+        networkAddress.toBuffer(),
+        address.toBuffer(),
+      ],
+      programId
+    );
+  }
+
   static fromState(state: AddressState): Address {
     return new Address({
       accountType: state.account_type,
@@ -65,28 +82,28 @@ export class Address {
   }
 
   static async retrieve(
+    programId: PublicKey,
     connection: Connection,
     communityName: string,
     networkName: string,
     address: PublicKey
   ): Promise<{ data: Address; account: PublicKey }> {
-    const [communityAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("community"), Buffer.from(communityName)],
-      HAPI_PROGRAM_ID
+    const [communityAddress] = await Community.getAddress(
+      programId,
+      communityName
     );
 
-    const [networkAddress] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from("network"),
-        communityAddress.toBuffer(),
-        Buffer.from(networkName),
-      ],
-      HAPI_PROGRAM_ID
+    const [networkAddress] = await Network.getAddress(
+      programId,
+      communityAddress,
+      networkName
     );
 
-    const [addressAddress] = await PublicKey.findProgramAddress(
-      [Buffer.from("address"), networkAddress.toBuffer(), address.toBuffer()],
-      HAPI_PROGRAM_ID
+    const [addressAddress] = await Address.getAddress(
+      programId,
+      communityAddress,
+      networkAddress,
+      address
     );
 
     const account = await connection.getAccountInfo(

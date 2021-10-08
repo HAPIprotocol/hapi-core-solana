@@ -7,11 +7,13 @@ import {
 
 import { base58ToPublicKey, u64 } from "./utils";
 import { Address, Case, Community, Network, Reporter } from "./state";
+import { HAPI_PROGRAM_ID } from "./constants";
 
 export interface HapiClientConfig {
   endpoint: string;
   commintment?: Commitment | ConnectionConfig;
   communityName?: string;
+  programId?: string;
 }
 
 export interface HapiViewResponse<T> {
@@ -29,10 +31,12 @@ export interface HapiActionResponse<T> {
 export class ReaderClient {
   protected connection: Connection;
   protected communityName?: string;
+  protected programId: PublicKey;
 
   constructor(config: HapiClientConfig) {
     this.connection = new Connection(config.endpoint, config.commintment);
     this.communityName = config.communityName;
+    this.programId = new PublicKey(this.programId || HAPI_PROGRAM_ID);
   }
 
   /**
@@ -58,6 +62,7 @@ export class ReaderClient {
     }
 
     const state = await Community.retrieve(
+      this.programId,
       this.connection,
       communityName || this.communityName
     );
@@ -84,6 +89,7 @@ export class ReaderClient {
     }
 
     const state = await Network.retrieve(
+      this.programId,
       this.connection,
       communityName || this.communityName,
       networkName
@@ -107,6 +113,7 @@ export class ReaderClient {
     }
 
     const state = await Reporter.retrieve(
+      this.programId,
       this.connection,
       communityName || this.communityName,
       new PublicKey(reporterPubkey)
@@ -130,6 +137,7 @@ export class ReaderClient {
     }
 
     const state = await Case.retrieve(
+      this.programId,
       this.connection,
       communityName || this.communityName,
       caseId
@@ -164,6 +172,7 @@ export class ReaderClient {
         : base58ToPublicKey(address);
 
     const state = await Address.retrieve(
+      this.programId,
       this.connection,
       communityName || this.communityName,
       networkName,
