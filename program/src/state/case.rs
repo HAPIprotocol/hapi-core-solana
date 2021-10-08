@@ -14,6 +14,8 @@ use crate::{
     tools::account::{assert_is_valid_account, get_account_data, AccountMaxSize},
 };
 
+use super::enums::CaseStatus;
+
 /// HAPI Case Account
 /// Account PDA seeds: ['case', community_address, case_id]
 #[repr(C)]
@@ -28,6 +30,9 @@ pub struct Case {
     /// Categories bitmask
     pub categories: CategorySet,
 
+    /// Case status
+    pub status: CaseStatus,
+
     /// Case name
     pub name: String,
 }
@@ -39,6 +44,7 @@ impl AccountMaxSize for Case {
                 + std::mem::size_of::<u8>()
                 + std::mem::size_of::<Pubkey>()
                 + std::mem::size_of::<u32>()
+                + std::mem::size_of::<u8>()
                 + 32,
         )
     }

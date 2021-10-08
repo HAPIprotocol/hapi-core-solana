@@ -63,6 +63,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         .value_name("CASE_NAME")
         .help("Short memo about case");
 
+    let arg_case_status = Arg::with_name("case_status")
+        .long("case-status")
+        .value_name("CASE_STATUS")
+        .help("Case status");
+
     let arg_case_categories = Arg::with_name("category")
         .multiple(true)
         .long("category")
@@ -147,6 +152,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .about("Report a new case")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_case_name.clone().index(2).required(true))
+                .arg(arg_case_status.clone().index(3).required(true))
                 .arg(arg_case_categories.clone()),
         )
         .subcommand(
@@ -154,6 +160,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 .about("Update an existing case")
                 .arg(arg_community_name.clone().index(1).required(true))
                 .arg(arg_case_id.clone().index(2).required(true))
+                .arg(arg_case_status.clone().index(3).required(true))
                 .arg(arg_case_categories.clone()),
         )
         .subcommand(
@@ -345,17 +352,33 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 ("create", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let case_name = value_t_or_exit!(arg_matches, "case_name", String);
+                    let case_status = parse_arg_case_status(&arg_matches)?;
                     let categories = parse_arg_categories(&arg_matches)?;
 
-                    cmd_create_case(&rpc_client, &config, community_name, case_name, categories)
+                    cmd_create_case(
+                        &rpc_client,
+                        &config,
+                        community_name,
+                        case_name,
+                        case_status,
+                        categories,
+                    )
                 }
 
                 ("update", Some(arg_matches)) => {
                     let community_name = value_t_or_exit!(arg_matches, "community_name", String);
                     let case_id = value_t_or_exit!(arg_matches, "case_id", u64);
+                    let case_status = parse_arg_case_status(&arg_matches)?;
                     let categories = parse_arg_categories(&arg_matches)?;
 
-                    cmd_update_case(&rpc_client, &config, community_name, case_id, categories)
+                    cmd_update_case(
+                        &rpc_client,
+                        &config,
+                        community_name,
+                        case_id,
+                        case_status,
+                        categories,
+                    )
                 }
 
                 ("get", Some(arg_matches)) => {

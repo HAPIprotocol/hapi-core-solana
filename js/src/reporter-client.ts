@@ -18,7 +18,7 @@ import {
   HapiClientConfig,
   HapiActionResponseWithMeta,
 } from "./reader-client";
-import { Address, Case, Category, Community } from "./state";
+import { Address, Case, Category, Community, CaseStatus } from "./state";
 
 export interface HapiClientReporterConfig extends HapiClientConfig {
   payer: Keypair | PublicKey;
@@ -54,6 +54,7 @@ export class ReporterClient extends ReaderClient {
    **/
   async createCaseTransaction(
     caseName: string,
+    status: CaseStatus,
     categories: Category[],
     communityName?: string
   ): Promise<{ transaction: Transaction; caseId: u64 }> {
@@ -75,6 +76,7 @@ export class ReporterClient extends ReaderClient {
         payer: this.payerPublicKey,
         caseId,
         caseName,
+        status,
         categories,
         communityName,
       })
@@ -93,6 +95,7 @@ export class ReporterClient extends ReaderClient {
    **/
   async createCase(
     caseName: string,
+    status: CaseStatus,
     caseCategories: Category[],
     communityName?: string
   ): Promise<HapiActionResponseWithMeta<Case, { caseId: u64 }>> {
@@ -100,6 +103,7 @@ export class ReporterClient extends ReaderClient {
 
     const { transaction, caseId } = await this.createCaseTransaction(
       caseName,
+      status,
       caseCategories,
       communityName
     );
@@ -131,6 +135,7 @@ export class ReporterClient extends ReaderClient {
    **/
   async updateCaseTransaction(
     caseId: u64,
+    status: CaseStatus,
     categories: Category[],
     communityName?: string
   ): Promise<{ transaction: Transaction }> {
@@ -144,6 +149,7 @@ export class ReporterClient extends ReaderClient {
         payer: this.payerPublicKey,
         communityName,
         caseId,
+        status,
         categories,
       })
     );
@@ -161,6 +167,7 @@ export class ReporterClient extends ReaderClient {
    **/
   async updateCase(
     caseId: u64,
+    status: CaseStatus,
     caseCategories: Category[],
     communityName?: string
   ): Promise<HapiActionResponse<Case>> {
@@ -174,6 +181,7 @@ export class ReporterClient extends ReaderClient {
 
     const { transaction } = await this.updateCaseTransaction(
       caseId,
+      status,
       caseCategories,
       communityName
     );

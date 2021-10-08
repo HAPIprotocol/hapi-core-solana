@@ -120,3 +120,8 @@ export const Categories = [
   Category.Sanctions,
   Category.ChildAbuse,
 ];
+
+export enum CaseStatus {
+  Open = 0,
+  Closed,
+}

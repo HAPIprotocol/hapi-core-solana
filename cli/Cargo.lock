@@ -1033,7 +1033,7 @@ dependencies = [
 
 [[package]]
 name = "hapi-core-solana"
-version = "0.1.2"
+version = "0.1.7"
 dependencies = [
  "borsh",
  "num-derive",
@@ -1044,7 +1044,7 @@ dependencies = [
 
 [[package]]
 name = "hapi-core-solana-cli"
-version = "0.1.0"
+version = "0.1.7"
 dependencies = [
  "borsh",
  "chrono",

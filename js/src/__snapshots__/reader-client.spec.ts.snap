@@ -48,6 +48,7 @@ Object {
     "reporterKey": PublicKey {
       "_bn": "c0fdcf81e4689a79e0cb64d88098f5342910652a340ddc0703dbdb10386dc678",
     },
+    "status": 0,
   },
 }
 `;

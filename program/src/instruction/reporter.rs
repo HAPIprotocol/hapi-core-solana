@@ -17,7 +17,7 @@ use crate::{
         address::get_address_address,
         case::get_case_address,
         community::get_community_address,
-        enums::{Category, CategorySet},
+        enums::{CaseStatus, Category, CategorySet},
         network::get_network_address,
         reporter::get_reporter_address,
     },
@@ -32,6 +32,7 @@ pub fn create_case(
     community_name: &str,
     case_id: u64,
     case_name: &str,
+    status: CaseStatus,
     categories: &CategorySet,
 ) -> Result<Instruction, GenericError> {
     let community_address = get_community_address(&community_name);
@@ -49,6 +50,7 @@ pub fn create_case(
 
     let instruction = HapiInstruction::CreateCase {
         name: case_name.to_string(),
+        status,
         categories: *categories,
     };
 
@@ -66,6 +68,7 @@ pub fn update_case(
     // Args
     community_name: &str,
     case_id: u64,
+    status: CaseStatus,
     categories: &CategorySet,
 ) -> Result<Instruction, GenericError> {
     let community_address = get_community_address(&community_name);
@@ -81,6 +84,7 @@ pub fn update_case(
 
     let instruction = HapiInstruction::UpdateCase {
         categories: *categories,
+        status,
     };
 
     Ok(Instruction {

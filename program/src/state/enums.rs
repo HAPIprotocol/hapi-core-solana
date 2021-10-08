@@ -216,3 +216,22 @@ impl Category {
         map
     }
 }
+
+/// Defined Case status variants
+#[repr(C)]
+#[derive(
+    Clone, Debug, PartialEq, Eq, Ord, PartialOrd, BorshDeserialize, BorshSerialize, BorshSchema,
+)]
+pub enum CaseStatus {
+    /// Case is open
+    Open,
+
+    /// Case is closed
+    Closed,
+}
+
+impl Default for CaseStatus {
+    fn default() -> Self {
+        CaseStatus::Open
+    }
+}

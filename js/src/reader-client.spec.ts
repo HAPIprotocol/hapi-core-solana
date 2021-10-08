@@ -286,11 +286,11 @@ describe("ReaderClient", () => {
           context: { slot: 10001 },
           value: {
             data: [
-              "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAUAAABjYXNlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAAFAAAAY2FzZTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
               "base64",
             ],
             executable: false,
-            lamports: 1378080,
+            lamports: 1385040,
             owner: "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7",
             rentEpoch: 0,
           },

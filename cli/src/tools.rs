@@ -1,3 +1,5 @@
+use hapi_core_solana::state::enums::CaseStatus;
+
 use {
     hapi_core_solana::state::enums::{Category, CategorySet, ReporterType},
     solana_client::rpc_client::RpcClient,
@@ -33,6 +35,14 @@ pub fn reporter_type_from_string(input: &str) -> Result<ReporterType, Box<dyn st
         "Full" => Ok(ReporterType::Full),
         "Authority" => Ok(ReporterType::Authority),
         _ => Err("Unknown reporter type".into()),
+    }
+}
+
+pub fn case_status_from_string(input: &str) -> Result<CaseStatus, Box<dyn std::error::Error>> {
+    match input {
+        "Open" => Ok(CaseStatus::Open),
+        "Closed" => Ok(CaseStatus::Closed),
+        _ => Err("Unknown case status".into()),
     }
 }
 
@@ -107,4 +117,10 @@ pub fn parse_arg_reporter_type(
     matches: &clap::ArgMatches,
 ) -> Result<ReporterType, Box<dyn std::error::Error>> {
     reporter_type_from_string(matches.value_of("reporter_type").unwrap())
+}
+
+pub fn parse_arg_case_status(
+    matches: &clap::ArgMatches,
+) -> Result<CaseStatus, Box<dyn std::error::Error>> {
+    case_status_from_string(matches.value_of("case_status").unwrap())
 }

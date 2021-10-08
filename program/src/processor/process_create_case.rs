@@ -14,8 +14,8 @@ use crate::{
     error::HapiError,
     state::{
         case::{get_case_address_seeds, Case},
-        enums::{CategorySet, HapiAccountType},
         community::get_community_data,
+        enums::{CaseStatus, CategorySet, HapiAccountType},
         reporter::{assert_reporter_can_create_case, get_reporter_address},
     },
     tools::account::{assert_is_empty_account, create_and_serialize_account_signed},
@@ -26,6 +26,7 @@ pub fn process_create_case(
     accounts: &[AccountInfo],
     name: &str,
     categories: &CategorySet,
+    status: CaseStatus,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
     let reporter_key_info = next_account_info(account_info_iter)?; // 0
@@ -67,6 +68,7 @@ pub fn process_create_case(
         account_type: HapiAccountType::Case,
         reporter_key: *reporter_key_info.key,
         categories: *categories,
+        status,
         name: name.to_string(),
     };
 

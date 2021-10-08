@@ -105,17 +105,17 @@ solana airdrop 10 $CAROL_KEYPAIR
     exception "Can't view reporter Carol"
 
   echo "==> Creating case 0"
-  $CLI --keypair $ALICE_KEYPAIR case create hapi.one case0 &&
+  $CLI --keypair $ALICE_KEYPAIR case create hapi.one case0 Open &&
     $CLI --keypair $ALICE_KEYPAIR case get hapi.one 0 ||
     exception "Can't view case0"
 
   echo "==> Creating case 1"
-  $CLI --keypair $BOB_KEYPAIR case create hapi.one case1 --category Theft --category Scam &&
+  $CLI --keypair $BOB_KEYPAIR case create hapi.one case1 Open --category Theft --category Scam &&
     $CLI --keypair $BOB_KEYPAIR case get hapi.one 1 ||
     exception "Can't view case1"
 
   echo "==> Attempting to create case 2 without correct credentials"
-  $CLI --keypair $CAROL_KEYPAIR case create hapi.one case2 2>&1 >/dev/null &&
+  $CLI --keypair $CAROL_KEYPAIR case create hapi.one case2 Open 2>&1 >/dev/null &&
     exception "Shouldn't be able to report case by tracer" ||
     echo "Passed"
 

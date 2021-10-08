@@ -6,7 +6,7 @@ mod program_test;
 
 use program_test::*;
 
-use hapi_core_solana::state::enums::{Category, CategorySet};
+use hapi_core_solana::state::enums::{CaseStatus, Category, CategorySet};
 
 #[tokio::test]
 async fn test_case_reported() {
@@ -31,6 +31,7 @@ async fn test_case_reported() {
             &community_cookie,
             &case_cookie,
             &categories,
+            CaseStatus::Open,
         )
         .await
         .unwrap();
@@ -85,6 +86,7 @@ async fn test_case_reported_with_all_categories() {
             &community_cookie,
             &case_cookie,
             &categories,
+            CaseStatus::Open,
         )
         .await
         .unwrap();
@@ -115,7 +117,14 @@ async fn test_case_reported_with_all_categories() {
             | Category::ChildAbuse,
         updated_account.categories
     );
-    assert!(Category::Mixer as u32 & updated_account.categories != 0, "Mixer category should be present");
+    assert!(
+        Category::Mixer as u32 & updated_account.categories != 0,
+        "Mixer category should be present"
+    );
 
-    assert_eq!(64, std::mem::size_of_val(&updated_account), "Account size must be correct");
+    assert_eq!(
+        72,
+        std::mem::size_of_val(&updated_account),
+        "Account size must be correct"
+    );
 }

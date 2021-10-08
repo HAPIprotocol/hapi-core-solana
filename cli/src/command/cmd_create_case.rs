@@ -1,3 +1,5 @@
+use hapi_core_solana::state::enums::CaseStatus;
+
 use {
     crate::{tools::assert_is_empty_account, Config},
     colored::*,
@@ -18,6 +20,7 @@ pub fn cmd_create_case(
     config: &Config,
     community_name: String,
     case_name: String,
+    status: CaseStatus,
     categories: CategorySet,
 ) -> Result<(), Box<dyn std::error::Error>> {
     let community_account = get_community_address(&community_name);
@@ -42,6 +45,7 @@ pub fn cmd_create_case(
             &community_name,
             community.next_case_id,
             &case_name,
+            status,
             &categories,
         )
         .unwrap()],

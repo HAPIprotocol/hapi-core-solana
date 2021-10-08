@@ -1,6 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { deserializeUnchecked, serialize } from "borsh";
 
+import { CaseStatus } from "../state";
 import { u64 } from "../utils";
 import { Community } from "./community";
 import { Categories, Category, HapiAccountType } from "./enums";
@@ -9,10 +10,13 @@ class CaseState {
   account_type: number;
   reporter_key: Uint8Array;
   categories: number;
+  status: number;
   name: string;
+
   constructor(object: Partial<CaseState>) {
     Object.assign(this, object);
   }
+
   static schema = new Map([
     [
       CaseState,
@@ -22,12 +26,13 @@ class CaseState {
           ["account_type", "u8"],
           ["reporter_key", [32]],
           ["categories", "u32"],
+          ["status", "u8"],
           ["name", "string"],
         ],
       },
     ],
   ]);
-  static size = 70;
+  static size = 71;
 }
 
 export class Case {
@@ -39,6 +44,9 @@ export class Case {
 
   /// Categories
   categories: Category[];
+
+  /// Status
+  status: CaseStatus;
 
   /// Case name
   name: string;
@@ -65,6 +73,7 @@ export class Case {
       accountType: state.account_type,
       name: state.name,
       reporterKey: new PublicKey(state.reporter_key),
+      status: state.status,
       categories: Categories.filter(
         (category) => state.categories & category
       ).sort(),
@@ -113,6 +122,7 @@ export class Case {
       account_type: this.accountType,
       name: this.name,
       reporter_key: this.reporterKey.toBytes(),
+      status: this.status,
       categories: this.categories.reduce((acc, category) => {
         return acc | category;
       }, 0),

@@ -28,7 +28,7 @@ use hapi_core_solana::{
         address::{get_address_address, Address},
         case::{get_case_address, Case},
         community::{get_community_address, Community},
-        enums::{Category, CategorySet, HapiAccountType, ReporterType},
+        enums::{CaseStatus, Category, CategorySet, HapiAccountType, ReporterType},
         network::{get_network_address, Network},
         reporter::{get_reporter_address, Reporter},
     },
@@ -248,6 +248,7 @@ impl HapiProgramTest {
             &community.name,
             case_id,
             &name,
+            CaseStatus::Open,
             &categories,
         )
         .unwrap();
@@ -261,6 +262,7 @@ impl HapiProgramTest {
             name: name.clone(),
             reporter_key: reporter.reporter_keypair.pubkey(),
             categories,
+            status: CaseStatus::Open,
         };
 
         CaseCookie {
@@ -429,11 +431,13 @@ impl HapiProgramTest {
         community_cookie: &CommunityCookie,
         case_cookie: &CaseCookie,
         categories: &CategorySet,
+        status: CaseStatus,
     ) -> Result<(), ProgramError> {
         let update_case_ix = update_case(
             &reporter.pubkey(),
             &community_cookie.name,
             case_cookie.id,
+            status,
             categories,
         )
         .unwrap();

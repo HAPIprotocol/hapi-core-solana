@@ -2,7 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Case, Category, HapiAccountType } from ".";
+import { Case, Category, HapiAccountType, CaseStatus } from ".";
 import { u64 } from "../utils";
 import { assertBuffersEqual } from "../../test/util/comparison";
 import { mockRpcOk } from "../../test/util/mocks";
@@ -15,12 +15,12 @@ describe("Case", () => {
   const programId = HAPI_PROGRAM_ID;
 
   const BINARY_SAMPLE_1 = Buffer.from(
-    "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAUAAABjYXNlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+    "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAAFAAAAY2FzZTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
     "base64"
   );
 
   const BINARY_SAMPLE_2 = Buffer.from(
-    "BP3WE+1FkAhS4zhPJcodNQ4RQWJLiL9PwXCCLUdnpS3qAFAAAAUAAABjYXNlMQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+    "BP3WE+1FkAhS4zhPJcodNQ4RQWJLiL9PwXCCLUdnpS3qAFAAAAAFAAAAY2FzZTEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
     "base64"
   );
 
@@ -28,6 +28,7 @@ describe("Case", () => {
     accountType: HapiAccountType.Case,
     name: "case0",
     reporterKey: new PublicKey("DzMkTkH6ms7hEzyHisFnLLc2WDJfBb9TNNaPDQ7ADHhy"),
+    status: CaseStatus.Open,
     categories: [],
   });
 
@@ -35,6 +36,7 @@ describe("Case", () => {
     accountType: HapiAccountType.Case,
     name: "case1",
     reporterKey: new PublicKey("J5sUnZKuB1a9izNWDb4JEQzdB3J6mhe3sP6Ai6YCiKAZ"),
+    status: CaseStatus.Open,
     categories: [Category.Theft, Category.Scam],
   });
 
@@ -57,11 +59,11 @@ describe("Case", () => {
         context: { slot: 4131 },
         value: {
           data: [
-            "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAUAAABjYXNlMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "BMD9z4HkaJp54Mtk2ICY9TQpEGUqNA3cBwPb2xA4bcZ4AAAAAAAFAAAAY2FzZTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA===",
             "base64",
           ],
           executable: false,
-          lamports: 1378080,
+          lamports: 1385040,
           owner: "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7",
           rentEpoch: 0,
         },
@@ -91,11 +93,11 @@ describe("Case", () => {
         context: { slot: 4131 },
         value: {
           data: [
-            "BP3WE+1FkAhS4zhPJcodNQ4RQWJLiL9PwXCCLUdnpS3qAFAAAAUAAABjYXNlMQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+            "BP3WE+1FkAhS4zhPJcodNQ4RQWJLiL9PwXCCLUdnpS3qAFAAAAAFAAAAY2FzZTEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=",
             "base64",
           ],
           executable: false,
-          lamports: 1378080,
+          lamports: 1385040,
           owner: "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7",
           rentEpoch: 0,
         },

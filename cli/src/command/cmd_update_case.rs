@@ -1,3 +1,5 @@
+use hapi_core_solana::state::enums::CaseStatus;
+
 use {
     crate::{tools::assert_is_existing_account, Config},
     colored::*,
@@ -14,6 +16,7 @@ pub fn cmd_update_case(
     config: &Config,
     community_name: String,
     case_id: u64,
+    status: CaseStatus,
     categories: CategorySet,
 ) -> Result<(), Box<dyn std::error::Error>> {
     if config.verbose {
@@ -40,6 +43,7 @@ pub fn cmd_update_case(
             &config.keypair.pubkey(),
             &community_name,
             case_id,
+            status,
             &categories,
         )
         .unwrap()],

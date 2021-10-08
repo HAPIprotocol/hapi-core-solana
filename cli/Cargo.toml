@@ -4,7 +4,7 @@ description = "HAPI Core Program Client"
 edition = "2018"
 license = "BSL-1.1"
 name = "hapi-core-solana-cli"
-version = "0.1.0"
+version = "0.1.7"
 
 [dependencies]
 borsh = "0.9"

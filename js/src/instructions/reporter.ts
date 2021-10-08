@@ -12,6 +12,7 @@ import {
   Category,
   Community,
   Reporter,
+  CaseStatus,
 } from "../state";
 import {
   categoriesToBitmask,
@@ -31,6 +32,7 @@ export async function createCaseInstruction({
   communityName,
   caseId,
   caseName,
+  status,
   categories,
 }: {
   programId: PublicKey;
@@ -38,6 +40,7 @@ export async function createCaseInstruction({
   communityName: string;
   caseId: u64;
   caseName: string;
+  status: CaseStatus;
   categories: Category[];
 }): Promise<TransactionInstruction> {
   const [communityAddress] = await Community.getAddress(
@@ -60,6 +63,7 @@ export async function createCaseInstruction({
   const ix = new CreateCaseIx();
   ix.name = caseName;
   ix.categories = categoriesToBitmask(categories);
+  ix.status = status;
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -83,12 +87,14 @@ export async function updateCaseInstruction({
   payer,
   communityName,
   caseId,
+  status,
   categories,
 }: {
   programId: PublicKey;
   payer: PublicKey;
   communityName: string;
   caseId: u64;
+  status: CaseStatus;
   categories: Category[];
 }): Promise<TransactionInstruction> {
   const [communityAddress] = await Community.getAddress(
@@ -110,6 +116,7 @@ export async function updateCaseInstruction({
 
   const ix = new UpdateCaseIx();
   ix.categories = categoriesToBitmask(categories);
+  ix.status = status;
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },

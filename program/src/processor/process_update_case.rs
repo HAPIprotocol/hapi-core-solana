@@ -12,7 +12,7 @@ use crate::{
     error::HapiError,
     state::{
         case::{assert_is_valid_case, get_case_data},
-        enums::CategorySet,
+        enums::{CaseStatus, CategorySet},
         reporter::{
             assert_is_valid_reporter, assert_reporter_can_update_case, get_reporter_address,
         },
@@ -23,6 +23,7 @@ pub fn process_update_case(
     _program_id: &Pubkey,
     accounts: &[AccountInfo],
     categories: &CategorySet,
+    status: CaseStatus,
 ) -> ProgramResult {
     let account_info_iter = &mut accounts.iter();
     let reporter_key_info = next_account_info(account_info_iter)?; // 0
@@ -51,6 +52,7 @@ pub fn process_update_case(
     assert_reporter_can_update_case(&reporter_key_info, &reporter_info, &case_data.reporter_key)?;
 
     case_data.categories = *categories;
+    case_data.status = status;
     case_data.serialize(&mut *case_info.data.borrow_mut())?;
 
     Ok(())

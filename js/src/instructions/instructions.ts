@@ -132,6 +132,7 @@ export class CreateCaseIx extends Ix {
   protected tag = HapiInstruction.CreateCase;
 
   categories: u32;
+  status: number;
   name: string;
 
   static schema = new Map([
@@ -142,6 +143,7 @@ export class CreateCaseIx extends Ix {
         fields: [
           ["tag", "u8"],
           ["categories", "u32"],
+          ["status", "u8"],
           ["name", "string"],
         ],
       },
@@ -156,6 +158,7 @@ export class CreateCaseIx extends Ix {
 export class UpdateCaseIx extends Ix {
   protected tag = HapiInstruction.UpdateCase;
 
+  status: number;
   categories: u32;
 
   static schema = new Map([
@@ -166,6 +169,7 @@ export class UpdateCaseIx extends Ix {
         fields: [
           ["tag", "u8"],
           ["categories", "u32"],
+          ["status", "u8"],
         ],
       },
     ],

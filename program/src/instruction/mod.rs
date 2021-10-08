@@ -14,7 +14,7 @@ use {
     solana_program::pubkey::Pubkey,
 };
 
-use crate::state::enums::{Category, CategorySet, ReporterType};
+use crate::state::enums::{CaseStatus, Category, CategorySet, ReporterType};
 
 /// Instructions supported by the HAPI program
 #[repr(C)]
@@ -105,6 +105,9 @@ pub enum HapiInstruction {
         /// Categories
         categories: CategorySet,
 
+        /// Status
+        status: CaseStatus,
+
         /// UTF-8 encoded case name
         name: String,
     },
@@ -119,6 +122,9 @@ pub enum HapiInstruction {
     UpdateCase {
         /// Categories
         categories: CategorySet,
+
+        /// Status
+        status: CaseStatus,
     },
 
     /// Report an address for an existing case

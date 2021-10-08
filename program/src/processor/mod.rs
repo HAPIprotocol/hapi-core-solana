@@ -8,6 +8,8 @@ use {
     },
 };
 
+use crate::instruction::HapiInstruction;
+
 mod process_create_address;
 mod process_create_case;
 mod process_create_community;
@@ -19,7 +21,6 @@ mod process_update_community;
 mod process_update_network;
 mod process_update_reporter;
 
-use crate::instruction::HapiInstruction;
 use process_create_address::*;
 use process_create_case::*;
 use process_create_community::*;
@@ -43,17 +44,13 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
             process_create_community(program_id, accounts, &name)
         }
 
-        HapiInstruction::UpdateCommunity {  } => {
-            process_update_community(program_id, accounts)
-        }
+        HapiInstruction::UpdateCommunity {} => process_update_community(program_id, accounts),
 
         HapiInstruction::CreateNetwork { name } => {
             process_create_network(program_id, accounts, &name)
         }
 
-        HapiInstruction::UpdateNetwork {} => {
-            process_update_network(program_id, accounts)
-        }
+        HapiInstruction::UpdateNetwork {} => process_update_network(program_id, accounts),
 
         HapiInstruction::CreateReporter {
             reporter_type,
@@ -65,12 +62,14 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
             name,
         } => process_update_reporter(program_id, accounts, &name, reporter_type),
 
-        HapiInstruction::CreateCase { categories, name } => {
-            process_create_case(program_id, accounts, &name, &categories)
-        }
+        HapiInstruction::CreateCase {
+            categories,
+            status,
+            name,
+        } => process_create_case(program_id, accounts, &name, &categories, status),
 
-        HapiInstruction::UpdateCase { categories } => {
-            process_update_case(program_id, accounts, &categories)
+        HapiInstruction::UpdateCase { categories, status } => {
+            process_update_case(program_id, accounts, &categories, status)
         }
 
         HapiInstruction::CreateAddress {
