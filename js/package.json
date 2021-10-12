@@ -16,7 +16,12 @@
     "test": "jest --config=./jest.json",
     "lint": "eslint . --ext .ts"
   },
-  "keywords": ["HAPI", "cybersecurity", "Solana", "client"],
+  "keywords": [
+    "HAPI",
+    "cybersecurity",
+    "Solana",
+    "client"
+  ],
   "author": "HAPI",
   "license": "BSL-1.1",
   "devDependencies": {
@@ -24,7 +29,6 @@
     "@types/node": "16.x",
     "@typescript-eslint/eslint-plugin": "4.x",
     "@typescript-eslint/parser": "4.x",
-    "b58": "^4.0.3",
     "eslint": "7.x",
     "eslint-config-prettier": "8.x",
     "eslint-plugin-prettier": "4.x",
@@ -39,6 +43,7 @@
   "dependencies": {
     "@solana/web3.js": "1.x",
     "assert": "2.x",
+    "b58": "^4.0.3",
     "bn.js": "5.x",
     "borsh": "0.6.x"
   }
