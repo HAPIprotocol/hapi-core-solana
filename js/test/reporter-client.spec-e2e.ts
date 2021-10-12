@@ -1,9 +1,13 @@
+import { Keypair } from "@solana/web3.js";
 import { ReporterClient } from "../src";
 
 describe("ReporterClient", () => {
   it("should initialize", () => {
+    const payer = new Keypair();
+
     const client = new ReporterClient({
       endpoint: "http://localhost:8899",
+      payer,
     });
 
     expect(client).toBeDefined();
