@@ -1,6 +1,6 @@
 {
   "name": "@hapi.one/solana-client",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "publishConfig": {
     "access": "public"
   },
@@ -43,7 +43,7 @@
   "dependencies": {
     "@solana/web3.js": "1.x",
     "assert": "2.x",
-    "b58": "^4.0.3",
+    "b58": "^4.x",
     "bn.js": "5.x",
     "borsh": "0.6.x"
   }

@@ -74,35 +74,44 @@ export class u32 extends BN {
 }
 
 export class u64 extends BN {
+  static size = 8;
+
   /**
    * Convert to Buffer representation
    */
   toBuffer(): Buffer {
-    const a = super.toArray().reverse();
-    const b = Buffer.from(a);
-    if (b.length === 8) {
-      return b;
-    }
-    assert(b.length < 8, "Numberu64 too large");
-
-    const zeroPad = Buffer.alloc(8);
-    b.copy(zeroPad);
-    return zeroPad;
+    return bnToBuffer(this, u64.size);
   }
 
   /**
    * Construct a Numberu64 from Buffer representation
    */
   static fromBuffer(buffer: Buffer): BN {
-    assert(buffer.length === 8, `Invalid buffer length: ${buffer.length}`);
+    assert(
+      buffer.length === u64.size,
+      `Invalid buffer length: ${buffer.length}`
+    );
     return new BN(
       [...buffer]
         .reverse()
-        .map((i) => `00${i.toString(16)}`.slice(-2))
+        .map((i) => `00${i.toString(u64.size * 2)}`.slice(-2))
         .join(""),
-      16
+      u64.size * 2
     );
   }
+}
+
+export function bnToBuffer(bn: BN, size: number): Buffer {
+  const a = bn.toArray().reverse();
+  const b = Buffer.from(a);
+  if (b.length === size) {
+    return b;
+  }
+  assert(b.length < size, `Buffer too large (size: ${size})`);
+
+  const zeroPad = Buffer.alloc(size);
+  b.copy(zeroPad);
+  return zeroPad;
 }
 
 export const signAndSendTransactionInstructions = async (
