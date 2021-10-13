@@ -178,7 +178,6 @@ export async function createAddressInstruction({
 
   const [addressAddress] = await Address.getAddress(
     programId,
-    communityAddress,
     networkAddress,
     address
   );
@@ -252,7 +251,6 @@ export async function updateAddressInstruction({
 
   const [addressAddress] = await Address.getAddress(
     programId,
-    communityAddress,
     networkAddress,
     address
   );

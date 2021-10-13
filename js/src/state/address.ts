@@ -52,17 +52,11 @@ export class Address {
 
   static async getAddress(
     programId: PublicKey,
-    communityAddress: PublicKey,
     networkAddress: PublicKey,
     address: PublicKey
   ): Promise<[PublicKey, number]> {
     return PublicKey.findProgramAddress(
-      [
-        Buffer.from("address"),
-        communityAddress.toBuffer(),
-        networkAddress.toBuffer(),
-        address.toBuffer(),
-      ],
+      [Buffer.from("address"), networkAddress.toBuffer(), address.toBuffer()],
       programId
     );
   }
@@ -102,7 +96,6 @@ export class Address {
 
     const [addressAddress] = await Address.getAddress(
       programId,
-      communityAddress,
       networkAddress,
       address
     );
