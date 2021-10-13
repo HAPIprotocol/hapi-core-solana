@@ -1,6 +1,5 @@
-import assert from "assert";
 import BN from "bn.js";
-import b58 from "b58";
+import { decode } from "bs58";
 import {
   Connection,
   Keypair,
@@ -10,27 +9,27 @@ import {
 } from "@solana/web3.js";
 
 export class u8 extends BN {
+  static size = 1;
+
+  constructor(...args: ConstructorParameters<typeof BN>) {
+    super(...args);
+    Object.setPrototypeOf(this, u8.prototype);
+  }
+
   /**
    * Convert to Buffer representation
    */
   toBuffer(): Buffer {
-    const a = super.toArray().reverse();
-    const b = Buffer.from(a);
-    if (b.length === 1) {
-      return b;
-    }
-    assert(b.length < 1, "Numberu8 too large");
-
-    const zeroPad = Buffer.alloc(1);
-    b.copy(zeroPad);
-    return zeroPad;
+    return bnToBuffer(this, u8.size);
   }
 
   /**
    * Construct a Numberu8 from Buffer representation
    */
   static fromBuffer(buffer: Buffer): BN {
-    assert(buffer.length === 1, `Invalid buffer length: ${buffer.length}`);
+    if (buffer.length !== u8.size) {
+      throw new Error(`Invalid buffer length: ${buffer.length}`);
+    }
     return new BN(
       [...buffer]
         .reverse()
@@ -42,27 +41,27 @@ export class u8 extends BN {
 }
 
 export class u32 extends BN {
+  static size = 4;
+
+  constructor(...args: ConstructorParameters<typeof BN>) {
+    super(...args);
+    Object.setPrototypeOf(this, u32.prototype);
+  }
+
   /**
    * Convert to Buffer representation
    */
   toBuffer(): Buffer {
-    const a = super.toArray().reverse();
-    const b = Buffer.from(a);
-    if (b.length === 4) {
-      return b;
-    }
-    assert(b.length < 4, "Numberu32 too large");
-
-    const zeroPad = Buffer.alloc(4);
-    b.copy(zeroPad);
-    return zeroPad;
+    return bnToBuffer(this, u32.size);
   }
 
   /**
    * Construct a Numberu32 from Buffer representation
    */
   static fromBuffer(buffer: Buffer): BN {
-    assert(buffer.length === 4, `Invalid buffer length: ${buffer.length}`);
+    if (buffer.length !== u32.size) {
+      throw new Error(`Invalid buffer length: ${buffer.length}`);
+    }
     return new BN(
       [...buffer]
         .reverse()
@@ -76,6 +75,11 @@ export class u32 extends BN {
 export class u64 extends BN {
   static size = 8;
 
+  constructor(...args: ConstructorParameters<typeof BN>) {
+    super(...args);
+    Object.setPrototypeOf(this, u64.prototype);
+  }
+
   /**
    * Convert to Buffer representation
    */
@@ -87,16 +91,15 @@ export class u64 extends BN {
    * Construct a Numberu64 from Buffer representation
    */
   static fromBuffer(buffer: Buffer): BN {
-    assert(
-      buffer.length === u64.size,
-      `Invalid buffer length: ${buffer.length}`
-    );
+    if (buffer.length !== u64.size) {
+      throw new Error(`Invalid buffer length: ${buffer.length}`);
+    }
     return new BN(
       [...buffer]
         .reverse()
-        .map((i) => `00${i.toString(u64.size * 2)}`.slice(-2))
+        .map((i) => `00${i.toString(16)}`.slice(-2))
         .join(""),
-      u64.size * 2
+      16
     );
   }
 }
@@ -107,7 +110,9 @@ export function bnToBuffer(bn: BN, size: number): Buffer {
   if (b.length === size) {
     return b;
   }
-  assert(b.length < size, `Buffer too large (size: ${size})`);
+  if (b.length > size) {
+    throw new Error(`Buffer too large (size: ${size})`);
+  }
 
   const zeroPad = Buffer.alloc(size);
   b.copy(zeroPad);
@@ -161,6 +166,6 @@ export function setToBuffer<T extends number>(set: Set<T>, size = 4): Buffer {
 }
 
 export function base58ToPublicKey(address: string): PublicKey {
-  const buffer = b58.decode(address);
+  const buffer = decode(address);
   return new PublicKey(buffer);
 }

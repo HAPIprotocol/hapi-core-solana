@@ -2,7 +2,7 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import { deserializeUnchecked, serialize } from "borsh";
 
 import { CaseStatus } from "../state";
-import { bnToBuffer, u64 } from "../utils";
+import { u64 } from "../utils";
 import { Community } from "./community";
 import { Categories, Category, HapiAccountType } from "./enums";
 
@@ -63,11 +63,7 @@ export class Case {
     caseId: u64
   ): Promise<[PublicKey, number]> {
     return PublicKey.findProgramAddress(
-      [
-        Buffer.from("case"),
-        communityAddress.toBuffer(),
-        bnToBuffer(caseId, u64.size), // hack for browser compatibility
-      ],
+      [Buffer.from("case"), communityAddress.toBuffer(), caseId.toBuffer()],
       programId
     );
   }

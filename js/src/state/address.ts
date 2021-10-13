@@ -1,7 +1,8 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { deserializeUnchecked, serialize } from "borsh";
 
-import { Community, Network } from "../state";
+import { Community } from "./community";
+import { Network } from "./network";
 import { u64 } from "../utils";
 import { Categories, Category, HapiAccountType } from "./enums";
 

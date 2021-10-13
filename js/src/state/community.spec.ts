@@ -3,7 +3,8 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { HAPI_PROGRAM_ID } from "../constants";
-import { Community, HapiAccountType } from ".";
+import { HapiAccountType } from "./enums";
+import { Community } from "./community";
 import { mockRpcOk } from "../../test/util/mocks";
 import { u64 } from "../utils";
 

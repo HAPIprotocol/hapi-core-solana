@@ -3,7 +3,8 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { HAPI_PROGRAM_ID } from "../constants";
-import { Network, HapiAccountType } from ".";
+import { HapiAccountType } from "./enums";
+import { Network } from "./network";
 import { mockRpcOk } from "../../test/util/mocks";
 
 describe("Network", () => {

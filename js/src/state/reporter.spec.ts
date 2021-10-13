@@ -3,7 +3,8 @@ import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import { HAPI_PROGRAM_ID } from "../constants";
-import { Reporter, HapiAccountType, ReporterType } from ".";
+import { HapiAccountType, ReporterType } from "./enums";
+import { Reporter } from "./reporter";
 import { mockRpcOk } from "../../test/util/mocks";
 
 describe("Reporter", () => {

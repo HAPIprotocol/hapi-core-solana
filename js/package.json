@@ -1,18 +1,19 @@
 {
   "name": "@hapi.one/solana-client",
-  "version": "0.1.10",
+  "version": "0.2.1",
   "publishConfig": {
     "access": "public"
   },
   "description": "Client library for Solana smart contract for #HAPI",
   "main": "lib/index.js",
+  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib/**/*"
   ],
   "scripts": {
-    "prebuild": "rimraf lib",
-    "build": "tsc -p tsconfig.cjs.json",
+    "prebuild": "rimraf lib out-tsc",
+    "build": "tsc && rollup -c",
     "test": "jest --config=./jest.json",
     "lint": "eslint . --ext .ts"
   },
@@ -25,6 +26,11 @@
   "author": "HAPI",
   "license": "BSL-1.1",
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^21.0.0",
+    "@rollup/plugin-node-resolve": "^13.0.5",
+    "@rollup/plugin-typescript": "^8.2.5",
+    "@types/bn.js": "^5.1.0",
+    "@types/bs58": "^4.0.1",
     "@types/jest": "27.x",
     "@types/node": "16.x",
     "@typescript-eslint/eslint-plugin": "4.x",
@@ -37,14 +43,15 @@
     "nock": "^13.1.3",
     "prettier": "2.x",
     "rimraf": "^3.0.2",
+    "rollup": "^2.58.0",
+    "rollup-plugin-dts": "^4.0.0",
     "ts-jest": "27.x",
     "typescript": "4.4.x"
   },
   "dependencies": {
     "@solana/web3.js": "1.x",
-    "assert": "2.x",
-    "b58": "^4.x",
     "bn.js": "5.x",
-    "borsh": "0.6.x"
+    "borsh": "0.6.x",
+    "bs58": "^4.0.1"
   }
 }

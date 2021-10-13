@@ -1,4 +1,4 @@
-import b58 from "b58";
+import bs58 from "bs58";
 import nock from "nock";
 
 import { ReaderClient } from "./reader-client";
@@ -398,7 +398,9 @@ describe("ReaderClient", () => {
         }
       );
 
-      const buffer = b58.decode("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew");
+      const buffer = bs58.decode(
+        "2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"
+      );
       const response = await client.getAddress(buffer, "testcoin", "hapi.one");
       expect(response).toMatchSnapshot();
     });

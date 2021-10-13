@@ -2,7 +2,8 @@ import { Connection, PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
-import { Case, Category, HapiAccountType, CaseStatus } from ".";
+import { HapiAccountType, CaseStatus, Category } from "./enums";
+import { Case } from "./case";
 import { u64 } from "../utils";
 import { assertBuffersEqual } from "../../test/util/comparison";
 import { mockRpcOk } from "../../test/util/mocks";

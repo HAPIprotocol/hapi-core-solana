@@ -10,7 +10,7 @@ import {
   mockRpcOk,
 } from "../test/util/mocks";
 import { HapiAccountType } from "./state";
-import { AuthorityClient } from ".";
+import { AuthorityClient } from "./authority-client";
 
 describe("AuthorityClient", () => {
   let client: AuthorityClient;
