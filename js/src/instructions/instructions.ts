@@ -244,6 +244,7 @@ export class CreateAddressIx extends Ix {
         fields: [
           ["tag", "u8"],
           ["address", [32]],
+          ["risk", "u8"],
           ["case_id", "u64"],
           ["category", "u8"],
         ],
