@@ -28,8 +28,8 @@ pub fn process_update_case(
     let account_info_iter = &mut accounts.iter();
     let reporter_key_info = next_account_info(account_info_iter)?; // 0
     let community_info = next_account_info(account_info_iter)?; // 1
-    let reporter_info = next_account_info(account_info_iter)?; // 3
-    let case_info = next_account_info(account_info_iter)?; // 4
+    let reporter_info = next_account_info(account_info_iter)?; // 2
+    let case_info = next_account_info(account_info_iter)?; // 3
 
     // Reporter must sign
     if !reporter_key_info.is_signer {

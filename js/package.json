@@ -5,8 +5,8 @@
     "access": "public"
   },
   "description": "Client library for Solana smart contract for #HAPI",
-  "main": "lib/index.js",
-  "module": "lib/index.js",
+  "main": "lib/index.cjs.js",
+  "module": "lib/index.esm.js",
   "types": "lib/index.d.ts",
   "files": [
     "lib/**/*"

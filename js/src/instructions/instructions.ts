@@ -1,4 +1,4 @@
-import { serialize } from "borsh";
+import { serialize, deserializeUnchecked } from "borsh";
 
 import { ReporterType, HapiInstruction } from "../state";
 import { u32, u64, u8 } from "../utils";
@@ -30,6 +30,14 @@ export class CreateCommunityIx extends Ix {
   serialize(): Buffer {
     return Buffer.from(serialize(CreateCommunityIx.schema, this));
   }
+
+  static from(buffer: Buffer): CreateCommunityIx {
+    return deserializeUnchecked(
+      CreateCommunityIx.schema,
+      CreateCommunityIx,
+      buffer
+    );
+  }
 }
 
 export class UpdateCommunityIx extends Ix {
@@ -53,6 +61,14 @@ export class UpdateCommunityIx extends Ix {
   serialize(): Buffer {
     return Buffer.from(serialize(UpdateCommunityIx.schema, this));
   }
+
+  static from(buffer: Buffer): UpdateCommunityIx {
+    return deserializeUnchecked(
+      UpdateCommunityIx.schema,
+      UpdateCommunityIx,
+      buffer
+    );
+  }
 }
 
 export class CreateNetworkIx extends Ix {
@@ -75,6 +91,14 @@ export class CreateNetworkIx extends Ix {
 
   serialize(): Buffer {
     return Buffer.from(serialize(CreateNetworkIx.schema, this));
+  }
+
+  static from(buffer: Buffer): CreateNetworkIx {
+    return deserializeUnchecked(
+      CreateNetworkIx.schema,
+      CreateNetworkIx,
+      buffer
+    );
   }
 }
 
@@ -101,6 +125,14 @@ export class CreateReporterIx extends Ix {
   serialize(): Buffer {
     return Buffer.from(serialize(CreateReporterIx.schema, this));
   }
+
+  static from(buffer: Buffer): CreateReporterIx {
+    return deserializeUnchecked(
+      CreateReporterIx.schema,
+      CreateReporterIx,
+      buffer
+    );
+  }
 }
 
 export class UpdateReporterIx extends Ix {
@@ -125,6 +157,14 @@ export class UpdateReporterIx extends Ix {
 
   serialize(): Buffer {
     return Buffer.from(serialize(UpdateReporterIx.schema, this));
+  }
+
+  static from(buffer: Buffer): UpdateReporterIx {
+    return deserializeUnchecked(
+      UpdateReporterIx.schema,
+      UpdateReporterIx,
+      buffer
+    );
   }
 }
 
@@ -153,6 +193,10 @@ export class CreateCaseIx extends Ix {
   serialize(): Buffer {
     return Buffer.from(serialize(CreateCaseIx.schema, this));
   }
+
+  static from(buffer: Buffer): CreateCaseIx {
+    return deserializeUnchecked(CreateCaseIx.schema, CreateCaseIx, buffer);
+  }
 }
 
 export class UpdateCaseIx extends Ix {
@@ -177,6 +221,10 @@ export class UpdateCaseIx extends Ix {
 
   serialize(): Buffer {
     return Buffer.from(serialize(UpdateCaseIx.schema, this));
+  }
+
+  static from(buffer: Buffer): UpdateCaseIx {
+    return deserializeUnchecked(UpdateCaseIx.schema, UpdateCaseIx, buffer);
   }
 }
 
@@ -206,6 +254,14 @@ export class CreateAddressIx extends Ix {
   serialize(): Buffer {
     return Buffer.from(serialize(CreateAddressIx.schema, this));
   }
+
+  static from(buffer: Buffer): CreateAddressIx {
+    return deserializeUnchecked(
+      CreateAddressIx.schema,
+      CreateAddressIx,
+      buffer
+    );
+  }
 }
 
 export class UpdateAddressIx extends Ix {
@@ -231,5 +287,13 @@ export class UpdateAddressIx extends Ix {
 
   serialize(): Buffer {
     return Buffer.from(serialize(UpdateAddressIx.schema, this));
+  }
+
+  static from(buffer: Buffer): UpdateAddressIx {
+    return deserializeUnchecked(
+      UpdateAddressIx.schema,
+      UpdateAddressIx,
+      buffer
+    );
   }
 }
