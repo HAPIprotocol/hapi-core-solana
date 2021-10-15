@@ -102,6 +102,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             SubCommand::with_name("create")
                 .about("Create a new HAPI community")
                 .arg(arg_community_name.clone().index(1).required(true)),
+        )
+        .subcommand(
+            SubCommand::with_name("get")
+                .about("View community data")
+                .arg(arg_community_name.clone().index(1).required(true)),
         );
 
     let subcommand_network = SubCommand::with_name("network")
@@ -407,6 +412,12 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                     };
 
                     cmd_create_community(&rpc_client, &config, community_name, &community_authority)
+                }
+
+                ("get", Some(arg_matches)) => {
+                    let community_name = value_t_or_exit!(arg_matches, "community_name", String);
+
+                    cmd_get_community(&rpc_client, &config, community_name)
                 }
 
                 _ => subcommand_community

@@ -11,6 +11,7 @@ mod cmd_get_address;
 mod cmd_get_case;
 mod cmd_get_network;
 mod cmd_get_reporter;
+mod cmd_get_community;
 
 pub use cmd_create_reporter::*;
 pub use cmd_create_community::*;
@@ -25,3 +26,4 @@ pub use cmd_get_address::*;
 pub use cmd_get_case::*;
 pub use cmd_get_network::*;
 pub use cmd_get_reporter::*;
+pub use cmd_get_community::*;
