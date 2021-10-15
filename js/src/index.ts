@@ -6,3 +6,4 @@ export * from "./reporter-client";
 export * from "./authority-client";
 export * from "./interfaces";
 export * from "./mappings";
+export * from "./instructions/instructions";
