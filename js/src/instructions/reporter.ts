@@ -68,7 +68,7 @@ export async function createCaseInstruction({
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
-    { pubkey: communityAddress, isSigner: false, isWritable: false },
+    { pubkey: communityAddress, isSigner: false, isWritable: true },
     { pubkey: reporterAddress, isSigner: false, isWritable: false },
     { pubkey: caseAddress, isSigner: false, isWritable: true },
     ...SYSTEM_RENT_KEYS,
