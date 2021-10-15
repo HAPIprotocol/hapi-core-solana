@@ -24,6 +24,7 @@ use crate::{
 pub fn process_create_case(
     program_id: &Pubkey,
     accounts: &[AccountInfo],
+    case_id: u64,
     name: &str,
     categories: &CategorySet,
     status: CaseStatus,
@@ -60,7 +61,10 @@ pub fn process_create_case(
 
     // Obtain next case ID and increment it in Community account
     let mut community_data = get_community_data(community_info)?;
-    let case_id = community_data.next_case_id;
+    if case_id != community_data.next_case_id {
+        msg!("Case ID doesn't match community counter");
+        return Err(HapiError::InvalidInstruction.into());
+    }
     community_data.next_case_id += 1;
     community_data.serialize(&mut *community_info.data.borrow_mut())?;
 

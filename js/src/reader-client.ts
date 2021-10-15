@@ -12,7 +12,7 @@ export class ReaderClient {
   protected programId: PublicKey;
 
   constructor(config: HapiClientConfig) {
-    if (config.endpoint instanceof Connection) {
+    if (typeof config.endpoint === "object") {
       this.connection = config.endpoint;
     } else {
       this.connection = new Connection(config.endpoint, config.commitment);

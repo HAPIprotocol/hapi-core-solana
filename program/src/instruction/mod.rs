@@ -102,6 +102,9 @@ pub enum HapiInstruction {
     /// 5. `[]` Sysvar Rent
     ///
     CreateCase {
+        /// Case ID
+        case_id: u64,
+
         /// Categories
         categories: CategorySet,
 

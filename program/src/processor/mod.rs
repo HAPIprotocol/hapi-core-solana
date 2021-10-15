@@ -63,10 +63,11 @@ pub fn process(program_id: &Pubkey, accounts: &[AccountInfo], input: &[u8]) -> P
         } => process_update_reporter(program_id, accounts, &name, reporter_type),
 
         HapiInstruction::CreateCase {
+            case_id,
             categories,
             status,
             name,
-        } => process_create_case(program_id, accounts, &name, &categories, status),
+        } => process_create_case(program_id, accounts, case_id, &name, &categories, status),
 
         HapiInstruction::UpdateCase { categories, status } => {
             process_update_case(program_id, accounts, &categories, status)

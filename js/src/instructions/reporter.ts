@@ -61,6 +61,7 @@ export async function createCaseInstruction({
   );
 
   const ix = new CreateCaseIx();
+  ix.case_id = caseId;
   ix.name = caseName;
   ix.categories = categoriesToBitmask(categories);
   ix.status = status;
@@ -69,7 +70,7 @@ export async function createCaseInstruction({
     { pubkey: payer, isSigner: true, isWritable: true },
     { pubkey: communityAddress, isSigner: false, isWritable: false },
     { pubkey: reporterAddress, isSigner: false, isWritable: false },
-    { pubkey: caseAddress, isSigner: false, isWritable: false },
+    { pubkey: caseAddress, isSigner: false, isWritable: true },
     ...SYSTEM_RENT_KEYS,
   ];
 

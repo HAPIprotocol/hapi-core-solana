@@ -51,6 +51,7 @@ pub fn create_case(
     let instruction = HapiInstruction::CreateCase {
         name: case_name.to_string(),
         status,
+        case_id,
         categories: *categories,
     };
 

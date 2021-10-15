@@ -171,6 +171,7 @@ export class UpdateReporterIx extends Ix {
 export class CreateCaseIx extends Ix {
   protected tag = HapiInstruction.CreateCase;
 
+  case_id: u64;
   categories: u32;
   status: number;
   name: string;
@@ -182,6 +183,7 @@ export class CreateCaseIx extends Ix {
         kind: "struct",
         fields: [
           ["tag", "u8"],
+          ["case_id", "u64"],
           ["categories", "u32"],
           ["status", "u8"],
           ["name", "string"],
