@@ -6,21 +6,14 @@ import {
 } from "@solana/web3.js";
 
 import { Community, Network, Reporter, ReporterType } from "./state";
-import {
-  HapiActionResponse,
-  ReaderClient,
-  HapiClientConfig,
-} from "./reader-client";
+import { ReaderClient } from "./reader-client";
 import {
   createCommunityInstruction,
   createNetworkInstructions,
   createReporterInstructions,
   updateReporterInstructions,
 } from "./instructions/authority";
-
-export interface HapiClientAuthorityConfig extends HapiClientConfig {
-  payer: Keypair | PublicKey;
-}
+import { HapiActionResponse, HapiClientAuthorityConfig } from "./interfaces";
 
 /** HAPI client to operate authority program functions on Solana */
 export class AuthorityClient extends ReaderClient {

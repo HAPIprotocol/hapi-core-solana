@@ -12,17 +12,13 @@ import {
   updateAddressInstruction,
   updateCaseInstruction,
 } from "./instructions/reporter";
+import { ReaderClient } from "./reader-client";
+import { Address, Case, Category, Community, CaseStatus } from "./state";
 import {
   HapiActionResponse,
-  ReaderClient,
-  HapiClientConfig,
   HapiActionResponseWithMeta,
-} from "./reader-client";
-import { Address, Case, Category, Community, CaseStatus } from "./state";
-
-export interface HapiClientReporterConfig extends HapiClientConfig {
-  payer: Keypair | PublicKey;
-}
+  HapiClientReporterConfig,
+} from "./interfaces";
 
 /** HAPI client to operate reporter program functions on Solana */
 export class ReporterClient extends ReaderClient {

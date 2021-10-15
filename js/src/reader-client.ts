@@ -1,47 +1,22 @@
-import {
-  Commitment,
-  Connection,
-  ConnectionConfig,
-  PublicKey,
-} from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 import { base58ToPublicKey, u64 } from "./utils";
 import { Address, Case, Community, Network, Reporter } from "./state";
 import { HAPI_PROGRAM_ID } from "./constants";
-
-export interface HapiClientConfig {
-  endpoint: string;
-  commintment?: Commitment | ConnectionConfig;
-  communityName?: string;
-  programId?: string;
-}
-
-export interface HapiViewResponse<T> {
-  account: PublicKey;
-  data: T;
-}
-
-export interface HapiActionResponse<T> {
-  txHash: string;
-  account: PublicKey;
-  data: T;
-}
-
-export interface HapiActionResponseWithMeta<T, U> {
-  txHash: string;
-  account: PublicKey;
-  data: T;
-  meta: U;
-}
+import { HapiClientConfig, HapiViewResponse } from "./interfaces";
 
 /** HAPI client to read entity data from Solana */
 export class ReaderClient {
-  protected connection: Connection;
+  public readonly connection: Connection;
   protected communityName?: string;
   protected programId: PublicKey;
 
   constructor(config: HapiClientConfig) {
-    this.connection = new Connection(config.endpoint, config.commintment);
+    if (config.endpoint instanceof Connection) {
+      this.connection = config.endpoint;
+    } else {
+      this.connection = new Connection(config.endpoint, config.commitment);
+    }
     this.communityName = config.communityName;
     this.programId = new PublicKey(this.programId || HAPI_PROGRAM_ID);
   }
