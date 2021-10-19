@@ -307,7 +307,7 @@ describe("ReaderClient", () => {
       mockRpcOk(
         endpoint,
         "getAccountInfo",
-        ["8HpP3NYL4x8qifD3g2e1z7M1m4wPNeXtMoT8Z7yt1Yzs"],
+        ["5Q3FZTD9Vs2xXG7GDVeyT1GcdpGfV9ux7XaBWFAfqWWK"],
         { context: { slot: 6486 }, value: null }
       );
 
@@ -320,7 +320,7 @@ describe("ReaderClient", () => {
       mockRpcOk(
         endpoint,
         "getAccountInfo",
-        ["7viPn64FE3Uz9bFqKYDnBsL4ndwb8rXhFPjZ9NvgCVSx"],
+        ["JCoiJf6CgqhvL3WjzUZ1v6j9tSDTVo3VaKBQvVosXmQZ"],
         { context: { slot: 6911 }, value: null }
       );
 
@@ -343,7 +343,7 @@ describe("ReaderClient", () => {
       mockRpcOk(
         endpoint,
         "getAccountInfo",
-        ["BMCaLwP7mmErK69cay99uSnyV1YRtFGGTRU8Vj4F7KNd"],
+        ["C4cz5pxVZ9eyqqMYSoRu3DmcCMSjgZ24noo1KukZ9LNF"],
         { context: { slot: 6984 }, value: null }
       );
 
@@ -360,7 +360,7 @@ describe("ReaderClient", () => {
       mockRpcOk(
         endpoint,
         "getAccountInfo",
-        ["C5Srms9M3eHy5XbzEgRgEEHFZ3rKxdAEaH2DZSSXLGDD"],
+        ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
         {
           context: { slot: 7526 },
           value: {
@@ -385,7 +385,7 @@ describe("ReaderClient", () => {
       mockRpcOk(
         endpoint,
         "getAccountInfo",
-        ["C5Srms9M3eHy5XbzEgRgEEHFZ3rKxdAEaH2DZSSXLGDD"],
+        ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
         {
           context: { slot: 7526 },
           value: {

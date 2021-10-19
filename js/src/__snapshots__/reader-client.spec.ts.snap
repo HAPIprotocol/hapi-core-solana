@@ -3,7 +3,7 @@
 exports[`ReaderClient getAddress should respond - success (buffer) 1`] = `
 Object {
   "account": PublicKey {
-    "_bn": "a4941e0a5e533262f6a3c9e32aa364a77e6c285a54a08f6218a4548732d84798",
+    "_bn": "c51892d0703b31cdf66396ec41f908351cfda218f07c6f5350d767bf040654f4",
   },
   "data": Address {
     "accountType": 5,
@@ -17,7 +17,7 @@ Object {
 exports[`ReaderClient getAddress should respond - success (string) 1`] = `
 Object {
   "account": PublicKey {
-    "_bn": "a4941e0a5e533262f6a3c9e32aa364a77e6c285a54a08f6218a4548732d84798",
+    "_bn": "c51892d0703b31cdf66396ec41f908351cfda218f07c6f5350d767bf040654f4",
   },
   "data": Address {
     "accountType": 5,

@@ -37,7 +37,7 @@ describe("Address", () => {
     mockRpcOk(
       endpoint,
       "getAccountInfo",
-      ["C5Srms9M3eHy5XbzEgRgEEHFZ3rKxdAEaH2DZSSXLGDD"],
+      ["EGP3s7nD3dFaT9jGtwT7UoZndi58W3VexaJ41N1y5yMm"],
       {
         context: { slot: 2223 },
         value: {
