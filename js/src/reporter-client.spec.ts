@@ -1,10 +1,10 @@
-jest.mock("rpc-websockets"); // disable web3's websocket connections
-
+import { PublicKey } from "@solana/web3.js";
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
 
 import {
   captureConsoleError,
+  getIxFromRawTx,
   mockConfirmTransaction,
   mockRpcAccount,
   mockRpcError,
@@ -26,7 +26,11 @@ import {
   UNINITIALIZED,
 } from "../test/keypairs";
 import { u64 } from "./utils";
-import { PublicKey } from "@solana/web3.js";
+import {
+  CreateAddressIx,
+  CreateCaseIx,
+  UpdateCaseIx,
+} from "./instructions/instructions";
 
 describe("ReporterClient", () => {
   let client: ReporterClient;
@@ -126,7 +130,7 @@ describe("ReporterClient", () => {
         },
       });
 
-      mockRpcError(endpoint, "sendTransaction", [], {
+      const txInput = mockRpcError(endpoint, "sendTransaction", [], {
         code: -32002,
         message:
           "Transaction simulation failed: Error processing Instruction 0: custom program error: 0x9",
@@ -151,6 +155,18 @@ describe("ReporterClient", () => {
       expect(consoleSpy.finish()).toContain(
         "Reporter doesn't have a permission to report a case"
       );
+
+      expect(
+        CreateCaseIx.decode(getIxFromRawTx(txInput.input().params[0] as string))
+      ).toMatchInlineSnapshot(`
+        CreateCaseIx {
+          "caseId": "0a",
+          "categories": 32,
+          "name": "invalid reporter",
+          "status": 0,
+          "tag": 6,
+        }
+      `);
     });
 
     it("should create a case - success", async () => {
@@ -174,7 +190,7 @@ describe("ReporterClient", () => {
         },
       });
 
-      mockRpcOk(
+      const txInput = mockRpcOk(
         endpoint,
         "sendTransaction",
         [],
@@ -214,6 +230,18 @@ describe("ReporterClient", () => {
 
       expect(stringify(data)).toMatchSnapshot();
       expect(caseId.toString()).toEqual("48");
+
+      expect(
+        CreateCaseIx.decode(getIxFromRawTx(txInput.input().params[0] as string))
+      ).toMatchInlineSnapshot(`
+        CreateCaseIx {
+          "caseId": "30",
+          "categories": 256,
+          "name": "Slice the dice",
+          "status": 0,
+          "tag": 6,
+        }
+      `);
     });
   });
 
@@ -375,7 +403,7 @@ describe("ReporterClient", () => {
         },
       });
 
-      mockRpcOk(
+      const txInput = mockRpcOk(
         endpoint,
         "sendTransaction",
         [],
@@ -400,6 +428,16 @@ describe("ReporterClient", () => {
       ]);
 
       expect(stringify(data)).toMatchSnapshot();
+
+      expect(
+        UpdateCaseIx.decode(getIxFromRawTx(txInput.input().params[0] as string))
+      ).toMatchInlineSnapshot(`
+        UpdateCaseIx {
+          "categories": 256,
+          "status": 1,
+          "tag": 7,
+        }
+      `);
     });
   });
 
@@ -602,7 +640,7 @@ describe("ReporterClient", () => {
         },
       });
 
-      mockRpcOk(
+      const txInput = mockRpcOk(
         endpoint,
         "sendTransaction",
         [],
@@ -628,6 +666,53 @@ describe("ReporterClient", () => {
       );
 
       expect(data).toMatchSnapshot();
+
+      expect(
+        CreateAddressIx.decode(
+          getIxFromRawTx(txInput.input().params[0] as string)
+        )
+      ).toMatchInlineSnapshot(`
+        CreateAddressIx {
+          "address": Uint8Array [
+            23,
+            12,
+            11,
+            122,
+            35,
+            15,
+            177,
+            67,
+            2,
+            229,
+            208,
+            72,
+            228,
+            26,
+            206,
+            78,
+            10,
+            57,
+            76,
+            194,
+            54,
+            138,
+            184,
+            210,
+            241,
+            138,
+            192,
+            10,
+            252,
+            247,
+            58,
+            24,
+          ],
+          "caseId": "00",
+          "category": 0,
+          "risk": 0,
+          "tag": 8,
+        }
+      `);
     });
   });
 

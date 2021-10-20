@@ -75,11 +75,12 @@ export async function createCaseInstruction({
     caseId
   );
 
-  const ix = new CreateCaseIx();
-  ix.case_id = caseId;
-  ix.name = caseName;
-  ix.categories = categoriesToBitmask(categories);
-  ix.status = status;
+  const ix = new CreateCaseIx({
+    caseId,
+    status,
+    name: caseName,
+    categories: categoriesToBitmask(categories),
+  });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -92,7 +93,7 @@ export async function createCaseInstruction({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
@@ -140,9 +141,10 @@ export async function updateCaseInstruction({
     caseId
   );
 
-  const ix = new UpdateCaseIx();
-  ix.categories = categoriesToBitmask(categories);
-  ix.status = status;
+  const ix = new UpdateCaseIx({
+    status,
+    categories: categoriesToBitmask(categories),
+  });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -154,7 +156,7 @@ export async function updateCaseInstruction({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
@@ -216,11 +218,12 @@ export async function createAddressInstruction({
     address
   );
 
-  const ix = new CreateAddressIx();
-  ix.address = address.toBytes();
-  ix.risk = risk;
-  ix.case_id = caseId;
-  ix.category = categoryToBinary(category);
+  const ix = new CreateAddressIx({
+    address: address.toBytes(),
+    risk,
+    caseId,
+    category: categoryToBinary(category),
+  });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -235,7 +238,7 @@ export async function createAddressInstruction({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
@@ -297,10 +300,11 @@ export async function updateAddressInstruction({
     address
   );
 
-  const ix = new UpdateAddressIx();
-  ix.risk = risk;
-  ix.case_id = caseId;
-  ix.category = categoryToBinary(category);
+  const ix = new UpdateAddressIx({
+    risk,
+    caseId,
+    category: categoryToBinary(category),
+  });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -314,7 +318,7 @@ export async function updateAddressInstruction({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;

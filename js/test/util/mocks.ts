@@ -1,3 +1,4 @@
+import { Transaction } from "@solana/web3.js";
 import nock from "nock";
 
 import { Address, Case, Community, Network, Reporter } from "../../src/state";
@@ -47,16 +48,17 @@ export function mockRpcError(
   let savedInput: mockRpcInput;
 
   nock(url, { encodedQueryParams: true })
-    .post(
-      "/",
-      (input) =>
+    .post("/", (input) => {
+      savedInput = input;
+      return (
         input.method === method &&
         params
           .map((value, index) => value === input.params[index])
           .reduce((result, value) => {
             return result && value;
           }, true)
-    )
+      );
+    })
     .reply(200, {
       jsonrpc: "2.0",
       error,
@@ -116,4 +118,9 @@ export function captureConsoleError(): { finish: () => string } {
       return buffer;
     },
   };
+}
+
+export function getIxFromRawTx(rawTx: string, instruction = 0): Buffer {
+  const buffer = Buffer.from(rawTx, "base64");
+  return Transaction.from(buffer).instructions[instruction].data;
 }

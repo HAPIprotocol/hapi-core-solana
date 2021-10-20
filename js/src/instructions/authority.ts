@@ -30,8 +30,7 @@ export async function createCommunityInstruction({
     communityName
   );
 
-  const ix = new CreateCommunityIx();
-  ix.name = communityName;
+  const ix = new CreateCommunityIx({ name: communityName });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -42,7 +41,7 @@ export async function createCommunityInstruction({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
@@ -74,8 +73,7 @@ export async function createNetworkInstructions({
     networkName
   );
 
-  const ix = new CreateNetworkIx();
-  ix.name = networkName;
+  const ix = new CreateNetworkIx({ name: networkName });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: true },
@@ -87,7 +85,7 @@ export async function createNetworkInstructions({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
@@ -123,9 +121,10 @@ export async function createReporterInstructions({
     reporterPubkey
   );
 
-  const ix = new CreateReporterIx();
-  ix.reporter_type = reporterType;
-  ix.name = reporterName;
+  const ix = new CreateReporterIx({
+    name: reporterName,
+    reporterType,
+  });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: false },
@@ -138,7 +137,7 @@ export async function createReporterInstructions({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
@@ -174,9 +173,10 @@ export async function updateReporterInstructions({
     reporterPubkey
   );
 
-  const ix = new UpdateReporterIx();
-  ix.name = reporterName;
-  ix.reporter_type = reporterType;
+  const ix = new UpdateReporterIx({
+    name: reporterName,
+    reporterType,
+  });
 
   const keys: AccountMeta[] = [
     { pubkey: payer, isSigner: true, isWritable: false },
@@ -188,7 +188,7 @@ export async function updateReporterInstructions({
   const instruction = new TransactionInstruction({
     keys,
     programId,
-    data: ix.serialize(),
+    data: ix.encode(),
   });
 
   return instruction;
