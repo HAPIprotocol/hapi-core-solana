@@ -2,28 +2,40 @@ import nock from "nock";
 
 import { Address, Case, Community, Network, Reporter } from "../../src/state";
 
+interface mockRpcInput {
+  method: string;
+  params: unknown[];
+}
+
 export function mockRpcOk(
   url: string,
   method: string,
   params: Array<unknown>,
   result: unknown
-): void {
+): { input: () => mockRpcInput | undefined } {
+  let savedInput: mockRpcInput;
+
   nock(url, { encodedQueryParams: true })
-    .post(
-      "/",
-      (input) =>
+    .post("/", (input) => {
+      savedInput = input;
+      return (
         input.method === method &&
         params
           .map((value, index) => value === input.params[index])
           .reduce((result, value) => {
             return result && value;
           }, true)
-    )
+      );
+    })
     .reply(200, {
       jsonrpc: "2.0",
       result,
       id: "f2653441-fed8-4e4f-ac1e-dcc560ab5abc",
     });
+
+  return {
+    input: () => savedInput,
+  };
 }
 
 export function mockRpcError(
@@ -31,7 +43,9 @@ export function mockRpcError(
   method: string,
   params: Array<unknown>,
   error: unknown
-): void {
+): { input: () => mockRpcInput | undefined } {
+  let savedInput: mockRpcInput;
+
   nock(url, { encodedQueryParams: true })
     .post(
       "/",
@@ -48,6 +62,10 @@ export function mockRpcError(
       error,
       id: "f2653441-fed8-4e4f-ac1e-dcc560ab5abc",
     });
+
+  return {
+    input: () => savedInput,
+  };
 }
 
 export function mockConfirmTransaction(client: unknown): jest.SpyInstance {
@@ -62,7 +80,11 @@ export function mockConfirmTransaction(client: unknown): jest.SpyInstance {
 
 export function mockRpcAccount<
   T extends Address | Network | Case | Community | Reporter
->(url: string, address: string, entity: T | null): void {
+>(
+  url: string,
+  address: string,
+  entity: T | null
+): { input: () => mockRpcInput | undefined } {
   return mockRpcOk(url, "getAccountInfo", [address], {
     context: { slot: 8180 },
     value:

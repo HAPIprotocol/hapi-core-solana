@@ -179,6 +179,14 @@ export async function createAddressInstruction({
   risk: number;
   category: Category;
 }): Promise<TransactionInstruction> {
+  if (Categories.indexOf(category) < 0) {
+    throw new Error(`Unknown category: ${category}`);
+  }
+
+  if (risk < 0 || risk > 10) {
+    throw new RangeError(`Risk must have a value between 0 and 10`);
+  }
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName
@@ -252,6 +260,14 @@ export async function updateAddressInstruction({
   risk: number;
   category: Category;
 }): Promise<TransactionInstruction> {
+  if (Categories.indexOf(category) < 0) {
+    throw new Error(`Unknown category: ${category}`);
+  }
+
+  if (risk < 0 || risk > 10) {
+    throw new RangeError(`Risk must have a value between 0 and 10`);
+  }
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName

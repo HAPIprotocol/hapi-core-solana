@@ -1,4 +1,4 @@
-import { serialize, deserializeUnchecked } from "borsh";
+import { serialize, deserializeUnchecked, deserialize } from "borsh";
 
 import { ReporterType, HapiInstruction } from "../state";
 import { u32, u64, u8 } from "../utils";
@@ -259,11 +259,7 @@ export class CreateAddressIx extends Ix {
   }
 
   static from(buffer: Buffer): CreateAddressIx {
-    return deserializeUnchecked(
-      CreateAddressIx.schema,
-      CreateAddressIx,
-      buffer
-    );
+    return deserialize(CreateAddressIx.schema, CreateAddressIx, buffer);
   }
 }
 

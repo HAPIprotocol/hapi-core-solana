@@ -13,7 +13,14 @@ import {
   updateCaseInstruction,
 } from "./instructions/reporter";
 import { ReaderClient } from "./reader-client";
-import { Address, Case, Category, Community, CaseStatus } from "./state";
+import {
+  Address,
+  Case,
+  Category,
+  Community,
+  CaseStatus,
+  Network,
+} from "./state";
 import {
   HapiActionResponse,
   HapiActionResponseWithMeta,
@@ -217,6 +224,20 @@ export class ReporterClient extends ReaderClient {
     communityName?: string
   ): Promise<{ transaction: Transaction }> {
     communityName = this.ensureCommunityName(communityName);
+
+    // Make sure the community exists
+    await Community.retrieve(this.programId, this.connection, communityName);
+
+    // Make sure the network exists
+    await Network.retrieve(
+      this.programId,
+      this.connection,
+      communityName,
+      networkName
+    );
+
+    // Make sure the case exists
+    await Case.retrieve(this.programId, this.connection, communityName, caseId);
 
     const transaction = new Transaction();
 

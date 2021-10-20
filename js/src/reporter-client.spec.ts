@@ -1,4 +1,4 @@
-//jest.mock("rpc-websockets"); // disable web3's websocket connections
+jest.mock("rpc-websockets"); // disable web3's websocket connections
 
 import stringify from "fast-json-stable-stringify";
 import nock from "nock";
@@ -10,7 +10,14 @@ import {
   mockRpcError,
   mockRpcOk,
 } from "../test/util/mocks";
-import { Case, CaseStatus, Category, Community } from "./state";
+import {
+  Address,
+  Case,
+  CaseStatus,
+  Category,
+  Community,
+  Network,
+} from "./state";
 import { ReporterClient } from "./reporter-client";
 import {
   AUTHORITY,
@@ -19,6 +26,7 @@ import {
   UNINITIALIZED,
 } from "../test/keypairs";
 import { u64 } from "./utils";
+import { PublicKey } from "@solana/web3.js";
 
 describe("ReporterClient", () => {
   let client: ReporterClient;
@@ -396,12 +404,231 @@ describe("ReporterClient", () => {
   });
 
   describe("createAddress", () => {
-    it.todo("should throw - community not found");
-    it.todo("should throw - network not found");
-    it.todo("should throw - invalid address");
-    it.todo("should throw - invalid category");
-    it.todo("should throw - invalid risk score");
-    it.todo("should create an address - success");
+    it("should throw - community not found", async () => {
+      client.switchCommunity("community404");
+
+      mockRpcAccount(
+        endpoint,
+        "mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh",
+        null
+      );
+
+      await expect(() =>
+        client.createAddress(
+          "solana",
+          new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"),
+          new u64(0),
+          Category.Safe,
+          0
+        )
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it("should throw - network not found", async () => {
+      mockRpcAccount(
+        endpoint,
+        "DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja",
+        new Community({
+          authority: AUTHORITY.publicKey,
+          name: "hapi.one",
+          nextCaseId: new u64(0),
+        })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "CkAua1GMeBR3HhKqSyiFtnGZjJm7HsWNq5ynH3wTykC5",
+        null
+      );
+
+      await expect(() =>
+        client.createAddress(
+          "solana",
+          new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"),
+          new u64(0),
+          Category.Safe,
+          0
+        )
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it("should throw - case not found", async () => {
+      mockRpcAccount(
+        endpoint,
+        "DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja",
+        new Community({
+          authority: AUTHORITY.publicKey,
+          name: "hapi.one",
+          nextCaseId: new u64(1),
+        })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "CkAua1GMeBR3HhKqSyiFtnGZjJm7HsWNq5ynH3wTykC5",
+        new Network({ name: "solana" })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "5yGEyZT2WwuLD6BJuvP7TXRcR2ojZTpFVv2TkQm6eX2P",
+        null
+      );
+
+      await expect(() =>
+        client.createAddress(
+          "solana",
+          new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"),
+          new u64(404),
+          Category.Safe,
+          0
+        )
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it("should throw - invalid category", async () => {
+      mockRpcAccount(
+        endpoint,
+        "DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja",
+        new Community({
+          authority: AUTHORITY.publicKey,
+          name: "hapi.one",
+          nextCaseId: new u64(1),
+        })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "CkAua1GMeBR3HhKqSyiFtnGZjJm7HsWNq5ynH3wTykC5",
+        new Network({ name: "solana" })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "63G8TLWGQpd26UZj7L9Qr9e3R1MPbybLcW3A7LXtG1Sk",
+        new Case({
+          name: "invalid category",
+          reporterKey: client.payerPublicKey,
+          status: CaseStatus.Open,
+          categories: [],
+        })
+      );
+
+      await expect(() =>
+        client.createAddress(
+          "solana",
+          new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"),
+          new u64(0),
+          99999999,
+          0
+        )
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it("should throw - invalid risk score", async () => {
+      mockRpcAccount(
+        endpoint,
+        "DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja",
+        new Community({
+          authority: AUTHORITY.publicKey,
+          name: "hapi.one",
+          nextCaseId: new u64(1),
+        })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "CkAua1GMeBR3HhKqSyiFtnGZjJm7HsWNq5ynH3wTykC5",
+        new Network({ name: "solana" })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "63G8TLWGQpd26UZj7L9Qr9e3R1MPbybLcW3A7LXtG1Sk",
+        new Case({
+          name: "invalid category",
+          reporterKey: client.payerPublicKey,
+          status: CaseStatus.Open,
+          categories: [],
+        })
+      );
+
+      await expect(() =>
+        client.createAddress(
+          "solana",
+          new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"),
+          new u64(0),
+          Category.Safe,
+          69
+        )
+      ).rejects.toThrowErrorMatchingSnapshot();
+    });
+
+    it("should create an address - success", async () => {
+      mockRpcAccount(
+        endpoint,
+        "DgBtqgnzYRsUZP3PhX5rCLfNycTQQ8cp7eMseosUQ4Ja",
+        new Community({
+          authority: AUTHORITY.publicKey,
+          name: "hapi.one",
+          nextCaseId: new u64(1),
+        })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "CkAua1GMeBR3HhKqSyiFtnGZjJm7HsWNq5ynH3wTykC5",
+        new Network({ name: "solana" })
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "63G8TLWGQpd26UZj7L9Qr9e3R1MPbybLcW3A7LXtG1Sk",
+        new Case({
+          name: "cool stuff",
+          reporterKey: client.payerPublicKey,
+          status: CaseStatus.Open,
+          categories: [],
+        })
+      );
+
+      mockConfirmTransaction(client);
+
+      mockRpcOk(endpoint, "getRecentBlockhash", [], {
+        context: { slot: 159 },
+        value: {
+          blockhash: "Gk8Vxi2AjCDBtAufgVKcnHv327sxEuTcZKUrNYusKhd4",
+          feeCalculator: { lamportsPerSignature: 5000 },
+        },
+      });
+
+      mockRpcOk(
+        endpoint,
+        "sendTransaction",
+        [],
+        "64cBhBwynYdXc6Ybr1suHM5Hz4xKtEzB3uyyg3gRtE8hfenzQJzd5whCZdPF5Xf5Quffvtib7U82XqYRQet4roU2"
+      );
+
+      mockRpcAccount(
+        endpoint,
+        "4SDf7t46o18vMznTRQJWTWLECHUfcAF3u8BnLaHotbET",
+        new Address({
+          caseId: new u64(0),
+          risk: 0,
+          category: Category.Safe,
+        })
+      );
+
+      const { data } = await client.createAddress(
+        "solana",
+        new PublicKey("2Yy2iSPJv4iEMyNkUX7ydFoufSmyPLMc8P9owJopFRew"),
+        new u64(0),
+        Category.Safe,
+        0
+      );
+
+      expect(data).toMatchSnapshot();
+    });
   });
 
   describe("updateAddress", () => {
