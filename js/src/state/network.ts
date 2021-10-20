@@ -27,7 +27,7 @@ class NetworkState {
 
 export class Network {
   /// HAPI account type
-  accountType: HapiAccountType;
+  accountType = HapiAccountType.Network;
 
   /// HAPI network name
   name: string;
@@ -85,10 +85,7 @@ export class Network {
       networkName
     );
 
-    const account = await connection.getAccountInfo(
-      networkAddress,
-      "processed"
-    );
+    const account = await connection.getAccountInfo(networkAddress);
     if (!account) {
       throw new Error(
         `Network not found: "${networkName}" (${networkAddress}) in community "${communityName}" (${communityAddress})`

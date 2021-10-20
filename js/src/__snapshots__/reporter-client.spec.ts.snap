@@ -1,0 +1,23 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReporterClient createCase should create a case - success 1`] = `"{\\"accountType\\":4,\\"categories\\":[256],\\"name\\":\\"Slice the dice\\",\\"reporterKey\\":{\\"_bn\\":\\"c0fdcf81e4689a79e0cb64d88098f5342910652a340ddc0703dbdb10386dc678\\"},\\"status\\":0}"`;
+
+exports[`ReporterClient createCase should throw - community not found 1`] = `"Community not found: community404 (mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh)"`;
+
+exports[`ReporterClient createCase should throw - invalid categories 1`] = `"Unknown category 4294967295"`;
+
+exports[`ReporterClient createCase should throw - invalid name 1`] = `"Case name length should not be over 28 bytes"`;
+
+exports[`ReporterClient createCase should throw - reporter doesn't have rights 1`] = `"failed to send transaction: Transaction simulation failed: Error processing Instruction 0: custom program error: 0x9"`;
+
+exports[`ReporterClient updateCase should throw - case not found 1`] = `"Invalid case account provided"`;
+
+exports[`ReporterClient updateCase should throw - community not found 1`] = `"Community not found: community404 (mJLCqGmUWWDzYcDVHRAjaDJocoPDLzeimfD7KzwnxFh)"`;
+
+exports[`ReporterClient updateCase should throw - invalid categories 1`] = `"Unknown category 4294967295"`;
+
+exports[`ReporterClient updateCase should throw - invalid status 1`] = `"Unknown case status 420"`;
+
+exports[`ReporterClient updateCase should throw - invalid status 2`] = `"Unknown case status 3"`;
+
+exports[`ReporterClient updateCase should update a case - success 1`] = `"{\\"accountType\\":4,\\"categories\\":[256],\\"name\\":\\"gamble\\",\\"reporterKey\\":{\\"_bn\\":\\"c0fdcf81e4689a79e0cb64d88098f5342910652a340ddc0703dbdb10386dc678\\"},\\"status\\":1}"`;

@@ -33,7 +33,7 @@ export class AddressState {
 
 export class Address {
   /// HAPI account type
-  accountType: HapiAccountType;
+  accountType = HapiAccountType.Address;
 
   /// Risk score
   risk: number;
@@ -100,10 +100,7 @@ export class Address {
       address
     );
 
-    const account = await connection.getAccountInfo(
-      addressAddress,
-      "processed"
-    );
+    const account = await connection.getAccountInfo(addressAddress);
     if (!account) {
       throw new Error(
         `Address not found: "${address}" in network "${networkName}" (${networkAddress}) in community "${communityName}" (${communityAddress})`

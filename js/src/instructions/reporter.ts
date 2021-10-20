@@ -13,6 +13,7 @@ import {
   Community,
   Reporter,
   CaseStatus,
+  Categories,
 } from "../state";
 import {
   categoriesToBitmask,
@@ -43,6 +44,20 @@ export async function createCaseInstruction({
   status: CaseStatus;
   categories: Category[];
 }): Promise<TransactionInstruction> {
+  if (Buffer.from(caseName).length > 28) {
+    throw new Error("Case name length should not be over 28 bytes");
+  }
+
+  if (status !== CaseStatus.Open && status !== CaseStatus.Closed) {
+    throw new Error(`Unknown case status ${status}`);
+  }
+
+  categories.forEach((category) => {
+    if (Categories.indexOf(category) < 0) {
+      throw new Error(`Unknown category ${category}`);
+    }
+  });
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName
@@ -98,6 +113,16 @@ export async function updateCaseInstruction({
   status: CaseStatus;
   categories: Category[];
 }): Promise<TransactionInstruction> {
+  categories.forEach((category) => {
+    if (Categories.indexOf(category) < 0) {
+      throw new Error(`Unknown category ${category}`);
+    }
+  });
+
+  if (status !== CaseStatus.Open && status !== CaseStatus.Closed) {
+    throw new Error(`Unknown case status ${status}`);
+  }
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName
@@ -123,7 +148,7 @@ export async function updateCaseInstruction({
     { pubkey: payer, isSigner: true, isWritable: true },
     { pubkey: communityAddress, isSigner: false, isWritable: false },
     { pubkey: reporterAddress, isSigner: false, isWritable: false },
-    { pubkey: caseAddress, isSigner: false, isWritable: false },
+    { pubkey: caseAddress, isSigner: false, isWritable: true },
   ];
 
   const instruction = new TransactionInstruction({

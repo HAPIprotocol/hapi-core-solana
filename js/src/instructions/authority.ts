@@ -22,6 +22,9 @@ export async function createCommunityInstruction({
   payer: PublicKey;
   communityName: string;
 }): Promise<TransactionInstruction> {
+  if (Buffer.from(communityName).length > 28) {
+    throw new Error("Community name length should not be over 28 bytes");
+  }
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName
@@ -56,6 +59,10 @@ export async function createNetworkInstructions({
   communityName: string;
   networkName: string;
 }): Promise<TransactionInstruction> {
+  if (Buffer.from(networkName).length > 28) {
+    throw new Error("Network name length should not be over 28 bytes");
+  }
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName
@@ -101,6 +108,10 @@ export async function createReporterInstructions({
   reporterType: ReporterType;
   reporterName: string;
 }): Promise<TransactionInstruction> {
+  if (Buffer.from(reporterName).length > 28) {
+    throw new Error("Reporter name length should not be over 28 bytes");
+  }
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName
@@ -148,6 +159,10 @@ export async function updateReporterInstructions({
   reporterType: ReporterType;
   reporterName: string;
 }): Promise<TransactionInstruction> {
+  if (Buffer.from(reporterName).length > 28) {
+    throw new Error("Reporter name length should not be over 28 bytes");
+  }
+
   const [communityAddress] = await Community.getAddress(
     programId,
     communityName

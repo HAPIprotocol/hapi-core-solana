@@ -5,7 +5,7 @@ export async function fundPayer(
   payer: Keypair,
   lamports: number
 ): Promise<void> {
-  const connection = new Connection(endpoint);
+  const connection = new Connection(endpoint, "confirmed");
   const signature = await connection.requestAirdrop(payer.publicKey, lamports);
   await connection.confirmTransaction(signature, "confirmed");
 }

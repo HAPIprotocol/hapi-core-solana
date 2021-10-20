@@ -1,5 +1,7 @@
 import nock from "nock";
 
+import { Address, Case, Community, Network, Reporter } from "../../src/state";
+
 export function mockRpcOk(
   url: string,
   method: string,
@@ -56,4 +58,40 @@ export function mockConfirmTransaction(client: unknown): jest.SpyInstance {
   } else {
     throw new Error(`Object doesn't have "connection" attribute`);
   }
+}
+
+export function mockRpcAccount<
+  T extends Address | Network | Case | Community | Reporter
+>(url: string, address: string, entity: T | null): void {
+  return mockRpcOk(url, "getAccountInfo", [address], {
+    context: { slot: 8180 },
+    value:
+      entity === null
+        ? null
+        : {
+            data: [
+              Buffer.from(entity.serialize()).toString("base64"),
+              "base64",
+            ],
+            executable: false,
+            lamports: 1398960,
+            owner: "hapiScWyxeZy36fqXD5CcRUYFCUdid26jXaakAtcdZ7",
+            rentEpoch: 0,
+          },
+  });
+}
+
+export function captureConsoleError(): { finish: () => string } {
+  let buffer = "";
+  const spy = jest.spyOn(console, "error").mockImplementation((...args) => {
+    buffer += args.join(" ") + "\n";
+    return;
+  });
+
+  return {
+    finish() {
+      spy.mockRestore();
+      return buffer;
+    },
+  };
 }

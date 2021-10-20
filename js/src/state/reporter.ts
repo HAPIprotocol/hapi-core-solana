@@ -29,7 +29,7 @@ class ReporterState {
 
 export class Reporter {
   /// HAPI account type
-  accountType: HapiAccountType;
+  accountType = HapiAccountType.Reporter;
 
   /// Reporter type
   reporterType: ReporterType;
@@ -91,10 +91,7 @@ export class Reporter {
       reporterPubkey
     );
 
-    const account = await connection.getAccountInfo(
-      reporterAddress,
-      "processed"
-    );
+    const account = await connection.getAccountInfo(reporterAddress);
     if (!account) {
       throw new Error(
         `Reporter not found: "${reporterPubkey}" in community "${communityName}" (${communityAddress})`

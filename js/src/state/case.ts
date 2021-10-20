@@ -37,7 +37,7 @@ class CaseState {
 
 export class Case {
   /// HAPI account type
-  accountType: HapiAccountType;
+  accountType = HapiAccountType.Case;
 
   /// Case reporter key
   reporterKey: PublicKey;
@@ -103,7 +103,7 @@ export class Case {
       caseId
     );
 
-    const account = await connection.getAccountInfo(caseAddress, "processed");
+    const account = await connection.getAccountInfo(caseAddress);
     if (!account) {
       throw new Error("Invalid case account provided");
     }

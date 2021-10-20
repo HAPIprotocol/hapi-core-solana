@@ -107,8 +107,7 @@ export class ReporterClient extends ReaderClient {
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [this.payerKeypair],
-      { commitment: "confirmed" }
+      [this.payerKeypair]
     );
 
     const { data, account } = await Case.retrieve(
@@ -169,11 +168,11 @@ export class ReporterClient extends ReaderClient {
   ): Promise<HapiActionResponse<Case>> {
     communityName = this.ensureCommunityName(communityName);
 
-    const community = await Community.retrieve(
-      this.programId,
-      this.connection,
-      communityName
-    );
+    // Make sure the community exists
+    await Community.retrieve(this.programId, this.connection, communityName);
+
+    // Make sure the case exists
+    await Case.retrieve(this.programId, this.connection, communityName, caseId);
 
     const { transaction } = await this.updateCaseTransaction(
       caseId,
@@ -185,15 +184,14 @@ export class ReporterClient extends ReaderClient {
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [this.payerKeypair],
-      { commitment: "confirmed" }
+      [this.payerKeypair]
     );
 
     const { data, account } = await Case.retrieve(
       this.programId,
       this.connection,
       communityName,
-      community.data.nextCaseId
+      caseId
     );
 
     return { account, data, txHash };
@@ -276,8 +274,7 @@ export class ReporterClient extends ReaderClient {
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [this.payerKeypair],
-      { commitment: "confirmed" }
+      [this.payerKeypair]
     );
 
     const { data, account } = await Address.retrieve(
@@ -363,8 +360,7 @@ export class ReporterClient extends ReaderClient {
     const txHash = await sendAndConfirmTransaction(
       this.connection,
       transaction,
-      [this.payerKeypair],
-      { commitment: "confirmed" }
+      [this.payerKeypair]
     );
 
     const { data, account } = await Address.retrieve(

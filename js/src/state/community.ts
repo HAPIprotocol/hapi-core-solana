@@ -91,10 +91,7 @@ export class Community {
       communityName
     );
 
-    const communityAccount = await connection.getAccountInfo(
-      communityAddress,
-      "confirmed"
-    );
+    const communityAccount = await connection.getAccountInfo(communityAddress);
     if (!communityAccount) {
       throw new Error(
         `Community not found: ${communityName} (${communityAddress})`
