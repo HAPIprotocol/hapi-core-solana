@@ -16,6 +16,7 @@
     "build": "tsc && rollup -c",
     "prepublish": "npm run build",
     "test": "jest --config=./jest.json",
+    "test:e2e": "jest --config=./jest.e2e.json",
     "lint": "eslint . --ext .ts"
   },
   "keywords": [
