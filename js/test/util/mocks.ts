@@ -105,9 +105,13 @@ export function mockRpcAccount<
   });
 }
 
-export function captureConsoleError(): { finish: () => string } {
-  let buffer = "";
+export function captureConsoleError(): { finish: () => string | undefined } {
+  let buffer: string;
+
   const spy = jest.spyOn(console, "error").mockImplementation((...args) => {
+    if (buffer === undefined) {
+      buffer = "";
+    }
     buffer += args.join(" ") + "\n";
     return;
   });

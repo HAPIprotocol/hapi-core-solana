@@ -169,3 +169,15 @@ export function base58ToPublicKey(address: string): PublicKey {
   const buffer = decode(address);
   return new PublicKey(buffer);
 }
+
+export function hexToPublicKey(hex: string): PublicKey {
+  const byteLength = Buffer.from(hex, "hex").length;
+  if (byteLength > 32) {
+    throw RangeError(
+      `hexToPublicKey: input length can't be longer than 32 bytes`
+    );
+  }
+  const buffer = Buffer.alloc(32);
+  buffer.write(hex, 32 - byteLength, "hex");
+  return PublicKey.decodeUnchecked(buffer);
+}
