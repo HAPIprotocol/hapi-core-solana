@@ -1,5 +1,7 @@
 # HAPI Core Solana
 
+**WARNING**: This is a deprecated version of HAPI Core contract. Please go to https://github.com/HAPIprotocol/hapi-core to see the current one.
+
 HAPI Core Solana is the core part of [HAPI Protocol](https://hapi.one/). It is responsible for key data storage and protocol governance.
 
 # Components
